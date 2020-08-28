@@ -1,1 +1,1 @@
-# INFOMR
+# INFOMR-Project
