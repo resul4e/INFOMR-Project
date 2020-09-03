@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>730</width>
+    <height>623</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Multimedia Retriever</string>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>730</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="importDataFileMenu">
+     <property name="title">
+      <string>Import Data File</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="exportDataFileMenu">
+     <property name="title">
+      <string>Export Data File</string>
+     </property>
+    </widget>
+    <addaction name="addNewPluginAction"/>
+    <addaction name="importDataFileMenu"/>
+    <addaction name="exportDataFileMenu"/>
+    <addaction name="openProjectAction"/>
+    <addaction name="exitAction"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="openProjectAction">
+   <property name="text">
+    <string>Open Project</string>
+   </property>
+  </action>
+  <action name="addNewPluginAction">
+   <property name="text">
+    <string>Add New Plugin</string>
+   </property>
+  </action>
+  <action name="exitAction">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="findLogFileAction">
+   <property name="text">
+    <string>Find Log File</string>
+   </property>
+  </action>
+  <action name="logViewAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log View</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
