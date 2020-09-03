@@ -35,3 +35,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BINA
 
 # Install binaries
 install(FILES ThirdParty/assimp/bin/assimp.dll DESTINATION ${BINARY_DIR}/$<CONFIG>/)
+
+#set startup project to be the main executable instead of ALL_BUILD
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${PROJECT_NAME}")
