@@ -31,6 +31,7 @@ private:
     std::shared_ptr<Camera> m_camera;
     glm::mat4 m_projMatrix;
     glm::mat4 m_viewMatrix;
+    glm::mat4 m_modelMatrix;
 
     ShaderProgram m_modelShader;
 };

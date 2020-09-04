@@ -19,7 +19,7 @@ void ModelViewer::initializeGL()
     std::string versionString = std::string((const char*)glGetString(GL_VERSION));
     qDebug() << versionString.c_str();
 
-    _model = ModelLoader::LoadModel("../Resources/Cube.obj");
+    _model = ModelLoader::LoadModel("../Resources/benchmark/db/1/m100/m100.off");
     _model->Upload();
     m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
     m_camera->loadProjectionMatrix(m_projMatrix);
@@ -30,6 +30,8 @@ void ModelViewer::initializeGL()
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void ModelViewer::resizeGL(int w, int h)
@@ -53,11 +55,14 @@ void ModelViewer::paintGL()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     t += 0.01f;
-    m_viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(sin(t), 0, -3));
+    m_viewMatrix = glm::mat4(1.0f);
+    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -3));
+    m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
     //std::cout << glm::to_string(m_projMatrix) << std::endl;
     m_modelShader.bind();
     m_modelShader.uniformMatrix4f("projMatrix", m_projMatrix);
     m_modelShader.uniformMatrix4f("viewMatrix", m_viewMatrix);
+    m_modelShader.uniformMatrix4f("modelMatrix", m_modelMatrix);
 
     for (Mesh& mesh : _model->m_meshes)
     {
