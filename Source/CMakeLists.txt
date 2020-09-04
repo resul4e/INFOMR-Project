@@ -13,6 +13,8 @@ set(BASE_SOURCES
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
     ${DIR}/ModelLoader.cpp
+    ${DIR}/Camera.h
+    ${DIR}/Camera.cpp
     ${DIR}/../Resources/MainWindow.ui
     ${DIR}/../Resources/resources.qrc
     PARENT_SCOPE

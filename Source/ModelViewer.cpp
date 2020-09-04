@@ -2,6 +2,7 @@
 
 #include "ModelLoader.h"
 #include "Model.h"
+#include "Camera.h"
 
 #include <QDebug>
 
@@ -14,12 +15,18 @@ void ModelViewer::initializeGL()
 
     _model = ModelLoader::LoadModel("../Resources/Cube.obj");
     _model->Upload();
+    m_camera = std::make_shared<Camera>(60, 1, 0.1f, 100.0f);
+    m_camera->loadProjectionMatrix(m_projMatrix);
+
+    m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
     //connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelViewer::cleanup);
 }
 
 void ModelViewer::resizeGL(int w, int h)
 {
     qDebug() << "Resize" << w << h;
+    m_camera->SetAspectRatio((float) w / h);
+    m_camera->loadProjectionMatrix(m_projMatrix);
     //_windowSize.setWidth(w);
     //_windowSize.setHeight(h);
 }
@@ -37,9 +44,14 @@ void ModelViewer::paintGL()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    m_modelShader.bind();
+    m_modelShader.uniformMatrix4f("projMatrix", m_projMatrix);
+
     for (Mesh& mesh : _model->m_meshes)
     {
         glBindVertexArray(mesh.vao);
         glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
     }
+
+    m_modelShader.release();
 }

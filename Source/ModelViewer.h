@@ -1,11 +1,16 @@
 #pragma once
 
+#include "Shader.h"
+
+#include <glm/glm.hpp>
+
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
 #include <memory>
 
 class Model;
+class Camera;
 
 class ModelViewer : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
 {
@@ -23,4 +28,8 @@ protected:
 
 private:
     std::shared_ptr<Model> _model;
+    std::shared_ptr<Camera> m_camera;
+    glm::mat4 m_projMatrix;
+
+    ShaderProgram m_modelShader;
 };
