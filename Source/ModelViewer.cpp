@@ -1,5 +1,8 @@
 #include "ModelViewer.h"
 
+#include "ModelLoader.h"
+#include "Model.h"
+
 #include <QDebug>
 
 void ModelViewer::initializeGL()
@@ -9,11 +12,14 @@ void ModelViewer::initializeGL()
     std::string versionString = std::string((const char*)glGetString(GL_VERSION));
     qDebug() << versionString.c_str();
 
+    _model = ModelLoader::LoadModel("../Resources/Cube.obj");
+    _model->Upload();
     //connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelViewer::cleanup);
 }
 
 void ModelViewer::resizeGL(int w, int h)
 {
+    qDebug() << "Resize" << w << h;
     //_windowSize.setWidth(w);
     //_windowSize.setHeight(h);
 }
@@ -31,5 +37,9 @@ void ModelViewer::paintGL()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glGenVertexArrays(1, &vao);
+    for (Mesh& mesh : _model->m_meshes)
+    {
+        glBindVertexArray(mesh.vao);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
+    }
 }

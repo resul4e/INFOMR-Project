@@ -3,6 +3,10 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
+#include <memory>
+
+class Model;
+
 class ModelViewer : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
@@ -18,6 +22,5 @@ protected:
     void paintGL()              Q_DECL_OVERRIDE;
 
 private:
-    GLuint vao;
-    GLuint vbo;
+    std::shared_ptr<Model> _model;
 };
