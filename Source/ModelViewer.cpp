@@ -8,6 +8,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include <QTimer>
+#include <QWheelEvent>
 #include <QDebug>
 #include <iostream>
 #include <cmath>
@@ -68,7 +69,7 @@ void ModelViewer::paintGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     t += 0.01f;
     m_viewMatrix = glm::mat4(1.0f);
-    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -3));
+    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -m_distance));
     m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
 
     m_modelShader.bind();
@@ -83,4 +84,13 @@ void ModelViewer::paintGL()
     }
 
     m_modelShader.release();
+}
+
+void ModelViewer::wheelEvent(QWheelEvent* event)
+{
+    float d = event->delta() < 0 ? 0.2f : -0.2f;
+
+    m_distance += d;
+
+    if (m_distance < 1) m_distance = 1;
 }
