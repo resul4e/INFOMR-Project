@@ -39,10 +39,8 @@
       <string>Export Data File</string>
      </property>
     </widget>
-    <addaction name="addNewPluginAction"/>
     <addaction name="importDataFileMenu"/>
     <addaction name="exportDataFileMenu"/>
-    <addaction name="openProjectAction"/>
     <addaction name="exitAction"/>
    </widget>
    <widget class="QMenu" name="menuHelp">

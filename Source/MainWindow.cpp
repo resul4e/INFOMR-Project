@@ -4,6 +4,7 @@
 #include <QDesktopWidget> // Used by centerAndResize
 #include <QStyle> // Used by centerAndResize
 #include <QDockWidget>
+#include <QFileDialog>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _modelViewer = new ModelViewer();
     setCentralWidget(_modelViewer);
+
+    QAction* importModelAction = new QAction("3D Model");
+    connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
+    importDataFileMenu->addAction(importModelAction);
 }
 
 MainWindow::~MainWindow()
@@ -29,6 +34,22 @@ QAction* MainWindow::addImportOption(QString menuName)
 QAction* MainWindow::addExportOption(QString menuName)
 {
     return exportDataFileMenu->addAction(menuName);
+}
+
+void MainWindow::importModelFromFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(Q_NULLPTR, "Load File", "", "Model Files (*.off *.ply *)");
+
+    // Don't try to load a file if the dialog was cancelled or the file name is empty
+    if (fileName.isNull() || fileName.isEmpty())
+        return;
+
+    qDebug() << "Loading Model file: " << fileName;
+    QFile file(fileName);
+
+    std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
+
+    _modelViewer->setModel(model);
 }
 
 void MainWindow::centerAndResize(float coverage) {

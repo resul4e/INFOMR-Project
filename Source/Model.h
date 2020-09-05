@@ -44,12 +44,17 @@ struct Mesh
 class Model
 {
 public:
+	Model();
+
 	/**
 	 * \brief Upload the model data to the graphics card video memory
 	 * \remark Needs a valid OpenGL context to be bound when this function is called
 	 */
 	void Upload();
 
+	bool isUploaded();
+
 	std::vector<Mesh> m_meshes;
 	//Bounds m_bounds;
+	bool m_isUploaded;
 };

@@ -56,10 +56,22 @@ void Mesh::Upload()
 	}
 }
 
+Model::Model() :
+	m_isUploaded(false)
+{
+
+}
+
 void Model::Upload()
 {
 	for (Mesh& mesh : m_meshes)
 	{
 		mesh.Upload();
 	}
+	m_isUploaded = true;
+}
+
+bool Model::isUploaded()
+{
+	return m_isUploaded;
 }

@@ -2,7 +2,7 @@
 
 #include "ModelViewer.h"
 
-#include "Resources/ui_MainWindow.h"
+#include "../Resources/ui_MainWindow.h"
 
 #include <QMainWindow>
 #include <QAction>
@@ -29,6 +29,8 @@ public:
     * Adds a new item to the export menu.
     */
     QAction* addExportOption(QString menuName);
+
+    void importModelFromFile();
 
     /**
      * Moves the window to the center of the screen and resizes it to a fraction
