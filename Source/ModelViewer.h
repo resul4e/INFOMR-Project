@@ -17,7 +17,10 @@ class ModelViewer : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
     Q_OBJECT
 public:
     ModelViewer(QWidget* parent = 0) :
-        m_model(nullptr)
+        m_model(nullptr),
+        m_projMatrix(1.0f),
+        m_viewMatrix(1.0f),
+        m_modelMatrix(1.0f)
     {
         //setStyleSheet("background-color:black;");
     }
