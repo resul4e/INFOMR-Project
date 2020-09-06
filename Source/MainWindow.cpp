@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include "QueryManager.h"
 #include "ModelLoader.h"
 #include "Normalizer.h"
 
@@ -18,11 +19,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     setupUi(this);
+	
 
     QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     _modelViewer = new ModelViewer();
     setCentralWidget(_modelViewer);
+
+    m_queryManager = std::make_shared<QueryManager>();
 
     QAction* importModelAction = new QAction("3D Model");
     connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
@@ -31,6 +35,19 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* normalizeModelAction = new QAction("Normalize Model");
     connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
     menuFile->insertAction(exitAction, normalizeModelAction);
+
+    addDatabaseMenuActions();
+}
+
+void MainWindow::addDatabaseMenuActions()
+{
+    QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
+    connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
+    menuDatabase->addAction(loadLabelledPSBAction);
+
+    QAction* loadPSBAction = new QAction("Load PSB");
+    connect(loadPSBAction, &QAction::triggered, this, &MainWindow::loadPSB);
+    menuDatabase->addAction(loadPSBAction);
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +77,28 @@ void MainWindow::importModelFromFile()
     std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
 
     _modelViewer->setModel(model);
+}
+
+void MainWindow::loadLabelledPSB()
+{
+    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
+
+    // Don't try to load a file if the dialog was cancelled or the file name is empty
+    if (fileName.isNull() || fileName.isEmpty())
+        return;
+
+    m_queryManager->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+}
+
+void MainWindow::loadPSB()
+{
+    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
+
+    // Don't try to load a file if the dialog was cancelled or the file name is empty
+    if (fileName.isNull() || fileName.isEmpty())
+        return;
+
+    m_queryManager->LoadPSB(std::filesystem::path(fileName.toStdString()));
 }
 
 void MainWindow::normalizeCurrentModel()

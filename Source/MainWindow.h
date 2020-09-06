@@ -8,6 +8,8 @@
 #include <QAction>
 #include <QByteArray>
 
+class QueryManager;
+
 namespace Ui
 {
     class MainWindow;
@@ -31,6 +33,8 @@ public:
     QAction* addExportOption(QString menuName);
 
     void importModelFromFile();
+    void loadLabelledPSB();
+    void loadPSB();
 
     void normalizeCurrentModel();
 
@@ -57,8 +61,11 @@ private:
     void hideEvent(QHideEvent *event) override;
     void showEvent(QShowEvent *event) override;
 
+    void addDatabaseMenuActions();
+	
 private:
     QByteArray _windowConfiguration;
 
     ModelViewer* _modelViewer;
+    std::shared_ptr<QueryManager> m_queryManager;
 };

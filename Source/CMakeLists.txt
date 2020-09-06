@@ -13,8 +13,12 @@ set(BASE_SOURCES
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
     ${DIR}/ModelLoader.cpp
+    ${DIR}/Database.h
+    ${DIR}/Database.cpp
     ${DIR}/Normalizer.h
     ${DIR}/Normalizer.cpp
+    ${DIR}/QueryManager.h
+    ${DIR}/QueryManager.cpp
     ${DIR}/Camera.h
     ${DIR}/Camera.cpp
     ${DIR}/../Resources/MainWindow.ui
