@@ -25,15 +25,22 @@ void ModelViewer::initializeGL()
     std::string versionString = std::string((const char*)glGetString(GL_VERSION));
     qDebug() << versionString.c_str();
 
+    m_planeModel = ModelLoader::LoadModel("../Resources/Plane.obj");
+    m_planeModel->Upload();
+
     m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
     m_camera->loadProjectionMatrix(m_projMatrix);
 
     m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
+    m_planeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Plane.frag");
     //connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelViewer::cleanup);
 
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
     timer->start(10);
+
+    // Set the background color to a light grey
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
 }
@@ -53,7 +60,6 @@ void ModelViewer::paintGL()
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
 
     // Clear the widget to the background color
-    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // If no model is set, don't call any rendering functions
@@ -68,8 +74,8 @@ void ModelViewer::paintGL()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     t += 0.01f;
-    m_viewMatrix = glm::mat4(1.0f);
-    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -m_distance));
+    m_viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, -m_distance));
+    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
     m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
 
     m_modelShader.bind();
@@ -84,6 +90,21 @@ void ModelViewer::paintGL()
     }
 
     m_modelShader.release();
+
+    m_modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(40, 1, 40));
+
+    m_planeShader.bind();
+    m_planeShader.uniformMatrix4f("projMatrix", m_projMatrix);
+    m_planeShader.uniformMatrix4f("viewMatrix", m_viewMatrix);
+    m_planeShader.uniformMatrix4f("modelMatrix", m_modelMatrix);
+
+    for (Mesh& mesh : m_planeModel->m_meshes)
+    {
+        glBindVertexArray(mesh.vao);
+        glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
+    }
+
+    m_planeShader.release();
 }
 
 void ModelViewer::wheelEvent(QWheelEvent* event)

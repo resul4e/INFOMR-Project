@@ -25,7 +25,6 @@ public:
         //setStyleSheet("background-color:black;");
     }
 
-    void loadModelFromFile(QString modelPath);
     void setModel(std::shared_ptr<Model> model);
 
 protected:
@@ -37,6 +36,7 @@ protected:
 
 private:
     std::shared_ptr<Model> m_model;
+    std::shared_ptr<Model> m_planeModel;
     std::shared_ptr<Camera> m_camera;
     glm::mat4 m_projMatrix;
     glm::mat4 m_viewMatrix;
@@ -45,4 +45,5 @@ private:
     float m_distance = 3;
 
     ShaderProgram m_modelShader;
+    ShaderProgram m_planeShader;
 };

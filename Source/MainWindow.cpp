@@ -49,7 +49,6 @@ void MainWindow::importModelFromFile()
         return;
 
     qDebug() << "Loading Model file: " << fileName;
-    QFile file(fileName);
 
     std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
 
