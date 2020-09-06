@@ -40,15 +40,15 @@ void Normalizer::ScaleModel(Model& _model)
 
 	for (int l = 0; l < _model.m_meshes.size(); l++)
 	{
-		for (int i = 0; i < _model.m_meshes[l].positions.size() - 1; i++)
+		for (int i = 0; i < _model.m_meshes[l].positions.size(); i++)
 		{
 			for (int m = 0; m < _model.m_meshes.size(); m++)
 			{
-				for (int j = i + 1; j < _model.m_meshes[m].positions.size(); j++)
+				for (int j = 0; j < _model.m_meshes[m].positions.size(); j++)
 				{
 					for (int k = 0; k < 3; k++)
 					{
-						float diff = std::abs(_model.m_meshes[l].positions[i].x - _model.m_meshes[m].positions[j].x);
+						float diff = std::abs(_model.m_meshes[l].positions[i][k] - _model.m_meshes[m].positions[j][k]);
 						if (diff > largestDiff)
 						{
 							largestDiff = diff;
