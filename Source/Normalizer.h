@@ -12,4 +12,5 @@ public:
 	
 private:
 	static void CenterModel(Model& _model);
+	static void ScaleModel(Model& _model);
 };
