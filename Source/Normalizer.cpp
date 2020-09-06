@@ -14,7 +14,7 @@ void Normalizer::CenterModel(Model& _model)
 	for (int i = 0; i < 3; i++)
 	{
 		int positionAmounts = 0;
-		for(int k = 0; k < _model.m_meshes.size(); k++)
+		for (int k = 0; k < _model.m_meshes.size(); k++)
 		{
 			positionAmounts += _model.m_meshes[k].positions.size();
 			for (int j = 0; j < _model.m_meshes[k].positions.size(); j++)
@@ -36,29 +36,33 @@ void Normalizer::CenterModel(Model& _model)
 
 void Normalizer::ScaleModel(Model& _model)
 {
+	//find the maximum and minimum value for each of the three axes.
 	float largestDiff = 0;
-
-	for (int l = 0; l < _model.m_meshes.size(); l++)
+	glm::vec3 max{ std::numeric_limits<float>::min() };
+	glm::vec3 min{ std::numeric_limits<float>::max() };
+	for (int i = 0; i < _model.m_meshes.size(); i++)
 	{
-		for (int i = 0; i < _model.m_meshes[l].positions.size(); i++)
+		for (int j = 0; j < _model.m_meshes[i].positions.size(); j++)
 		{
-			for (int m = 0; m < _model.m_meshes.size(); m++)
+			for (int k = 0; k < 3; k++)
 			{
-				for (int j = 0; j < _model.m_meshes[m].positions.size(); j++)
-				{
-					for (int k = 0; k < 3; k++)
-					{
-						float diff = std::abs(_model.m_meshes[l].positions[i][k] - _model.m_meshes[m].positions[j][k]);
-						if (diff > largestDiff)
-						{
-							largestDiff = diff;
-						}
-					}
-				}
+				max[k] = std::max(max[k], _model.m_meshes[i].positions[j][k]);
+				min[k] = std::min(min[k], _model.m_meshes[i].positions[j][k]);
 			}
 		}
 	}
 
+	//find the largest difference in one of the three axes.
+	for (int k = 0; k < 3; k++)
+	{
+		float diff = max[k] - min[k];
+		if (diff > largestDiff)
+		{
+			largestDiff = diff;
+		}
+	}
+
+	//divide each position by the largest difference.
 	for (int l = 0; l < _model.m_meshes.size(); l++)
 	{
 		for (int j = 0; j < _model.m_meshes[l].positions.size(); j++)
