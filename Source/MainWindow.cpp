@@ -1,11 +1,15 @@
 #include "MainWindow.h"
 
+#include "ModelLoader.h"
+
 #include <QApplication> // Used by centerAndResize
 #include <QDesktopWidget> // Used by centerAndResize
 #include <QStyle> // Used by centerAndResize
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QDebug>
+
+#include <filesystem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
