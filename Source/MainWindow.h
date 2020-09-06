@@ -32,6 +32,8 @@ public:
 
     void importModelFromFile();
 
+    void normalizeCurrentModel();
+
     /**
      * Moves the window to the center of the screen and resizes it to a fraction
      * of the total screen size defined by 'coverage'.

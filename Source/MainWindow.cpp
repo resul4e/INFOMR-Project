@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include "ModelLoader.h"
+#include "Normalizer.h"
 
 #include <QApplication> // Used by centerAndResize
 #include <QDesktopWidget> // Used by centerAndResize
@@ -10,6 +11,8 @@
 #include <QDebug>
 
 #include <filesystem>
+#include <iostream>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -24,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* importModelAction = new QAction("3D Model");
     connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
     importDataFileMenu->addAction(importModelAction);
+
+    QAction* normalizeModelAction = new QAction("Normalize Model");
+    connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
+    menuFile->insertAction(exitAction, normalizeModelAction);
 }
 
 MainWindow::~MainWindow()
@@ -53,6 +60,19 @@ void MainWindow::importModelFromFile()
     std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
 
     _modelViewer->setModel(model);
+}
+
+void MainWindow::normalizeCurrentModel()
+{
+	std::shared_ptr<Model> model = _modelViewer->getModel();
+	if(model != nullptr)
+    {
+        Normalizer::Normalize(*model);
+    }
+    else
+    {
+        std::cerr << "No Model to perform normalization on!" << std::endl;
+    }
 }
 
 void MainWindow::centerAndResize(float coverage) {

@@ -57,7 +57,8 @@ void Mesh::Upload()
 }
 
 Model::Model() :
-	m_isUploaded(false)
+	m_isUploaded(false),
+	m_class("")
 {
 
 }

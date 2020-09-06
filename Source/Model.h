@@ -57,4 +57,5 @@ public:
 	std::vector<Mesh> m_meshes;
 	//Bounds m_bounds;
 	bool m_isUploaded;
+	std::string m_class;
 };

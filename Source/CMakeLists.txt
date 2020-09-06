@@ -13,6 +13,8 @@ set(BASE_SOURCES
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
     ${DIR}/ModelLoader.cpp
+    ${DIR}/Normalizer.h
+    ${DIR}/Normalizer.cpp
     ${DIR}/Camera.h
     ${DIR}/Camera.cpp
     ${DIR}/../Resources/MainWindow.ui

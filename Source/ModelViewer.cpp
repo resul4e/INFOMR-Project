@@ -18,6 +18,11 @@ void ModelViewer::setModel(std::shared_ptr<Model> model)
     m_model = model;
 }
 
+std::shared_ptr<Model> ModelViewer::getModel() const
+{
+    return m_model;
+}
+
 void ModelViewer::initializeGL()
 {
     initializeOpenGLFunctions();
