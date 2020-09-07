@@ -36,12 +36,24 @@ public:
 
 	/**
 	 * @brief Gets path to database directory from user and Calls QueryManager::LoadLabelledPSB
+	 * @note Also clears the database model selector
 	*/
 	void loadLabelledPSB();
     /**
      * @brief Gets path to database directory from user and Calls QueryManager::LoadPSB
+     * @note Also clears the database model selector
     */
     void loadPSB();
+
+    /**
+     * @brief GO through all of the models in the database and add them to the menu (only if the list is empty)
+    */
+    void populateDatabaseModelSelector();
+    /**
+     * @brief Set the model to the selected model in the Model database selector.
+     * @param _model The model to display on the screen.
+    */
+    void selectModel(std::shared_ptr<Model> _model);
 
     void normalizeCurrentModel();
 
@@ -71,6 +83,7 @@ private:
     void addDatabaseMenuActions();
 	
 private:
+    QMenu* m_menuModelSelect;
     QByteArray _windowConfiguration;
 
     ModelViewer* _modelViewer;

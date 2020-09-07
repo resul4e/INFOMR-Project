@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::addDatabaseMenuActions()
 {
+	//Importing databases
     QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
     connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
     menuDatabase->addAction(loadLabelledPSBAction);
@@ -48,6 +49,11 @@ void MainWindow::addDatabaseMenuActions()
     QAction* loadPSBAction = new QAction("Load PSB");
     connect(loadPSBAction, &QAction::triggered, this, &MainWindow::loadPSB);
     menuDatabase->addAction(loadPSBAction);
+
+	//Model selector
+    m_menuModelSelect = new QMenu("Select Model");
+    connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
+    menuDatabase->addMenu(m_menuModelSelect);
 }
 
 MainWindow::~MainWindow()
@@ -88,17 +94,46 @@ void MainWindow::loadLabelledPSB()
         return;
 
     m_queryManager->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+    m_menuModelSelect->clear();
 }
 
 void MainWindow::loadPSB()
 {
-    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
+    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select PSB directory", "");
 
     // Don't try to load a file if the dialog was cancelled or the file name is empty
     if (fileName.isNull() || fileName.isEmpty())
         return;
 
     m_queryManager->LoadPSB(std::filesystem::path(fileName.toStdString()));
+    m_menuModelSelect->clear();
+}
+
+void MainWindow::populateDatabaseModelSelector()
+{
+	if(!m_menuModelSelect->actions().empty())
+	{
+        return;
+	}
+	
+	for(std::shared_ptr<Model> m : m_queryManager->GetDatabase()->GetModelDatabase())
+	{
+        auto selectModelLamda = [=]()
+        {
+            selectModel(m);
+        };
+		
+        QAction* modelAction = new QAction(m->m_name.c_str());
+        connect(modelAction, &QAction::triggered, this, selectModelLamda);
+        m_menuModelSelect->addAction(modelAction);
+        m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
+
+	}
+}
+
+void MainWindow::selectModel(std::shared_ptr<Model> _model)
+{
+    _modelViewer->setModel(_model);
 }
 
 void MainWindow::normalizeCurrentModel()

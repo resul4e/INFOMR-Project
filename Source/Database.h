@@ -16,6 +16,12 @@ public:
 	*/
 	void AddModel(std::shared_ptr<Model> _model);
 
+	/**
+	 * @brief Returns the list of all models.
+	 * @return All of the models in this database.
+	*/
+	std::vector<std::shared_ptr<Model>> GetModelDatabase();
+	
 private:
 	std::vector<std::shared_ptr<Model>> m_modelDatabase;
 };

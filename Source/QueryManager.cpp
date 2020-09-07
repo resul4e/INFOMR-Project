@@ -45,6 +45,7 @@ void QueryManager::LoadLabelledPSB(fs::path _labelledPSBDirectory)
 			{
 				std::shared_ptr<Model> model = ModelLoader::LoadModel(m.path());
 				model->m_class = cls;
+				model->m_name = cls + m.path().filename().string();
 				m_database->AddModel(model);
 			}
 		}
@@ -86,6 +87,7 @@ void QueryManager::LoadPSB(std::filesystem::path _PSBDirectory)
 				
 				std::shared_ptr<Model> model = ModelLoader::LoadModel(modelPath / db / ("m" + line) / ("m" + line + ".off"));
 				model->m_class = cls;
+				model->m_name = cls + line;
 				m_database->AddModel(model);
 			}
 			else

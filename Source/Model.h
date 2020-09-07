@@ -61,4 +61,5 @@ public:
 	 * @brief The shape class of the model.
 	*/
 	std::string m_class;
+	std::string m_name;
 };
