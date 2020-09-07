@@ -57,5 +57,8 @@ public:
 	std::vector<Mesh> m_meshes;
 	//Bounds m_bounds;
 	bool m_isUploaded;
+	/**
+	 * @brief The shape class of the model.
+	*/
 	std::string m_class;
 };

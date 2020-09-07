@@ -33,7 +33,14 @@ public:
     QAction* addExportOption(QString menuName);
 
     void importModelFromFile();
-    void loadLabelledPSB();
+
+	/**
+	 * @brief Gets path to database directory from user and Calls QueryManager::LoadLabelledPSB
+	*/
+	void loadLabelledPSB();
+    /**
+     * @brief Gets path to database directory from user and Calls QueryManager::LoadPSB
+    */
     void loadPSB();
 
     void normalizeCurrentModel();

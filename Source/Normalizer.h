@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include "Model.h"
 
 class Normalizer
@@ -8,6 +7,10 @@ public:
 	Normalizer() = delete;
 	~Normalizer() = delete;
 
+	/**
+	 * @brief Performs normalization on a model. This centers the model, aligns it to its eigenvectors, flips the model and scales it to a unit cube.
+	 * @param _model The model to perform the normalization on.
+	*/
 	static void Normalize(Model& _model);
 	
 private:
