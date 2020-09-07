@@ -93,7 +93,7 @@ void MainWindow::loadLabelledPSB()
     if (fileName.isNull() || fileName.isEmpty())
         return;
 
-    m_queryManager->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+    m_queryManager->GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
     m_menuModelSelect->clear();
 }
 
@@ -105,7 +105,7 @@ void MainWindow::loadPSB()
     if (fileName.isNull() || fileName.isEmpty())
         return;
 
-    m_queryManager->LoadPSB(std::filesystem::path(fileName.toStdString()));
+    m_queryManager->GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
     m_menuModelSelect->clear();
 }
 
