@@ -134,6 +134,9 @@ void ModelViewer::drawModel(bool wireframe)
 	}
 
 	shader.release();
+
+	// Reset polygon mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ModelViewer::wheelEvent(QWheelEvent* event)
