@@ -59,7 +59,7 @@ void Database::LoadPSB(std::filesystem::path _PSBDirectory)
 	int counter = 0;
 	std::string line;
 	std::string cls = "NO_CLASS_DETECTED!";
-	fs::path modelPath(_PSBDirectory / "db");
+	fs::path modelDirectoryPath(_PSBDirectory / "db");
 	std::ifstream testClassifications(_PSBDirectory / "classification" / "v1" / "coarse1" / "coarse1Test.cla");
 	if (testClassifications.is_open())
 	{
@@ -87,7 +87,8 @@ void Database::LoadPSB(std::filesystem::path _PSBDirectory)
 					db = line.substr(0, 2);
 				}
 
-				std::shared_ptr<Model> model = ModelLoader::LoadModel(modelPath / db / ("m" + line) / ("m" + line + ".off"));
+				fs::path modelPath = modelDirectoryPath / db / ("m" + line) / ("m" + line + ".off");
+				std::shared_ptr<Model> model = ModelLoader::LoadModel(modelPath);
 				model->m_class = cls;
 				model->m_name = cls + line;
 				AddModel(model);
@@ -105,4 +106,24 @@ void Database::LoadPSB(std::filesystem::path _PSBDirectory)
 void Database::ProcessAllModels()
 {
 	
+	for(std::shared_ptr<Model> model : m_modelDatabase)
+	{
+		bool subdivide = false;
+		for(const Mesh& mesh : model->m_meshes)
+		{
+			if(mesh.positions.size() < 100 || mesh.faces.size() < 100)
+			{
+				subdivide = true;
+				std::cerr << "Not enough verts/faces in model with name: " << model->m_name << std::endl;
+			}
+		}
+		if(subdivide)
+		{
+			auto newPath = model->m_path;
+			newPath = newPath.replace_extension("");
+			newPath = newPath.replace_filename(newPath.filename().string() + "1");
+			newPath = newPath.replace_extension(".off");
+			system(("java -jar ../Scripts/catmullclark.jar "+ model->m_path.string() + " " + newPath.string()).c_str());
+		}
+	}
 }

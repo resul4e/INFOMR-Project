@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <filesystem>
 
 struct Face
 {
@@ -62,4 +63,5 @@ public:
 	*/
 	std::string m_class;
 	std::string m_name;
+	std::filesystem::path m_path;
 };

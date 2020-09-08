@@ -41,6 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::addDatabaseMenuActions()
 {
+    auto processModelsFunc = [=]()
+    {
+        m_queryManager->GetDatabase()->ProcessAllModels();
+    };
+	
 	//Importing databases
     QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
     connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
@@ -54,6 +59,10 @@ void MainWindow::addDatabaseMenuActions()
     m_menuModelSelect = new QMenu("Select Model");
     connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
     menuDatabase->addMenu(m_menuModelSelect);
+
+    QAction* menuProcessDatabase = new QAction("Process database");
+    connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
+    menuDatabase->addAction(menuProcessDatabase);
 }
 
 MainWindow::~MainWindow()
