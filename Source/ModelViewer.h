@@ -36,6 +36,9 @@ protected:
 	void wheelEvent(QWheelEvent* event) override;
 
 private:
+	void drawGroundPlane();
+	void drawModel();
+
 	std::shared_ptr<Model> m_model;
 	std::shared_ptr<Model> m_planeModel;
 	std::shared_ptr<Camera> m_camera;

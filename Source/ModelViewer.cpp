@@ -80,22 +80,13 @@ void ModelViewer::paintGL()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	t += 0.01f;
 	m_viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, -m_distance));
-	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-	m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
 
-	m_modelShader.bind();
-	m_modelShader.uniformMatrix4f("projMatrix", m_projMatrix);
-	m_modelShader.uniformMatrix4f("viewMatrix", m_viewMatrix);
-	m_modelShader.uniformMatrix4f("modelMatrix", m_modelMatrix);
+	drawGroundPlane();
+	drawModel();
+}
 
-	for (Mesh& mesh : m_model->m_meshes)
-	{
-		glBindVertexArray(mesh.vao);
-		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
-	}
-
-	m_modelShader.release();
-
+void ModelViewer::drawGroundPlane()
+{
 	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -0.5f, 0));
 	m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(40, 1, 40));
 
@@ -111,6 +102,25 @@ void ModelViewer::paintGL()
 	}
 
 	m_planeShader.release();
+}
+
+void ModelViewer::drawModel()
+{
+	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+	m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
+
+	m_modelShader.bind();
+	m_modelShader.uniformMatrix4f("projMatrix", m_projMatrix);
+	m_modelShader.uniformMatrix4f("viewMatrix", m_viewMatrix);
+	m_modelShader.uniformMatrix4f("modelMatrix", m_modelMatrix);
+
+	for (Mesh& mesh : m_model->m_meshes)
+	{
+		glBindVertexArray(mesh.vao);
+		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
+	}
+
+	m_modelShader.release();
 }
 
 void ModelViewer::wheelEvent(QWheelEvent* event)
