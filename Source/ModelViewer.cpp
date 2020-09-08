@@ -96,7 +96,8 @@ void ModelViewer::paintGL()
 
     m_modelShader.release();
 
-    m_modelMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(40, 1, 40));
+    m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -0.5f, 0));
+    m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(40, 1, 40));
 
     m_planeShader.bind();
     m_planeShader.uniformMatrix4f("projMatrix", m_projMatrix);
