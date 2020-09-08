@@ -35,6 +35,7 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 	}
 
 	std::shared_ptr<Model> model = std::make_shared<Model>();
+	model->m_path = _filePath;
 	model->m_meshes.resize(scene->mNumMeshes);
 	
 	// Initial minimum and maximum bounds of the model

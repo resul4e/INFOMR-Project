@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include "QueryManager.h"
+#include "FeatureView.h"
 #include "ModelLoader.h"
 #include "Normalizer.h"
 
@@ -21,10 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     setupUi(this);
 	
 
+	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+
     QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     _modelViewer = new ModelViewer();
     setCentralWidget(_modelViewer);
+
+	_featureWidget = new FeatureView();
+	_featureWidget->setAllowedAreas(Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _featureWidget);
 
     m_queryManager = std::make_shared<QueryManager>();
 
