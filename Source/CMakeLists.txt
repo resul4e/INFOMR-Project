@@ -7,6 +7,8 @@ set(BASE_SOURCES
     ${DIR}/MainWindow.h
     ${DIR}/ModelViewer.h
     ${DIR}/ModelViewer.cpp
+    ${DIR}/FeatureView.h
+    ${DIR}/FeatureView.cpp
     ${DIR}/Shader.h
     ${DIR}/Shader.cpp
     ${DIR}/Model.h

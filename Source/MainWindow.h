@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QByteArray>
 
+class FeatureView;
 class QueryManager;
 
 namespace Ui
@@ -88,4 +89,5 @@ private:
 
     ModelViewer* _modelViewer;
     std::shared_ptr<QueryManager> m_queryManager;
+	FeatureView* _featureWidget;
 };
