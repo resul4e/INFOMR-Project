@@ -37,6 +37,7 @@ void ModelViewer::initializeGL()
 	m_camera->loadProjectionMatrix(m_projMatrix);
 
 	m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
+	m_wireframeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Color.frag");
 	m_planeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Plane.frag");
 	//connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelViewer::cleanup);
 
@@ -83,6 +84,7 @@ void ModelViewer::paintGL()
 
 	drawGroundPlane();
 	drawModel();
+	drawModel(true);
 }
 
 void ModelViewer::drawGroundPlane()
@@ -104,15 +106,26 @@ void ModelViewer::drawGroundPlane()
 	m_planeShader.release();
 }
 
-void ModelViewer::drawModel()
+void ModelViewer::drawModel(bool wireframe)
 {
+	ShaderProgram& shader = wireframe ? m_wireframeShader : m_modelShader;
+
 	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 	m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
 
-	m_modelShader.bind();
-	m_modelShader.uniformMatrix4f("projMatrix", m_projMatrix);
-	m_modelShader.uniformMatrix4f("viewMatrix", m_viewMatrix);
-	m_modelShader.uniformMatrix4f("modelMatrix", m_modelMatrix);
+	shader.bind();
+	shader.uniformMatrix4f("projMatrix", m_projMatrix);
+	shader.uniformMatrix4f("viewMatrix", m_viewMatrix);
+	shader.uniformMatrix4f("modelMatrix", m_modelMatrix);
+
+	if (wireframe) {
+		shader.uniform3f("u_Color", glm::vec3(1, 0, 1));
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 
 	for (Mesh& mesh : m_model->m_meshes)
 	{
@@ -120,7 +133,7 @@ void ModelViewer::drawModel()
 		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
 	}
 
-	m_modelShader.release();
+	shader.release();
 }
 
 void ModelViewer::wheelEvent(QWheelEvent* event)

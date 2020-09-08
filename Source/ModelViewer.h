@@ -37,7 +37,7 @@ protected:
 
 private:
 	void drawGroundPlane();
-	void drawModel();
+	void drawModel(bool wireframe = false);
 
 	std::shared_ptr<Model> m_model;
 	std::shared_ptr<Model> m_planeModel;
@@ -49,5 +49,6 @@ private:
 	float m_distance = 3;
 
 	ShaderProgram m_modelShader;
+	ShaderProgram m_wireframeShader;
 	ShaderProgram m_planeShader;
 };
