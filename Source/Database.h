@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <string>
 
 namespace std {
 	namespace filesystem {
@@ -47,10 +48,22 @@ public:
 	*/
 	std::vector<std::shared_ptr<Model>> GetModelDatabase();
 
+	/**
+	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
+	*/
 	void ProcessAllModels();
 
+	/**
+	 * @brief Sorts the model database on the given SortingOptions.
+	 * @param _option The sorting option, current supports Vertex count, Face count and AABB cross section.
+	*/
 	void SortDatabase(SortingOptions _option);
 
 private:
+
+	void SubdivideModel(std::shared_ptr<Model>& _model);
+	
+	std::shared_ptr<Model> LoadModifiedModel(std::string _modelFileName);
+	
 	std::vector<std::shared_ptr<Model>> m_modelDatabase;
 };

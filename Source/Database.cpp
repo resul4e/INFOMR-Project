@@ -45,9 +45,15 @@ void Database::LoadLabelledPSB(const fs::path& _labelledPSBDirectory)
 		{
 			if (m.path().extension() == ".off")
 			{
-				std::shared_ptr<Model> model = ModelLoader::LoadModel(m.path());
+				std::string fileName = m.path().filename().string();
+
+				std::shared_ptr<Model> model = LoadModifiedModel(fileName);
+				if(model == nullptr)
+				{
+					model = ModelLoader::LoadModel(m.path());
+				}
 				model->m_class = cls;
-				model->m_name = cls + m.path().filename().string();
+				model->m_name = cls + fileName;
 				AddModel(model);
 			}
 		}
@@ -88,7 +94,11 @@ void Database::LoadPSB(const fs::path& _PSBDirectory)
 				}
 
 				fs::path modelPath = modelDirectoryPath / db / ("m" + line) / ("m" + line + ".off");
-				std::shared_ptr<Model> model = ModelLoader::LoadModel(modelPath);
+				std::shared_ptr<Model> model = LoadModifiedModel(("m" + line + ".off"));
+				if (model == nullptr)
+				{
+					model = ModelLoader::LoadModel(modelPath);
+				}
 				model->m_class = cls;
 				model->m_name = cls + line;
 				AddModel(model);
@@ -105,26 +115,43 @@ void Database::LoadPSB(const fs::path& _PSBDirectory)
 
 void Database::ProcessAllModels()
 {
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	fs::create_directory(modifiedMeshesPath);
 	
-	for(std::shared_ptr<Model> model : m_modelDatabase)
+	for(std::shared_ptr<Model>& model : m_modelDatabase)
 	{
-		bool subdivide = false;
-		for(const Mesh& mesh : model->m_meshes)
+		SubdivideModel(model);
+	}
+}
+
+void Database::SubdivideModel(std::shared_ptr<Model>& _model)
+{
+	//The folder where we will save the subdivided mesh
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+
+	//check if we need to subdivide.
+	bool subdivide = false;
+	for (const Mesh& mesh : _model->m_meshes)
+	{
+		if (mesh.positions.size() < 100 || mesh.faces.size() < 100)
 		{
-			if(mesh.positions.size() < 100 || mesh.faces.size() < 100)
-			{
-				subdivide = true;
-				std::cerr << "Not enough verts/faces in model with name: " << model->m_name << std::endl;
-			}
+			subdivide = true;
+			std::cerr << "Not enough verts/faces in model with name: " << _model->m_name << std::endl;
 		}
-		if(subdivide)
-		{
-			auto newPath = model->m_path;
-			newPath = newPath.replace_extension("");
-			newPath = newPath.replace_filename(newPath.filename().string() + "1");
-			newPath = newPath.replace_extension(".off");
-			system(("java -jar ../Scripts/catmullclark.jar "+ model->m_path.string() + " " + newPath.string()).c_str());
-		}
+	}
+
+	//If we do need to subidivde: call the script and load the model, then recall this method to see if the
+	//new model has enough verts/faces. If not do this again. Once this recursive call is returned swap the
+	//new model with the old one so that we immediately have access to the higher fidelity model.
+	if (subdivide)
+	{
+		auto newPath = modifiedMeshesPath;
+		newPath /= _model->m_path.filename();
+		system(("..\\Scripts\\mesh_filter.exe " + _model->m_path.string() + " -subdiv " + newPath.string()).c_str());
+
+		std::shared_ptr<Model> _newModel = ModelLoader::LoadModel(newPath);
+		SubdivideModel(_newModel);
+		_model.swap(_newModel);
 	}
 }
 
@@ -153,4 +180,14 @@ void Database::SortDatabase(SortingOptions _option)
 	default:
 		break;
 	}
+}
+
+std::shared_ptr<Model> Database::LoadModifiedModel(std::string _modelFileName)
+{
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	if(fs::exists(modifiedMeshesPath / _modelFileName))
+	{
+		return ModelLoader::LoadModel(modifiedMeshesPath / _modelFileName);
+	}
+	return nullptr;
 }
