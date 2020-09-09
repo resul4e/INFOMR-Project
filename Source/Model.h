@@ -16,6 +16,12 @@ struct Face
 	unsigned int indices[3];
 };
 
+struct Bounds
+{
+	glm::vec3 min;
+	glm::vec3 max;
+};
+
 struct Mesh
 {
 	Mesh();
@@ -58,10 +64,17 @@ public:
 	std::vector<Mesh> m_meshes;
 	//Bounds m_bounds;
 	bool m_isUploaded;
+
+	std::string m_name;
+	std::filesystem::path m_path;
+
+	///FILTER DATA
 	/**
 	 * @brief The shape class of the model.
 	*/
 	std::string m_class;
-	std::string m_name;
-	std::filesystem::path m_path;
+	Bounds m_bounds;
+	size_t m_vertexCount;
+	size_t m_faceCount;
+
 };

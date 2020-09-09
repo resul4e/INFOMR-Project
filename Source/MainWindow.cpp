@@ -52,6 +52,24 @@ void MainWindow::addDatabaseMenuActions()
     {
         m_queryManager->GetDatabase()->ProcessAllModels();
     };
+
+	auto sortByVertexCountFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::VERTEX_COUNT);
+		m_menuModelSelect->clear();
+	};
+
+	auto sortByFaceCountFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::FACE_COUNT);
+		m_menuModelSelect->clear();
+	};
+
+	auto sortByBoundsFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::BOUNDS);
+		m_menuModelSelect->clear();
+	};
 	
 	//Importing databases
     QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
@@ -67,6 +85,23 @@ void MainWindow::addDatabaseMenuActions()
     connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
     menuDatabase->addMenu(m_menuModelSelect);
 
+	//Sorting menu
+	QMenu* menuSortDatabase = new QMenu("Sort database by...");
+	menuDatabase->addMenu(menuSortDatabase);
+
+	QAction* sortByVertexCount = new QAction("Vertex Count");
+	connect(sortByVertexCount, &QAction::triggered, this, sortByVertexCountFunc);
+	menuSortDatabase->addAction(sortByVertexCount);
+
+	QAction* sortByFaceCount = new QAction("Face Count");
+	connect(sortByFaceCount, &QAction::triggered, this, sortByFaceCountFunc);
+	menuSortDatabase->addAction(sortByFaceCount);
+
+	QAction* sortByBounds = new QAction("Bounds");
+	connect(sortByBounds, &QAction::triggered, this, sortByBoundsFunc);
+	menuSortDatabase->addAction(sortByBounds);
+	
+	//Processing menu
     QAction* menuProcessDatabase = new QAction("Process database");
     connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
     menuDatabase->addAction(menuProcessDatabase);

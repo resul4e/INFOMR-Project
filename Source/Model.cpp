@@ -58,7 +58,9 @@ void Mesh::Upload()
 
 Model::Model() :
 	m_isUploaded(false),
-	m_class("")
+	m_class(""),
+	m_vertexCount(0),
+	m_faceCount(0)
 {
 
 }

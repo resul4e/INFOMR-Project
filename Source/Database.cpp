@@ -127,3 +127,30 @@ void Database::ProcessAllModels()
 		}
 	}
 }
+
+void Database::SortDatabase(SortingOptions _option)
+{
+	switch (_option)
+	{
+	case SortingOptions::VERTEX_COUNT:
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+	{
+				return _left->m_vertexCount < _right->m_vertexCount;
+	});
+		break;
+	case SortingOptions::FACE_COUNT:
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+			{
+				return _left->m_faceCount < _right->m_faceCount;
+			});
+		break;
+	case SortingOptions::BOUNDS:
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+			{
+				return glm::length(_left->m_bounds.max - _left->m_bounds.min) < glm::length(_right->m_bounds.max - _right->m_bounds.min);
+			});
+		break;
+	default:
+		break;
+	}
+}

@@ -16,6 +16,13 @@ public:
 	Database() = default;
 	~Database() = default;
 
+	enum class SortingOptions
+	{
+		VERTEX_COUNT,
+		FACE_COUNT,
+		BOUNDS
+	};
+	
 	/**
 	 * @brief Adds a model to the database.
 	 * @param _model The model to be added.
@@ -41,6 +48,8 @@ public:
 	std::vector<std::shared_ptr<Model>> GetModelDatabase();
 
 	void ProcessAllModels();
+
+	void SortDatabase(SortingOptions _option);
 
 private:
 	std::vector<std::shared_ptr<Model>> m_modelDatabase;
