@@ -27,12 +27,12 @@ public:
 	 * @param _labelledPSBDirectory The path to the directory containing all labelled model directories
 	 * @note When alphabetically sorted the directory should start with "Airplane" "Ant" etc.
 	*/
-	void LoadLabelledPSB(std::filesystem::path _labelledPSBDirectory);
+	void LoadLabelledPSB(const std::filesystem::path& _labelledPSBDirectory);
 	/**
 	 * @brief Give a path to the Princeton Shape Benchmark database loads all models and their shape class.
 	 * @param _PSBDirectory The path to the directory containing the classifications directory and the db directory.
 	*/
-	void LoadPSB(std::filesystem::path _PSBDirectory);
+	void LoadPSB(const std::filesystem::path& _PSBDirectory);
 
 	/**
 	 * @brief Returns the list of all models.

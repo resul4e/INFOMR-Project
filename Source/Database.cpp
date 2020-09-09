@@ -34,7 +34,7 @@ std::vector<std::shared_ptr<Model>> Database::GetModelDatabase()
 	return m_modelDatabase;
 }
 
-void Database::LoadLabelledPSB(fs::path _labelledPSBDirectory)
+void Database::LoadLabelledPSB(const fs::path& _labelledPSBDirectory)
 {
 	//Go through each directory and load the .off files
 	for (const fs::directory_entry& p : fs::directory_iterator(_labelledPSBDirectory))
@@ -54,7 +54,7 @@ void Database::LoadLabelledPSB(fs::path _labelledPSBDirectory)
 	}
 }
 
-void Database::LoadPSB(std::filesystem::path _PSBDirectory)
+void Database::LoadPSB(const fs::path& _PSBDirectory)
 {
 	int counter = 0;
 	std::string line;
