@@ -133,7 +133,7 @@ void MainWindow::importModelFromFile()
 
     std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
 
-    _modelViewer->setModel(model);
+	selectModel(model);
 }
 
 void MainWindow::loadLabelledPSB()
@@ -185,6 +185,7 @@ void MainWindow::populateDatabaseModelSelector()
 void MainWindow::selectModel(std::shared_ptr<Model> _model)
 {
     _modelViewer->setModel(_model);
+	_featureWidget->SetModel(_model);
 }
 
 void MainWindow::normalizeCurrentModel()
