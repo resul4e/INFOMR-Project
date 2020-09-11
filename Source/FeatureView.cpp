@@ -1,6 +1,7 @@
 #include "FeatureView.h"
 
 #include "Model.h"
+#include "FeatureExtraction.h"
 
 #include <QVBoxLayout>
 #include <QGroupBox>
@@ -29,7 +30,9 @@ FeatureView::FeatureView() :
 	mainlayout->setMargin(0);
 	setWidget(mainWidget);
 
-	QGridLayout* viewLayout = new QGridLayout();
+	QGridLayout* attributeLayout = new QGridLayout();
+	QGridLayout* featureLayout = new QGridLayout();
+
 	QLabel* modelNameLabel = new QLabel("Name");
 	QLabel* verticesLabel = new QLabel("# Vertices");
 	QLabel* facesLabel = new QLabel("# Faces");
@@ -42,39 +45,46 @@ FeatureView::FeatureView() :
 	m_facesField = createField("0");
 	m_modelNameField = createField("NULL", 150);
 	QLineEdit* volumeField = createField("0");
-	QLineEdit* surfaceAreaField = createField("0");
+	m_surfaceAreaField = createField("0");
 	QLineEdit* vsaRatioField = createField("0");
 	QLineEdit* bbaRatioField = createField("0");
 
 	QSpacerItem* spacer = new QSpacerItem(0, 1000);
 
-	viewLayout->addWidget(volumeLabel, 0, 0);
-	viewLayout->addWidget(volumeField, 0, 1);
-	viewLayout->addWidget(surfaceAreaLabel, 1, 0);
-	viewLayout->addWidget(surfaceAreaField, 1, 1);
-	viewLayout->addWidget(vsaRatioLabel, 2, 0);
-	viewLayout->addWidget(vsaRatioField, 2, 1);
-	viewLayout->addWidget(bbaRatioLabel, 3, 0);
-	viewLayout->addWidget(bbaRatioField, 3, 1);
-	viewLayout->addWidget(verticesLabel, 4, 0);
-	viewLayout->addWidget(m_verticesField, 4, 1);
-	viewLayout->addWidget(facesLabel, 5, 0);
-	viewLayout->addWidget(m_facesField, 5, 1);
-	viewLayout->addWidget(modelNameLabel, 6, 0);
-	viewLayout->addWidget(m_modelNameField, 6, 1);
-	//viewLayout->setColumnStretch(0, 1);
-	viewLayout->addItem(spacer, 7, 0);
+	attributeLayout->addWidget(modelNameLabel, 0, 0);
+	attributeLayout->addWidget(m_modelNameField, 0, 1);
+	attributeLayout->addWidget(verticesLabel, 1, 0);
+	attributeLayout->addWidget(m_verticesField, 1, 1);
+	attributeLayout->addWidget(facesLabel, 2, 0);
+	attributeLayout->addWidget(m_facesField, 2, 1);
 
-	QGroupBox* settingsBox = new QGroupBox("Basic features");
-	settingsBox->setLayout(viewLayout);
+	featureLayout->addWidget(volumeLabel, 0, 0);
+	featureLayout->addWidget(volumeField, 0, 1);
+	featureLayout->addWidget(surfaceAreaLabel, 1, 0);
+	featureLayout->addWidget(m_surfaceAreaField, 1, 1);
+	featureLayout->addWidget(vsaRatioLabel, 2, 0);
+	featureLayout->addWidget(vsaRatioField, 2, 1);
+	featureLayout->addWidget(bbaRatioLabel, 3, 0);
+	featureLayout->addWidget(bbaRatioField, 3, 1);
+	featureLayout->addItem(spacer, 4, 0);
 
-	mainlayout->addWidget(settingsBox);
+	QGroupBox* attributeBox = new QGroupBox("Model attributes");
+	attributeBox->setLayout(attributeLayout);
+
+	QGroupBox* featureBox = new QGroupBox("Model features");
+	featureBox->setLayout(featureLayout);
+
+	mainlayout->addWidget(attributeBox);
+	mainlayout->addWidget(featureBox);
 }
 
 void FeatureView::SetModel(std::shared_ptr<Model> _model)
 {
 	m_model = _model;
-	m_verticesField->setText(std::to_string(m_model->m_vertexCount).c_str());
-	m_facesField->setText(std::to_string(m_model->m_faceCount).c_str());
+
 	m_modelNameField->setText(m_model->m_name.c_str());
+	m_verticesField->setText(QString::number(m_model->m_vertexCount));
+	m_facesField->setText(QString::number(m_model->m_faceCount));
+
+	m_surfaceAreaField->setText(QString::number(ExtractSurfaceArea(*_model)));
 }
