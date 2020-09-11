@@ -13,7 +13,7 @@ set(CMAKE_AUTOUIC ON)
 # Set executable directory
 set(BINARY_DIR ${CMAKE_SOURCE_DIR}/Binary)
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
 
 # Set our include folders as the place to look for library includes
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/assimp/include/)
@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
 source_group(Source FILES ${BASE_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt5::Charts)
 target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/ThirdParty/assimp/lib/assimp.lib)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BINARY_DIR}/$<CONFIG>/)

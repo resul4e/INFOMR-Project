@@ -153,6 +153,7 @@ void MainWindow::loadLabelledPSB()
 
     m_queryManager->GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
     m_menuModelSelect->clear();
+	_databaseWidget->Update();
 }
 
 void MainWindow::loadPSB()
@@ -165,6 +166,7 @@ void MainWindow::loadPSB()
 
     m_queryManager->GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
     m_menuModelSelect->clear();
+	_databaseWidget->Update();
 }
 
 void MainWindow::populateDatabaseModelSelector()
