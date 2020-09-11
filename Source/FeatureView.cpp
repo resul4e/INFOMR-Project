@@ -9,11 +9,11 @@
 
 #include <string>
 
-QLineEdit* createField(std::string text)
+QLineEdit* createField(std::string text, int maxWidth)
 {
 	QLineEdit* field = new QLineEdit();
 	field->setText(text.c_str());
-	field->setMaximumWidth(50);
+	field->setMaximumWidth(maxWidth);
 	field->setReadOnly(true);
 	return field;
 }
@@ -40,7 +40,7 @@ FeatureView::FeatureView() :
 
 	m_verticesField = createField("0");
 	m_facesField = createField("0");
-	m_modelNameField = createField("NULL");
+	m_modelNameField = createField("NULL", 150);
 	QLineEdit* volumeField = createField("0");
 	QLineEdit* surfaceAreaField = createField("0");
 	QLineEdit* vsaRatioField = createField("0");

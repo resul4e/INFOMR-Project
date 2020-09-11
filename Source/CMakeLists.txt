@@ -9,6 +9,8 @@ set(BASE_SOURCES
     ${DIR}/ModelViewer.cpp
     ${DIR}/FeatureView.h
     ${DIR}/FeatureView.cpp
+    ${DIR}/DatabaseView.h
+    ${DIR}/DatabaseView.cpp
     ${DIR}/Shader.h
     ${DIR}/Shader.cpp
     ${DIR}/Model.h

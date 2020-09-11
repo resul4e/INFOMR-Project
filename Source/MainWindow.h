@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QByteArray>
 
+class DatabaseView;
 class FeatureView;
 class QueryManager;
 
@@ -90,4 +91,5 @@ private:
 	ModelViewer* _modelViewer;
 	std::shared_ptr<QueryManager> m_queryManager;
 	FeatureView* _featureWidget;
+	DatabaseView* _databaseWidget;
 };

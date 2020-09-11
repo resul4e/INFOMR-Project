@@ -2,6 +2,7 @@
 
 #include "QueryManager.h"
 #include "FeatureView.h"
+#include "DatabaseView.h"
 #include "ModelLoader.h"
 #include "Normalizer.h"
 
@@ -33,7 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	_featureWidget->setAllowedAreas(Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _featureWidget);
 
-    m_queryManager = std::make_shared<QueryManager>();
+	m_queryManager = std::make_shared<QueryManager>();
+	
+	_databaseWidget = new DatabaseView(m_queryManager->GetDatabase());
+	_databaseWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
+	addDockWidget(Qt::LeftDockWidgetArea, _databaseWidget);
+
+
 
     QAction* importModelAction = new QAction("3D Model");
     connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);

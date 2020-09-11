@@ -20,3 +20,5 @@ private:
 	QLineEdit* m_facesField;
 	QLineEdit* m_modelNameField;
 };
+
+QLineEdit* createField(std::string text, int maxWidth = 50);
