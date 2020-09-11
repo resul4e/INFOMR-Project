@@ -25,6 +25,8 @@ set(BASE_SOURCES
     ${DIR}/QueryManager.cpp
     ${DIR}/Camera.h
     ${DIR}/Camera.cpp
+    ${DIR}/ArcBall.h
+    ${DIR}/ArcBall.cpp
     ${DIR}/../Resources/MainWindow.ui
     ${DIR}/../Resources/resources.qrc
     PARENT_SCOPE

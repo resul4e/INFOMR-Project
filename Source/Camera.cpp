@@ -7,8 +7,10 @@ Camera::Camera(float _fov, float _aspect, float _zNear, float _zFar) :
 	m_aspect(_aspect),
 	m_zNear(_zNear),
 	m_zFar(_zFar),
+	position(0, 0, 0),
 	rotation(0, 0, 0),
-	center(0, 0, 0)
+	center(0, 0, 0),
+	distance(3)
 {
 
 }

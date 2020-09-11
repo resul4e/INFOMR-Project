@@ -35,6 +35,7 @@ void ModelViewer::initializeGL()
 
 	m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
 	m_camera->loadProjectionMatrix(m_projMatrix);
+	m_camera->RecomputePosition();
 
 	m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
 	m_wireframeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Color.frag");
@@ -55,11 +56,8 @@ void ModelViewer::resizeGL(int w, int h)
 {
 	m_camera->SetAspectRatio((float) w / h);
 	m_camera->loadProjectionMatrix(m_projMatrix);
-
-	//_windowSize.setWidth(w);
-	//_windowSize.setHeight(h);
 }
-float t = 0;
+
 void ModelViewer::paintGL()
 {
 	// Bind the framebuffer belonging to the widget
@@ -79,8 +77,8 @@ void ModelViewer::paintGL()
 	// Reset the blending function
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	t += 0.01f;
-	m_viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, -m_distance));
+
+	m_camera->LookAt(m_viewMatrix, m_camera->position, m_camera->center, glm::vec3(0, 1, 0));
 
 	drawGroundPlane();
 	drawModel();
@@ -111,7 +109,6 @@ void ModelViewer::drawModel(bool wireframe)
 	ShaderProgram& shader = wireframe ? m_wireframeShader : m_modelShader;
 
 	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-	m_modelMatrix = glm::rotate(m_modelMatrix, t, glm::vec3(0, 1, 0));
 
 	shader.bind();
 	shader.uniformMatrix4f("projMatrix", m_projMatrix);
@@ -146,4 +143,24 @@ void ModelViewer::wheelEvent(QWheelEvent* event)
 	m_distance += d;
 
 	if (m_distance < 1) m_distance = 1;
+
+	m_camera->distance += d;
+	if (m_camera->distance < 1) m_camera->distance = 1;
+
+	m_camera->RecomputePosition();
+}
+
+void ModelViewer::mouseMoveEvent(QMouseEvent* event)
+{
+	m_arcBall.Move(*m_camera, width(), height(), event->x(), event->y());
+}
+
+void ModelViewer::mousePressEvent(QMouseEvent* event)
+{
+	m_arcBall.Engage();
+}
+
+void ModelViewer::mouseReleaseEvent(QMouseEvent* event)
+{
+	m_arcBall.Release();
 }

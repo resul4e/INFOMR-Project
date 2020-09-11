@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "ArcBall.h"
 
 #include <glm/glm.hpp>
 
@@ -34,6 +35,9 @@ protected:
 	void paintGL()              Q_DECL_OVERRIDE;
 
 	void wheelEvent(QWheelEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
 	void drawGroundPlane();
@@ -42,6 +46,7 @@ private:
 	std::shared_ptr<Model> m_model;
 	std::shared_ptr<Model> m_planeModel;
 	std::shared_ptr<Camera> m_camera;
+	ArcBall m_arcBall;
 	glm::mat4 m_projMatrix;
 	glm::mat4 m_viewMatrix;
 	glm::mat4 m_modelMatrix;
