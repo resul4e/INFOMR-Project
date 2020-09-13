@@ -58,6 +58,7 @@ void MainWindow::addDatabaseMenuActions()
     auto processModelsFunc = [=]()
     {
         m_queryManager->GetDatabase()->ProcessAllModels();
+		_databaseWidget->Update();
     };
 
 	auto sortByVertexCountFunc = [=]()

@@ -8,6 +8,7 @@ namespace QtCharts
 	class QBarSet;
 	class QChart;
 	class QBarCategoryAxis;
+	class QValueAxis;
 }
 
 
@@ -21,9 +22,7 @@ public:
 	
 private:
 	QLineEdit* m_databaseCountField;
-	QtCharts::QBarSet* m_set0;
-	QtCharts::QChart* m_chart;
-	QtCharts::QBarCategoryAxis* m_XAxis;
+	QtCharts::QChart* m_vertexCountHistogram;
 	
 	std::shared_ptr<Database> m_database;
 };
