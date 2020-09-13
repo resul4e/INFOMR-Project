@@ -121,6 +121,7 @@ void Database::ProcessAllModels()
 	for(std::shared_ptr<Model>& model : m_modelDatabase)
 	{
 		SubdivideModel(model);
+		CrunchModel(model);
 	}
 }
 
@@ -152,6 +153,25 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 		std::shared_ptr<Model> _newModel = ModelLoader::LoadModel(newPath);
 		SubdivideModel(_newModel);
 		_model.swap(_newModel);
+	}
+}
+
+void Database::CrunchModel(std::shared_ptr<Model>& _model)
+{
+	//The folder where we will save the crunched mesh
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	
+	for (const Mesh& mesh : _model->m_meshes)
+	{
+		if (mesh.positions.size() > 100000 || mesh.faces.size() > 100000)
+		{
+			auto newPath = modifiedMeshesPath;
+			newPath /= _model->m_path.filename();
+			system(("..\\Scripts\\mesh_crunch.exe " + _model->m_path.string() + " " + newPath.string()).c_str());
+
+			std::shared_ptr<Model> _newModel = ModelLoader::LoadModel(newPath);
+			_model.swap(_newModel);
+		}
 	}
 }
 

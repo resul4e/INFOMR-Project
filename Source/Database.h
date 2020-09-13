@@ -62,6 +62,7 @@ public:
 private:
 
 	void SubdivideModel(std::shared_ptr<Model>& _model);
+	void CrunchModel(std::shared_ptr<Model>& _model);
 	
 	std::shared_ptr<Model> LoadModifiedModel(std::string _modelFileName);
 	
