@@ -10,7 +10,7 @@ namespace QtCharts
 	class QBarCategoryAxis;
 	class QValueAxis;
 }
-
+class QSlider;
 
 class DatabaseView : public QDockWidget
 {
@@ -21,8 +21,12 @@ public:
 	void Update();
 	
 private:
+	QtCharts::QChart* CreateVertexCountChart();
+	
 	QLineEdit* m_databaseCountField;
 	QtCharts::QChart* m_vertexCountHistogram;
+	QSlider* m_vertexCountSlider;
 	
 	std::shared_ptr<Database> m_database;
+	int m_maxVertexCount;
 };
