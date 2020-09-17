@@ -93,4 +93,5 @@ private:
 	std::shared_ptr<QueryManager> m_queryManager;
 	FeatureView* _featureWidget;
 	DatabaseView* _databaseWidget;
+	size_t m_selectedModelIndex;
 };
