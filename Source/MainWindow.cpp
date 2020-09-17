@@ -12,13 +12,15 @@
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QDebug>
+#include <QKeyEvent>
 
 #include <filesystem>
 #include <iostream>
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+    QMainWindow(parent),
+	m_selectedModelIndex(0)
 {
     setupUi(this);
 	
@@ -254,4 +256,25 @@ void MainWindow::showEvent(QShowEvent *event)
     QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
     for (auto child : dockWidgets)
         child->setVisible(true);
+}
+
+
+void MainWindow::keyPressEvent(QKeyEvent* _event)
+{
+	
+	std::cout << _event->key() << std::endl;
+	if(_event->key() == Qt::Key::Key_M)
+	{
+		m_selectedModelIndex++;
+	}
+	else if (_event->key() == Qt::Key::Key_N)
+	{
+		m_selectedModelIndex--;
+	}
+
+	std::vector<std::shared_ptr<Model>> db = m_queryManager->GetDatabase()->GetModelDatabase();
+	if(m_selectedModelIndex < db.size())
+	{
+		selectModel(db[m_selectedModelIndex]);
+	}
 }
