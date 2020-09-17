@@ -5,6 +5,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 
 #include <glm/glm.hpp>
+#include <pmp/SurfaceMesh.h>
 
 #include <vector>
 #include <string>
@@ -61,8 +62,11 @@ public:
 
 	bool isUploaded();
 
+	void ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
+	void FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
+
 	std::vector<Mesh> m_meshes;
-	//Bounds m_bounds;
+
 	bool m_isUploaded;
 
 	std::string m_name;
@@ -76,5 +80,4 @@ public:
 	Bounds m_bounds;
 	size_t m_vertexCount;
 	size_t m_faceCount;
-
 };

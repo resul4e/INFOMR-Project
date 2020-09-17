@@ -1,8 +1,14 @@
 #include "Model.h"
 
+#include <pmp/algorithms/SurfaceNormals.h>
+
 #include <iostream>
 
-Mesh::Mesh()
+Mesh::Mesh() :
+	vao(0),
+	pbo(0),
+	nbo(0),
+	tbo(0)
 {
 
 }
@@ -77,4 +83,66 @@ void Model::Upload()
 bool Model::isUploaded()
 {
 	return m_isUploaded;
+}
+
+void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
+{
+	pmpMeshes.resize(m_meshes.size());
+
+	for (int i = 0; i < m_meshes.size(); i++)
+	{
+		const Mesh& mesh = m_meshes[i];
+		pmp::SurfaceMesh& pmpMesh = pmpMeshes[i];
+
+		for (const glm::vec3& v : mesh.positions)
+		{
+			pmpMesh.add_vertex(pmp::Point(v.x, v.y, v.z));
+		}
+
+		for (const Face& face : mesh.faces)
+		{
+			pmp::Vertex v0(face.indices[0]);
+			pmp::Vertex v1(face.indices[1]);
+			pmp::Vertex v2(face.indices[2]);
+
+			pmpMesh.add_triangle(v0, v1, v2);
+		}
+	}
+}
+
+void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
+{
+	for (int i = 0; i < m_meshes.size(); i++)
+	{
+		pmp::SurfaceMesh& pmpMesh = pmpMeshes[i];
+		Mesh& mesh = m_meshes[i];
+
+		mesh.positions.resize(pmpMesh.n_vertices(), glm::vec3(0, 0, 0));
+		for (int j = 0; j < pmpMesh.positions().size(); j++)
+		{
+			mesh.positions[j] = glm::vec3(pmpMesh.positions()[j][0], pmpMesh.positions()[j][1], pmpMesh.positions()[j][2]);
+		}
+
+		mesh.normals.resize(pmpMesh.n_vertices(), glm::vec3(0, 1, 0));
+		auto normals = pmpMesh.get_vertex_property<pmp::Point>("v:normal");
+		for (auto vit : pmpMesh.vertices())
+		{
+			mesh.normals[vit.idx()] = glm::vec3(normals[vit][0], normals[vit][1], normals[vit][2]);
+		}
+
+		mesh.faces.clear();
+		for (pmp::Face pmpFace : pmpMesh.faces())
+		{
+			Face face;
+			int c = 0;
+			for (pmp::Vertex v : pmpMesh.vertices(pmpFace))
+			{
+				face.indices[c++] = v.idx();
+			}
+
+			mesh.faces.push_back(face);
+		}
+	}
+
+	m_isUploaded = false;
 }

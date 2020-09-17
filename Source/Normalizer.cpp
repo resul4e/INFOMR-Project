@@ -1,4 +1,7 @@
 #include "Normalizer.h"
+
+#include <pmp/algorithms/SurfaceRemeshing.h>
+
 #include <iostream>
 
 void Normalizer::Normalize(Model& _model)
@@ -70,4 +73,22 @@ void Normalizer::ScaleModel(Model& _model)
 			_model.m_meshes[l].positions[j] /= largestDiff;
 		}
 	}
+}
+
+void Normalizer::Remesh(Model& model)
+{
+	std::vector<pmp::SurfaceMesh> pmpMeshes;
+	model.ToPmpModel(pmpMeshes);
+
+	for (pmp::SurfaceMesh& pmpMesh : pmpMeshes)
+	{
+		auto bb = pmpMesh.bounds().size();
+		pmp::SurfaceRemeshing(pmpMesh).adaptive_remeshing(
+			0.0010 * bb,  // min length
+			0.010 * bb,  // max length
+			0.0005 * bb
+		); // approx. error
+	}
+
+	model.FromPmpModel(pmpMeshes);
 }

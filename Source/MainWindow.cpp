@@ -205,6 +205,7 @@ void MainWindow::normalizeCurrentModel()
 	std::shared_ptr<Model> model = _modelViewer->getModel();
 	if(model != nullptr)
     {
+		Normalizer::Remesh(*model);
         Normalizer::Normalize(*model);
     }
     else

@@ -12,6 +12,8 @@ public:
 	 * @param _model The model to perform the normalization on.
 	*/
 	static void Normalize(Model& _model);
+
+	static void Remesh(Model& _model);
 	
 private:
 	static void CenterModel(Model& _model);
