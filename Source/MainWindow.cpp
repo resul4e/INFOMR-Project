@@ -207,6 +207,7 @@ void MainWindow::normalizeCurrentModel()
     {
 		Normalizer::Remesh(*model);
         Normalizer::Normalize(*model);
+		_featureWidget->SetModel(model);
     }
     else
     {
