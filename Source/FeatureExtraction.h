@@ -6,3 +6,4 @@
 #include <iostream>
 
 float ExtractSurfaceArea(Model& model);
+std::vector<double>& ExtractFaceAreas(Model& model);
