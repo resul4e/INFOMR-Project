@@ -52,6 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
     menuFile->insertAction(exitAction, normalizeModelAction);
 
+	QAction* remeshModelAction = new QAction("Remesh Model");
+	connect(remeshModelAction, &QAction::triggered, this, &MainWindow::remeshCurrentModel);
+	menuFile->insertAction(exitAction, remeshModelAction);
+
     addDatabaseMenuActions();
 }
 
@@ -205,7 +209,7 @@ void MainWindow::normalizeCurrentModel()
 	std::shared_ptr<Model> model = _modelViewer->getModel();
 	if(model != nullptr)
     {
-		Normalizer::Remesh(*model);
+		//Normalizer::Remesh(*model);
         Normalizer::Normalize(*model);
 		_featureWidget->SetModel(model);
     }
@@ -213,6 +217,21 @@ void MainWindow::normalizeCurrentModel()
     {
         std::cerr << "No Model to perform normalization on!" << std::endl;
     }
+}
+
+void MainWindow::remeshCurrentModel()
+{
+	std::shared_ptr<Model> model = _modelViewer->getModel();
+	if (model != nullptr)
+	{
+		Normalizer::Remesh(*model);
+		//Normalizer::Normalize(*model);
+		_featureWidget->SetModel(model);
+	}
+	else
+	{
+		std::cerr << "No Model to perform remeshing on!" << std::endl;
+	}
 }
 
 void MainWindow::centerAndResize(float coverage) {

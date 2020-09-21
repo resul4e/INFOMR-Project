@@ -58,6 +58,7 @@ public:
 	void selectModel(std::shared_ptr<Model> _model);
 
 	void normalizeCurrentModel();
+	void remeshCurrentModel();
 
 	/**
 	 * Moves the window to the center of the screen and resizes it to a fraction
