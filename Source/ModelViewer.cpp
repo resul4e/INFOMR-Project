@@ -50,6 +50,8 @@ void ModelViewer::initializeGL()
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_POLYGON_OFFSET_LINE);
+	glPolygonOffset(-1.0, -1.0);
 }
 
 void ModelViewer::resizeGL(int w, int h)
