@@ -14,8 +14,12 @@ public:
 	static void Normalize(Model& _model);
 
 	static void Remesh(Model& _model);
+
+	
 	
 private:
 	static void CenterModel(Model& _model);
 	static void ScaleModel(Model& _model);
+	static void AlignModel(Model& _model);
+	static void FlipModel(Model& _model);
 };
