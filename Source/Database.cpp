@@ -6,6 +6,7 @@
 
 #include "ModelLoader.h"
 #include "Model.h"
+#include "Normalizer.h"
 
 namespace fs = std::filesystem;
 
@@ -117,12 +118,58 @@ void Database::ProcessAllModels()
 {
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	fs::create_directory(modifiedMeshesPath);
-	
 	for(std::shared_ptr<Model>& model : m_modelDatabase)
 	{
 		SubdivideModel(model);
 		CrunchModel(model);
 	}
+}
+
+void Database::NormalizeAllModels()
+{
+	float distBeforeNorm = 0;
+	float distAfterNorm = 0;
+	
+	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	{
+		glm::highp_dvec3 mean{ .0,.0,.0 };
+		for (int i = 0; i < 3; i++)
+		{
+			int positionAmounts = 0;
+			for (int k = 0; k < model->m_meshes.size(); k++)
+			{
+				positionAmounts += model->m_meshes[k].positions.size();
+				for (int j = 0; j < model->m_meshes[k].positions.size(); j++)
+				{
+					mean[i] += model->m_meshes[k].positions[j][i];
+				}
+			}
+			mean[i] /= static_cast<double>(positionAmounts);
+		}
+		
+		distBeforeNorm += glm::length(mean);
+		Normalizer::Normalize(*model);
+
+		mean = { .0,.0,.0 };
+		for (int i = 0; i < 3; i++)
+		{
+			int positionAmounts = 0;
+			for (int k = 0; k < model->m_meshes.size(); k++)
+			{
+				positionAmounts += model->m_meshes[k].positions.size();
+				for (int j = 0; j < model->m_meshes[k].positions.size(); j++)
+				{
+					mean[i] += model->m_meshes[k].positions[j][i];
+				}
+			}
+			mean[i] /= static_cast<double>(positionAmounts);
+		}
+		
+		distAfterNorm += glm::length(mean);
+		std::cout << distAfterNorm << "\n";
+	}
+
+	std::cout << distBeforeNorm << " & " << distAfterNorm << "\n";
 }
 
 void Database::SubdivideModel(std::shared_ptr<Model>& _model)
@@ -134,7 +181,7 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 	bool subdivide = false;
 	for (const Mesh& mesh : _model->m_meshes)
 	{
-		if (mesh.positions.size() < 100 || mesh.faces.size() < 100)
+		if (mesh.positions.size() < 1000 || mesh.faces.size() < 1000)
 		{
 			subdivide = true;
 			std::cerr << "Not enough verts/faces in model with name: " << _model->m_name << std::endl;
@@ -150,9 +197,9 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 		newPath /= _model->m_path.filename();
 		system(("..\\Scripts\\mesh_filter.exe " + _model->m_path.string() + " -subdiv " + newPath.string()).c_str());
 
-		std::shared_ptr<Model> _newModel = ModelLoader::LoadModel(newPath);
-		SubdivideModel(_newModel);
-		_model.swap(_newModel);
+		std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
+		SubdivideModel(newModel);
+		_model.swap(newModel);
 	}
 }
 
@@ -163,14 +210,14 @@ void Database::CrunchModel(std::shared_ptr<Model>& _model)
 	
 	for (const Mesh& mesh : _model->m_meshes)
 	{
-		if (mesh.positions.size() > 100000 || mesh.faces.size() > 100000)
+		if (mesh.positions.size() > 20000 || mesh.faces.size() > 20000)
 		{
 			auto newPath = modifiedMeshesPath;
 			newPath /= _model->m_path.filename();
 			system(("..\\Scripts\\mesh_crunch.exe " + _model->m_path.string() + " " + newPath.string()).c_str());
 
-			std::shared_ptr<Model> _newModel = ModelLoader::LoadModel(newPath);
-			_model.swap(_newModel);
+			std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
+			_model.swap(newModel);
 		}
 	}
 }

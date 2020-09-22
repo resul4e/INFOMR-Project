@@ -98,6 +98,7 @@ QChart* DatabaseView::CreateVertexCountChart()
 	vertexCountHistogram->setTitle("Vertex count distribution");
 	vertexCountHistogram->setAnimationOptions(QChart::SeriesAnimations);
 	vertexCountHistogram->setMaximumHeight(450);
+	vertexCountHistogram->setMinimumHeight(450);
 
 	//Create the x axis categories, these are also dummy values and will be updated.
 	QStringList categories;
@@ -181,7 +182,7 @@ void DatabaseView::Update()
 
 	//Set the correct range for the y axis
 	QAbstractAxis* yAxis = m_vertexCountHistogram->axes(Qt::Orientation::Vertical)[0];
-	yAxis->setRange(0, largestSet + 150);
+	yAxis->setRange(0, largestSet + static_cast<int>(largestSet * 0.1f));
 
 	//Set the new range labels on the x axis.
 	QBarCategoryAxis* xAxis = static_cast<QBarCategoryAxis*>(m_vertexCountHistogram->axes(Qt::Orientation::Horizontal)[0]);

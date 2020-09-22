@@ -67,6 +67,12 @@ void MainWindow::addDatabaseMenuActions()
 		_databaseWidget->Update();
     };
 
+	auto normalizeModelsFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->NormalizeAllModels();
+		_databaseWidget->Update();
+	};
+	
 	auto sortByVertexCountFunc = [=]()
 	{
 		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::VERTEX_COUNT);
@@ -119,6 +125,10 @@ void MainWindow::addDatabaseMenuActions()
     QAction* menuProcessDatabase = new QAction("Process database");
     connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
     menuDatabase->addAction(menuProcessDatabase);
+
+	QAction* menuNormalizeDatabase = new QAction("Normalize database");
+	connect(menuNormalizeDatabase, &QAction::triggered, this, normalizeModelsFunc);
+	menuDatabase->addAction(menuNormalizeDatabase);
 }
 
 MainWindow::~MainWindow()

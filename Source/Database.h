@@ -52,6 +52,7 @@ public:
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
 	*/
 	void ProcessAllModels();
+	void NormalizeAllModels();
 
 	/**
 	 * @brief Sorts the model database on the given SortingOptions.
