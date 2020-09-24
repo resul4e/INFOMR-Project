@@ -22,7 +22,7 @@ float ExtractSurfaceArea(Model& model)
 	return totalSurfaceArea;
 }
 
-std::vector<double>& ExtractFaceAreas(Model& model)
+std::vector<double> ExtractFaceAreas(Model& model)
 {
 	std::vector<double> facesAreas;
 	for (Mesh& mesh : model.m_meshes)
