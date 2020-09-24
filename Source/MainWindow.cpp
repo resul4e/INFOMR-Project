@@ -16,6 +16,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include "ModelSaver.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -47,6 +48,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* importModelAction = new QAction("3D Model");
     connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
     importDataFileMenu->addAction(importModelAction);
+
+	QAction* exportModelAction = new QAction("3D Model");
+	connect(exportModelAction, &QAction::triggered, this, &MainWindow::exportModelToFile);
+	exportDataFileMenu->addAction(exportModelAction);
 
     QAction* normalizeModelAction = new QAction("Normalize Model");
     connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
@@ -158,6 +163,24 @@ void MainWindow::importModelFromFile()
     std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
 
 	selectModel(model);
+}
+
+void MainWindow::exportModelToFile()
+{
+	QString fileName = QFileDialog::getSaveFileName(Q_NULLPTR, "Save File", "", "Model Files (*.off *.ply *)");
+
+	// Don't try to load a file if the dialog was cancelled or the file name is empty
+	if (fileName.isNull() || fileName.isEmpty())
+		return;
+
+	qDebug() << "Saving Model file: " << fileName;
+
+	std::shared_ptr<Model> model = _modelViewer->getModel();
+	if(model != nullptr)
+	{
+		ModelSaver::SavePly(*model, std::filesystem::path(fileName.toStdString()));
+	}
+	_featureWidget->SetModel(model);
 }
 
 void MainWindow::loadLabelledPSB()

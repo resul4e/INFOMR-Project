@@ -35,6 +35,7 @@ public:
 	QAction* addExportOption(QString menuName);
 
 	void importModelFromFile();
+	void exportModelToFile();
 
 	/**
 	 * @brief Gets path to database directory from user and Calls QueryManager::LoadLabelledPSB

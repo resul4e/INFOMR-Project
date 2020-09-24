@@ -19,6 +19,8 @@ set(BASE_SOURCES
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
     ${DIR}/ModelLoader.cpp
+    ${DIR}/ModelSaver.h
+    ${DIR}/ModelSaver.cpp
     ${DIR}/Database.h
     ${DIR}/Database.cpp
     ${DIR}/Normalizer.h
