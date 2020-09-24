@@ -63,6 +63,8 @@ public:
 
 private:
 
+	void ReadPSBClassificationFile(std::filesystem::path _modelDirectoryPath, std::filesystem::path _filePath);
+	
 	void SubdivideModel(std::shared_ptr<Model>& _model);
 	void CrunchModel(std::shared_ptr<Model>& _model);
 	

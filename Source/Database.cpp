@@ -64,11 +64,21 @@ void Database::LoadLabelledPSB(const fs::path& _labelledPSBDirectory)
 
 void Database::LoadPSB(const fs::path& _PSBDirectory)
 {
+	fs::path modelDirectoryPath(_PSBDirectory / "db");
+	fs::path testClassificationPath = _PSBDirectory / "classification" / "v1" / "coarse1" / "coarse1Test.cla";
+	fs::path trainClassificationPath = _PSBDirectory / "classification" / "v1" / "coarse1" / "coarse1Train.cla";
+	ReadPSBClassificationFile(modelDirectoryPath, testClassificationPath);
+	ReadPSBClassificationFile(modelDirectoryPath, trainClassificationPath);
+}
+
+void Database::ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path _filePath)
+{
+	std::string cls = "NO_CLASS_DETECTED!";
+	
 	int counter = 0;
 	std::string line;
-	std::string cls = "NO_CLASS_DETECTED!";
-	fs::path modelDirectoryPath(_PSBDirectory / "db");
-	std::ifstream testClassifications(_PSBDirectory / "classification" / "v1" / "coarse1" / "coarse1Test.cla");
+	std::ifstream testClassifications(_filePath);
+	
 	if (testClassifications.is_open())
 	{
 		while (std::getline(testClassifications, line))
@@ -95,7 +105,7 @@ void Database::LoadPSB(const fs::path& _PSBDirectory)
 					db = line.substr(0, 2);
 				}
 
-				fs::path modelPath = modelDirectoryPath / db / ("m" + line) / ("m" + line + ".off");
+				fs::path modelPath = _modelDirectoryPath / db / ("m" + line) / ("m" + line + ".off");
 				std::shared_ptr<Model> model = LoadModifiedModel(("m" + line + ".off"));
 				if (model == nullptr)
 				{
