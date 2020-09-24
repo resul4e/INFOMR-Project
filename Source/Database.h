@@ -52,6 +52,7 @@ public:
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
 	*/
 	void ProcessAllModels();
+	void SaveAllModels();
 	void NormalizeAllModels();
 
 	/**
@@ -65,7 +66,7 @@ private:
 	void SubdivideModel(std::shared_ptr<Model>& _model);
 	void CrunchModel(std::shared_ptr<Model>& _model);
 	
-	std::shared_ptr<Model> LoadModifiedModel(std::string _modelFileName);
+	std::shared_ptr<Model> LoadModifiedModel(std::filesystem::path _modelFileName);
 	
 	std::vector<std::shared_ptr<Model>> m_modelDatabase;
 };

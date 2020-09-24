@@ -66,12 +66,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::addDatabaseMenuActions()
 {
-    auto processModelsFunc = [=]()
+	auto processModelsFunc = [=]()
     {
         m_queryManager->GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
     };
 
+	auto saveModifiedModelsFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->SaveAllModels();
+	};
+	
 	auto normalizeModelsFunc = [=]()
 	{
 		m_queryManager->GetDatabase()->NormalizeAllModels();
@@ -134,6 +139,10 @@ void MainWindow::addDatabaseMenuActions()
 	QAction* menuNormalizeDatabase = new QAction("Normalize database");
 	connect(menuNormalizeDatabase, &QAction::triggered, this, normalizeModelsFunc);
 	menuDatabase->addAction(menuNormalizeDatabase);
+
+	QAction* menuSaveDatabase = new QAction("Save modified database");
+	connect(menuSaveDatabase, &QAction::triggered, this, saveModifiedModelsFunc);
+	menuDatabase->addAction(menuSaveDatabase);
 }
 
 MainWindow::~MainWindow()

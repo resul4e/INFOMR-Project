@@ -7,6 +7,7 @@
 #include "ModelLoader.h"
 #include "Model.h"
 #include "Normalizer.h"
+#include "ModelSaver.h"
 
 namespace fs = std::filesystem;
 
@@ -122,6 +123,16 @@ void Database::ProcessAllModels()
 	{
 		SubdivideModel(model);
 		CrunchModel(model);
+	}
+}
+
+void Database::SaveAllModels()
+{
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	fs::create_directory(modifiedMeshesPath);
+	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	{
+		ModelSaver::SavePly(*model, modifiedMeshesPath / model->m_path.filename().replace_extension(".ply"));
 	}
 }
 
@@ -249,12 +260,21 @@ void Database::SortDatabase(SortingOptions _option)
 	}
 }
 
-std::shared_ptr<Model> Database::LoadModifiedModel(std::string _modelFileName)
+std::shared_ptr<Model> Database::LoadModifiedModel(std::filesystem::path _modelFileName)
 {
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	if(fs::exists(modifiedMeshesPath / _modelFileName))
+
+	fs::path offPath = _modelFileName;
+	fs::path plyPath = _modelFileName.replace_extension(".ply");
+	if (fs::exists(modifiedMeshesPath / plyPath))
 	{
-		return ModelLoader::LoadModel(modifiedMeshesPath / _modelFileName);
+		return ModelLoader::LoadModel(modifiedMeshesPath / plyPath);
 	}
+
+	if(fs::exists(modifiedMeshesPath / offPath))
+	{
+		return ModelLoader::LoadModel(modifiedMeshesPath / offPath);
+	}
+
 	return nullptr;
 }
