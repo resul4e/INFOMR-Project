@@ -7,15 +7,16 @@
 class Model;
 
 /**
- * \brief Class that is responsible for loading a Model using Assimp.
+ * \brief Class that saves a model
  */
 class ModelSaver
 {
 public:
+
 	/**
-	 * \brief Loads a model from file and returns it.
-	 * \param _filePath The file to load the model from
-	 * \return The model loaded from the given file path
+	 * \brief Saves the model in ply format to the given file path.
+	 * \param _model The mode to be saved
+	 * \param _filePath The filepath to save the model to. The m_path property will be changed to this path in _model 
 	 */
 	static void SavePly(Model& _model, std::filesystem::path _filePath);
 };

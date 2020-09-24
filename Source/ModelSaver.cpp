@@ -13,12 +13,14 @@
 
 void ModelSaver::SavePly(Model& _model, std::filesystem::path _filePath)
 {
+	//Create the exporter and the scene
 	Assimp::Exporter exporter;
-
 	aiScene* scene = new aiScene();
 
+	//Create a mesh for each mesh that we have in our model.
 	aiMesh* meshes = new aiMesh[_model.m_meshes.size()];
 
+	//Extract the positions and faces from each mesh and add them to the assimp scene.
 	for(int i = 0; i < _model.m_meshes.size(); i++)
 	{
 		meshes[i].mNumVertices = _model.m_meshes[i].positions.size();
@@ -43,19 +45,23 @@ void ModelSaver::SavePly(Model& _model, std::filesystem::path _filePath)
 
 		scene->mNumMaterials = 1;
 	}
-
+	
+	//We need empty materials for the file to be saved properly.
 	aiMaterial* mats = new aiMaterial[scene->mNumMaterials];
 	scene->mMaterials = &mats;
 
+	//We need a root node for the application to not crash, and we need to associate the mesh we just added to the scene to this node.
 	scene->mRootNode = new aiNode{"Root"};
-	scene->mNumMeshes = _model.m_meshes.size();
-	scene->mMeshes = &meshes;
-
 	scene->mRootNode->mMeshes = new unsigned int[1];
 	scene->mRootNode->mMeshes[0] = 0;
 	scene->mRootNode->mNumMeshes = 1;
-	
+
+	scene->mNumMeshes = _model.m_meshes.size();
+	scene->mMeshes = &meshes;
+
+	//Save the scene.
 	exporter.Export(scene, exporter.GetExportFormatDescription(7)->id, _filePath.string());
 
+	//Change the filepath to be the new path.
 	_model.m_path = _filePath;
 }
