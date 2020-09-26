@@ -90,14 +90,9 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 		for (int i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			aiVector3D& v = aiMesh->mVertices[i];
-			for (int d = 0; d < 3; d++)
-			{
-				minBounds[d] = v[d] < minBounds[d] ? v[d] : minBounds[d];
-				maxBounds[d] = v[d] > maxBounds[d] ? v[d] : maxBounds[d];
-			}
 		}
 	}
 
-	model->m_bounds = Bounds{ minBounds, maxBounds };
+	model->UpdateBounds();
 	return model;
 }

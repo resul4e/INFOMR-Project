@@ -151,3 +151,22 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 
 	m_isUploaded = false;
 }
+
+void Model::UpdateBounds()
+{
+	m_bounds.max = glm::vec3(0, 0, 0);
+	m_bounds.min = glm::vec3(0, 0, 0);
+	for(int k = 0; k < m_meshes.size(); k++)
+	{
+		for(int j = 0; j < m_meshes[k].positions.size(); j++)
+		{
+			glm::vec3 v = m_meshes[k].positions[j];
+			for (int d = 0; d < 3; d++)
+			{
+				m_bounds.min[d] = v[d] < m_bounds.min[d] ? v[d] : m_bounds.min[d];
+				m_bounds.max[d] = v[d] > m_bounds.max[d] ? v[d] : m_bounds.max[d];
+			}
+		}
+	}
+
+}

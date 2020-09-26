@@ -40,3 +40,10 @@ std::vector<double> ExtractFaceAreas(Model& model)
 	}
 	return facesAreas;
 }
+
+float ExtractAABBArea(Model& _model)
+{
+	glm::vec3 AABB = _model.m_bounds.max - _model.m_bounds.min;
+
+	return AABB.x * AABB.y * AABB.z;
+}

@@ -49,6 +49,7 @@ FeatureView::FeatureView() :
 	QLabel* verticesLabel = new QLabel("# Vertices");
 	QLabel* facesLabel = new QLabel("# Faces");
 	QLabel* volumeLabel = new QLabel("Volume");
+	QLabel* AABBVolumeLabel = new QLabel("AABB Volume");
 	QLabel* surfaceAreaLabel = new QLabel("Surface Area");
 	QLabel* vsaRatioLabel = new QLabel("Volume-to-Surface Area Ratio");
 	QLabel* bbaRatioLabel = new QLabel("Bounding-Box Aspect Ratio");
@@ -58,6 +59,7 @@ FeatureView::FeatureView() :
 	m_modelNameField = createField("NULL", 150);
 	QLineEdit* volumeField = createField("0");
 	m_surfaceAreaField = createField("0");
+	m_AABBVolumeField = createField("0");
 	QLineEdit* vsaRatioField = createField("0");
 	QLineEdit* bbaRatioField = createField("0");
 
@@ -85,7 +87,9 @@ FeatureView::FeatureView() :
 	featureLayout->addWidget(vsaRatioField, 2, 1);
 	featureLayout->addWidget(bbaRatioLabel, 3, 0);
 	featureLayout->addWidget(bbaRatioField, 3, 1);
-	featureLayout->addItem(spacer, 4, 0);
+	featureLayout->addWidget(AABBVolumeLabel, 4, 0);
+	featureLayout->addWidget(m_AABBVolumeField, 4, 1);
+	featureLayout->addItem(spacer, 5, 0);
 
 	QGroupBox* attributeBox = new QGroupBox("Model attributes");
 	attributeBox->setLayout(attributeLayout);
@@ -123,8 +127,6 @@ QChart* FeatureView::CreateFaceAreaHistogram()
 	//Create the x axis categories, these are also dummy values and will be updated.
 	QStringList categories;
 	categories << "0" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10";
-
-
 	
 	//Create the x axis and attach it to the chart.
 	QBarCategoryAxis* vertexCountHistogramXAxis = new QBarCategoryAxis();
@@ -169,6 +171,7 @@ void FeatureView::SetModel(std::shared_ptr<Model> _model)
 	m_facesField->setText(QString::number(m_model->m_faceCount));
 
 	m_surfaceAreaField->setText(QString::number(ExtractSurfaceArea(*_model)));
+	m_AABBVolumeField->setText(QString::number(ExtractAABBArea(*_model)));
 	UpdateFaceAreaHistogram(_model);
 }
 

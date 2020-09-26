@@ -32,6 +32,7 @@ private:
 	QtCharts::QChart* m_faceAreaHistogram;
 
 	QLineEdit* m_surfaceAreaField;
+	QLineEdit* m_AABBVolumeField;
 };
 
 QLineEdit* createField(std::string text, int maxWidth = 50);

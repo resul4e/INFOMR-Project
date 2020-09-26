@@ -4,15 +4,23 @@
 
 #include <iostream>
 #include "ModelLoader.h"
+#include "ModelSaver.h"
 
 namespace fs = std::filesystem;
 
 void Normalizer::Normalize(Model& _model)
 {
-	AlignModel(_model);
+	//The folder where we will save the centered mesh
+	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	
 	CenterModel(_model);
-	ScaleModel(_model);
+	//We save it so that we load the correct model when aligning
+	ModelSaver::SavePly(_model, modifiedMeshesPath / _model.m_path.filename().replace_extension(".ply"));
+	AlignModel(_model);
 	FlipModel(_model);
+	ScaleModel(_model);
+
+	_model.UpdateBounds();
 	_model.m_isUploaded = false;
 }
 
