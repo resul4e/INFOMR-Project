@@ -158,11 +158,12 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 void Model::UpdateFeatures()
 {
 	UpdateBounds();
+	CalculateOBB(m_meshes[0].positions);	
 
 	m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
 	m_3DFeatures.volume = ExtractVolume(*this);
 	m_3DFeatures.boundsArea = ExtractAABBArea(*this);
-	m_3DFeatures.compactness = (m_3DFeatures.surfaceArea * m_3DFeatures.surfaceArea) / (4.0f * M_PI * m_3DFeatures.volume);
+	m_3DFeatures.compactness = (std::pow(M_PI, 1.0/3.0) * std::pow((6.0 * m_3DFeatures.volume), 2.0/3.0)) / m_3DFeatures.surfaceArea;
 }
 
 void Model::UpdateBounds()
@@ -182,4 +183,58 @@ void Model::UpdateBounds()
 		}
 	}
 
+}
+
+void Model::CalculateOBB(std::vector<glm::vec3>& vertices)
+{
+	m_orientedPoints.clear();
+
+	// compute mean
+	Eigen::Vector3d center;
+	center.setZero();
+	for (std::vector<glm::vec3>::const_iterator v = vertices.begin(); v != vertices.end(); v++) {
+		center += Eigen::Vector3d{ v->x, v->y, v->z };
+	}
+	center /= (double)vertices.size();
+
+	// adjust for mean and compute covariance
+	Eigen::Matrix3d covariance;
+	covariance.setZero();
+	for (std::vector<glm::vec3>::iterator v = vertices.begin(); v != vertices.end(); v++) {
+		Eigen::Vector3d pAdg = Eigen::Vector3d{ v->x, v->y, v->z } - center;
+		covariance += pAdg * pAdg.transpose();
+	}
+	covariance /= (double)vertices.size();
+
+	// compute eigenvectors for the covariance matrix
+	Eigen::EigenSolver<Eigen::Matrix3d> solver(covariance);
+	Eigen::Matrix3d eigenVectors = solver.eigenvectors().real();
+
+	// project min and max points on each principal axis
+	double min1 = INFINITY, max1 = -INFINITY;
+	double min2 = INFINITY, max2 = -INFINITY;
+	double min3 = INFINITY, max3 = -INFINITY;
+	double d = 0.0;
+	eigenVectors.transpose();
+	for (std::vector<glm::vec3>::iterator v = vertices.begin(); v != vertices.end(); v++) {
+		d = eigenVectors.row(0).dot(Eigen::Vector3d{ v->x, v->y, v->z });
+		if (min1 > d) min1 = d;
+		if (max1 < d) max1 = d;
+
+		d = eigenVectors.row(1).dot(Eigen::Vector3d{ v->x, v->y, v->z });
+		if (min2 > d) min2 = d;
+		if (max2 < d) max2 = d;
+
+		d = eigenVectors.row(2).dot(Eigen::Vector3d{ v->x, v->y, v->z });
+		if (min3 > d) min3 = d;
+		if (max3 < d) max3 = d;
+	}
+
+	// add points to vector
+	m_orientedPoints.push_back(eigenVectors.row(0) * min1);
+	m_orientedPoints.push_back(eigenVectors.row(0) * max1);
+	m_orientedPoints.push_back(eigenVectors.row(1) * min2);
+	m_orientedPoints.push_back(eigenVectors.row(1) * max2);
+	m_orientedPoints.push_back(eigenVectors.row(2) * min3);
+	m_orientedPoints.push_back(eigenVectors.row(2) * max3);
 }
