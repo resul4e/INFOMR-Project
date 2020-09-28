@@ -17,7 +17,7 @@
 #include <string>
 #include <fstream>
 
-
+# define M_PI           3.14159265358979323846  /* pi */
 
 using namespace QtCharts;
 
@@ -57,10 +57,10 @@ FeatureView::FeatureView() :
 	m_verticesField = createField("0");
 	m_facesField = createField("0");
 	m_modelNameField = createField("NULL", 150);
-	QLineEdit* volumeField = createField("0");
+	m_shapeVolumeField = createField("0");
 	m_surfaceAreaField = createField("0");
 	m_AABBVolumeField = createField("0");
-	QLineEdit* vsaRatioField = createField("0");
+	m_vsaRatioField = createField("0");
 	QLineEdit* bbaRatioField = createField("0");
 
 	m_faceAreaHistogram = CreateFaceAreaHistogram();
@@ -80,11 +80,11 @@ FeatureView::FeatureView() :
 	chartLayout->addWidget(chartView, 0, 0);
 
 	featureLayout->addWidget(volumeLabel, 0, 0);
-	featureLayout->addWidget(volumeField, 0, 1);
+	featureLayout->addWidget(m_shapeVolumeField, 0, 1);
 	featureLayout->addWidget(surfaceAreaLabel, 1, 0);
 	featureLayout->addWidget(m_surfaceAreaField, 1, 1);
 	featureLayout->addWidget(vsaRatioLabel, 2, 0);
-	featureLayout->addWidget(vsaRatioField, 2, 1);
+	featureLayout->addWidget(m_vsaRatioField, 2, 1);
 	featureLayout->addWidget(bbaRatioLabel, 3, 0);
 	featureLayout->addWidget(bbaRatioField, 3, 1);
 	featureLayout->addWidget(AABBVolumeLabel, 4, 0);
@@ -170,8 +170,14 @@ void FeatureView::SetModel(std::shared_ptr<Model> _model)
 	m_verticesField->setText(QString::number(m_model->m_vertexCount));
 	m_facesField->setText(QString::number(m_model->m_faceCount));
 
-	m_surfaceAreaField->setText(QString::number(ExtractSurfaceArea(*_model)));
+	const float surfaceArea = ExtractSurfaceArea(*_model);
+	const float volume = ExtractVolume(*_model);
+	m_surfaceAreaField->setText(QString::number(surfaceArea));
 	m_AABBVolumeField->setText(QString::number(ExtractAABBArea(*_model)));
+	m_shapeVolumeField->setText(QString::number(volume));
+	const float compactness = (surfaceArea * surfaceArea) / (4.0f * M_PI * volume);
+	m_vsaRatioField->setText(QString::number(compactness));
+	
 	UpdateFaceAreaHistogram(_model);
 }
 

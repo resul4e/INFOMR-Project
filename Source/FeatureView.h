@@ -33,6 +33,8 @@ private:
 
 	QLineEdit* m_surfaceAreaField;
 	QLineEdit* m_AABBVolumeField;
+	QLineEdit* m_shapeVolumeField;
+	QLineEdit* m_vsaRatioField;
 };
 
-QLineEdit* createField(std::string text, int maxWidth = 50);
+QLineEdit* createField(std::string text, int maxWidth = 75);
