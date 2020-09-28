@@ -17,8 +17,6 @@
 #include <string>
 #include <fstream>
 
-# define M_PI           3.14159265358979323846  /* pi */
-
 using namespace QtCharts;
 
 QLineEdit* createField(std::string text, int maxWidth)
@@ -170,13 +168,10 @@ void FeatureView::SetModel(std::shared_ptr<Model> _model)
 	m_verticesField->setText(QString::number(m_model->m_vertexCount));
 	m_facesField->setText(QString::number(m_model->m_faceCount));
 
-	const float surfaceArea = ExtractSurfaceArea(*_model);
-	const float volume = ExtractVolume(*_model);
-	m_surfaceAreaField->setText(QString::number(surfaceArea));
-	m_AABBVolumeField->setText(QString::number(ExtractAABBArea(*_model)));
-	m_shapeVolumeField->setText(QString::number(volume));
-	const float compactness = (surfaceArea * surfaceArea) / (4.0f * M_PI * volume);
-	m_vsaRatioField->setText(QString::number(compactness));
+	m_surfaceAreaField->setText(QString::number(_model->m_3DFeatures.surfaceArea));
+	m_AABBVolumeField->setText(QString::number(_model->m_3DFeatures.boundsArea));
+	m_shapeVolumeField->setText(QString::number(_model->m_3DFeatures.volume));
+	m_vsaRatioField->setText(QString::number(_model->m_3DFeatures.compactness));
 	
 	UpdateFaceAreaHistogram(_model);
 }

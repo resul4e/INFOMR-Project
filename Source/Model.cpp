@@ -3,6 +3,9 @@
 #include <pmp/algorithms/SurfaceNormals.h>
 
 #include <iostream>
+#include "FeatureExtraction.h"
+
+# define M_PI           3.14159265358979323846  /* pi */
 
 Mesh::Mesh() :
 	vao(0),
@@ -150,6 +153,16 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 	}
 
 	m_isUploaded = false;
+}
+
+void Model::UpdateFeatures()
+{
+	UpdateBounds();
+
+	m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
+	m_3DFeatures.volume = ExtractVolume(*this);
+	m_3DFeatures.boundsArea = ExtractAABBArea(*this);
+	m_3DFeatures.compactness = (m_3DFeatures.surfaceArea * m_3DFeatures.surfaceArea) / (4.0f * M_PI * m_3DFeatures.volume);
 }
 
 void Model::UpdateBounds()

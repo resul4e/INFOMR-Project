@@ -20,7 +20,7 @@ void Normalizer::Normalize(Model& _model)
 	FlipModel(_model);
 	ScaleModel(_model);
 
-	_model.UpdateBounds();
+	_model.UpdateFeatures();
 	_model.m_isUploaded = false;
 }
 
@@ -155,4 +155,5 @@ void Normalizer::Remesh(Model& model)
 	}
 
 	model.FromPmpModel(pmpMeshes);
+	model.UpdateFeatures();
 }

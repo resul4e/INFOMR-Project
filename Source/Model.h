@@ -49,6 +49,15 @@ struct Mesh
 	unsigned int tbo;
 };
 
+struct Features3D
+{
+	Bounds bounds;
+	float volume;
+	float surfaceArea;
+	float compactness;
+	float boundsArea;
+};
+
 class Model
 {
 public:
@@ -65,7 +74,7 @@ public:
 	void ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 	void FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 
-	void UpdateBounds();
+	void UpdateFeatures();
 
 	std::vector<Mesh> m_meshes;
 
@@ -80,6 +89,10 @@ public:
 	*/
 	std::string m_class;
 	Bounds m_bounds;
+	Features3D m_3DFeatures;
 	size_t m_vertexCount;
 	size_t m_faceCount;
+
+private:
+	void UpdateBounds();
 };
