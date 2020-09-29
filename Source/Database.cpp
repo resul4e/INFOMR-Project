@@ -132,10 +132,9 @@ void Database::ProcessAllModels()
 {
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	fs::create_directory(modifiedMeshesPath);
-	for(std::shared_ptr<Model>& model : m_modelDatabase)
+	for(ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		SubdivideModel(model);
-		CrunchModel(model);
+		
 	}
 }
 
@@ -151,9 +150,9 @@ void Database::SaveAllModels()
 {
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	fs::create_directory(modifiedMeshesPath);
-	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		ModelSaver::SavePly(*model, modifiedMeshesPath / model->m_path.filename().replace_extension(".ply"));
+		ModelSaver::SavePly(modelDescriptor, modifiedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
 	}
 }
 
@@ -163,17 +162,17 @@ void Database::NormalizeAllModels()
 	analytics::DataRecorder alignmentRecorder;
 	analytics::DataRecorder scaleRecorder;
 
-	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		barycenterRecorder.preRecord(analytics::ComputeBarycenterDistance(*model));
-		alignmentRecorder.preRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
-		scaleRecorder.preRecord(analytics::ComputeLongestAABBAxis(*model));
+		barycenterRecorder.preRecord(analytics::ComputeBarycenterDistance(*modelDescriptor.m_model));
+		alignmentRecorder.preRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*modelDescriptor.m_model));
+		scaleRecorder.preRecord(analytics::ComputeLongestAABBAxis(*modelDescriptor.m_model));
 
-		Normalizer::Normalize(*model);
+		Normalizer::Normalize(modelDescriptor);
 
-		barycenterRecorder.postRecord(analytics::ComputeBarycenterDistance(*model));
-		alignmentRecorder.postRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
-		scaleRecorder.postRecord(analytics::ComputeLongestAABBAxis(*model));
+		barycenterRecorder.postRecord(analytics::ComputeBarycenterDistance(*modelDescriptor.m_model));
+		alignmentRecorder.postRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*modelDescriptor.m_model));
+		scaleRecorder.postRecord(analytics::ComputeLongestAABBAxis(*modelDescriptor.m_model));
 	}
 
 	barycenterRecorder.saveData("barycenters.csv");
@@ -181,19 +180,19 @@ void Database::NormalizeAllModels()
 	scaleRecorder.saveData("scale.csv");
 }
 
-void Database::SubdivideModel(std::shared_ptr<Model>& _model)
+void Database::SubdivideModel(ModelDescriptor& _modelDescriptor)
 {
 	//The folder where we will save the subdivided mesh
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 
 	//check if we need to subdivide.
 	bool subdivide = false;
-	for (const Mesh& mesh : _model->m_meshes)
+	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 	{
 		if (mesh.positions.size() < 10000 || mesh.faces.size() < 10000)
 		{
 			subdivide = true;
-			std::cerr << "Not enough verts/faces in model with name: " << _model->m_name << std::endl;
+			std::cerr << "Not enough verts/faces in model with name: " << _modelDescriptor.m_name << std::endl;
 		}
 	}
 
@@ -203,30 +202,31 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 	if (subdivide)
 	{
 		auto newPath = modifiedMeshesPath;
-		newPath /= _model->m_path.filename();
-		newPath.replace_extension(".ply");
-		system(("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _model->m_path.string() + " -o " + newPath.string()).c_str());
 
-		std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
-		_model.swap(newModel);
+		newPath /= _modelDescriptor.m_path.filename();
+		newPath.replace_extension(".ply");
+		system(("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string()).c_str());
+
+		_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
+		_modelDescriptor.UpdateFeatures();
 	}
 }
 
-void Database::CrunchModel(std::shared_ptr<Model>& _model)
+void Database::CrunchModel(ModelDescriptor& _modelDescriptor)
 {
 	//The folder where we will save the crunched mesh
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	
-	for (const Mesh& mesh : _model->m_meshes)
+	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 	{
 		if (mesh.positions.size() > 40000 || mesh.faces.size() > 40000)
 		{
 			auto newPath = modifiedMeshesPath;
-			newPath /= _model->m_path.filename();
-			system(("..\\Scripts\\mesh_crunch.exe " + _model->m_path.string() + " " + newPath.string()).c_str());
+			newPath /= _modelDescriptor.m_path.filename();
+			system(("..\\Scripts\\mesh_crunch.exe " + _modelDescriptor.m_path.string() + " " + newPath.string()).c_str());
 
-			std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
-			_model.swap(newModel);
+			_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
+			_modelDescriptor.UpdateFeatures();
 		}
 	}
 }
@@ -236,21 +236,21 @@ void Database::SortDatabase(SortingOptions _option)
 	switch (_option)
 	{
 	case SortingOptions::VERTEX_COUNT:
-		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const ModelDescriptor& _left, const ModelDescriptor& _right)
 	{
-				return _left->m_vertexCount < _right->m_vertexCount;
+				return _left.m_vertexCount < _right.m_vertexCount;
 	});
 		break;
 	case SortingOptions::FACE_COUNT:
-		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const ModelDescriptor& _left, const ModelDescriptor& _right)
 			{
-				return _left->m_faceCount < _right->m_faceCount;
+				return _left.m_faceCount < _right.m_faceCount;
 			});
 		break;
 	case SortingOptions::BOUNDS:
-		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const std::shared_ptr<Model>& _left, const std::shared_ptr<Model>& _right)
+		std::sort(m_modelDatabase.begin(), m_modelDatabase.end(), [](const ModelDescriptor& _left, const ModelDescriptor& _right)
 			{
-				return glm::length(_left->m_bounds.max - _left->m_bounds.min) < glm::length(_right->m_bounds.max - _right->m_bounds.min);
+				return glm::length(_left.m_bounds.max - _left.m_bounds.min) < glm::length(_right.m_bounds.max - _right.m_bounds.min);
 			});
 		break;
 	default:

@@ -22,25 +22,23 @@ namespace
 
 		return ExtractTriangleArea(v0, v1, v2);
 	}
-
-
 }
 
-float ExtractSurfaceArea(Model& model)
+float ExtractSurfaceArea(ModelDescriptor& _modelDescriptor)
 {
 	float totalSurfaceArea = 0;
 
-	for (Mesh& mesh : model.m_meshes)
+	for (Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 		for (Face& face : mesh.faces)
 			totalSurfaceArea += ExtractFaceArea(mesh, face);
 
 	return totalSurfaceArea;
 }
 
-std::vector<double> ExtractFaceAreas(Model& model)
+std::vector<double> ExtractFaceAreas(ModelDescriptor& _modelDescriptor)
 {
 	std::vector<double> facesAreas;
-	for (Mesh& mesh : model.m_meshes)
+	for (Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 	{
 		for (Face& face : mesh.faces)
 		{
@@ -51,17 +49,16 @@ std::vector<double> ExtractFaceAreas(Model& model)
 	return facesAreas;
 }
 
-float ExtractAABBArea(Model& _model)
+float ExtractAABBArea(ModelDescriptor& _modelDescriptor)
 {
-	glm::vec3 AABB = _model.m_bounds.max - _model.m_bounds.min;
+	glm::vec3 AABB = _modelDescriptor.m_bounds.max - _modelDescriptor.m_bounds.min;
 
 	return 2 * (AABB.x * AABB.y + AABB.x * AABB.z + AABB.y * AABB.z);
 }
 
-
-float ExtractAABBVolume(Model& _model)
+float ExtractAABBVolume(ModelDescriptor& _modelDescriptor)
 {
-	glm::vec3 AABB = _model.m_bounds.max - _model.m_bounds.min;
+	glm::vec3 AABB = _modelDescriptor.m_bounds.max - _modelDescriptor.m_bounds.min;
 
 	return AABB.x * AABB.y * AABB.z;
 }
@@ -92,27 +89,27 @@ float ExtractVolumeOfMesh(const Mesh& _mesh) {
 	return std::abs(vols);
 }
 
-float ExtractVolume(const Model& _model)
+float ExtractVolume(const ModelDescriptor& _modelDescriptor)
 {
 	float vol = 0;
-	for (const Mesh& mesh : _model.m_meshes)
+	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 	{
 		vol += ExtractVolumeOfMesh(mesh);
 	}
 	return vol;
 }
 
-void GetRandomVertices(const Model& _model, int _count, int* _meshPositions, glm::vec3* o_randomVertices)
+void GetRandomVertices(const ModelDescriptor& _modelDescriptor, int _count, int* _meshPositions, glm::vec3* o_randomVertices)
 {
 	for (int j = 0; j < _count; j++)
 	{
-		int randomIndex = rand() % _model.m_vertexCount;
+		int randomIndex = rand() % _modelDescriptor.m_vertexCount;
 		int subIndex = randomIndex;
-		for (int k = 0; k < _model.m_meshes.size(); k++)
+		for (int k = 0; k < _modelDescriptor.m_model->m_meshes.size(); k++)
 		{
-			if (subIndex - (_meshPositions[k]) < _model.m_meshes[k].positions.size())
+			if (subIndex - (_meshPositions[k]) < _modelDescriptor.m_model->m_meshes[k].positions.size())
 			{
-				o_randomVertices[j] = _model.m_meshes[k].positions[subIndex];
+				o_randomVertices[j] = _modelDescriptor.m_model->m_meshes[k].positions[subIndex];
 				break;
 			}
 			subIndex -= _meshPositions[k];
@@ -134,14 +131,14 @@ void GetMeshPositions(const Model& _model, int* meshPositions)
 	}
 }
 
-HistogramFeature ExtractA1(const Model& _model)
+HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor)
 {
 	//The size of each of the bins.
 	const float binSize = M_PI / HISTOGRAM_BIN_SIZE;
 
 	//Get the start positions for each mesh so that we can pick a random vertex out of all meshes.
-	int* meshPositions = new int[_model.m_meshes.size()];;
-	GetMeshPositions(_model, meshPositions);
+	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];;
+	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Create all bins for the histogram.
 	HistogramFeature a1Feature{};
@@ -154,7 +151,7 @@ HistogramFeature ExtractA1(const Model& _model)
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		//Get three random vertices.
-		GetRandomVertices(_model, 3, meshPositions, randomVertices);
+		GetRandomVertices(_modelDescriptor, 3, meshPositions, randomVertices);
 
 		//calculate the difference of two of the vertices with the third vertex.
 		glm::vec3 u = randomVertices[0] - randomVertices[1];
@@ -179,23 +176,23 @@ HistogramFeature ExtractA1(const Model& _model)
 	return a1Feature;
 }
 
-HistogramFeature ExtractD1(const Model& _model)
+HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 {
 	//assume barycenter is at 0
 	//TODO(Resul): Do we want to set this to the actual barycenter?
 	const glm::vec3 barycenter{ 0 };
 
 	//Get the start positions for each mesh so that we can pick a random vertex out of all meshes.
-	int* meshPositions = new int[_model.m_meshes.size()];
-	GetMeshPositions(_model, meshPositions);
+	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];
+	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Get the maximum distance two points can be from the barycenter.
 	float maxDistance = 0;
-	for (size_t i = 0; i < _model.m_meshes.size(); i++)
+	for (size_t i = 0; i < _modelDescriptor.m_model->m_meshes.size(); i++)
 	{
-		for (int j = 0; j < _model.m_meshes[i].positions.size(); j++)
+		for (int j = 0; j < _modelDescriptor.m_model->m_meshes[i].positions.size(); j++)
 		{
-			maxDistance = std::max(glm::length(_model.m_meshes[i].positions[j] - barycenter), maxDistance);
+			maxDistance = std::max(glm::length(_modelDescriptor.m_model->m_meshes[i].positions[j] - barycenter), maxDistance);
 		}
 	}
 
@@ -215,9 +212,9 @@ HistogramFeature ExtractD1(const Model& _model)
 	glm::vec3 randomVertex;
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		GetRandomVertices(_model, 1, meshPositions, &randomVertex);
+		GetRandomVertices(_modelDescriptor, 1, meshPositions, &randomVertex);
 
-		for (int j = 0; j < _model.m_meshes.size(); j++)
+		for (int j = 0; j < _modelDescriptor.m_model->m_meshes.size(); j++)
 		{
 			glm::vec3 diff = randomVertex - barycenter;
 			const float distance = glm::length(diff);
@@ -229,14 +226,14 @@ HistogramFeature ExtractD1(const Model& _model)
 	return d1Feature;
 }
 
-HistogramFeature ExtractD2(const Model& _model)
+HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 {
 	//Get the start positions for each mesh so that we can pick a random vertex out of all meshes.
-	int* meshPositions = new int[_model.m_meshes.size()];
-	GetMeshPositions(_model, meshPositions);
+	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];
+	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
-	const float maxDistance = glm::length(_model.m_bounds.max - _model.m_bounds.min) + 0.001;
+	const float maxDistance = glm::length(_modelDescriptor.m_bounds.max - _modelDescriptor.m_bounds.min) + 0.001;
 	//Calculate the bin size.
 	const float binSize = maxDistance / HISTOGRAM_BIN_SIZE;
 
@@ -250,7 +247,7 @@ HistogramFeature ExtractD2(const Model& _model)
 	glm::vec3 randomVertices[2];
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		GetRandomVertices(_model, 2, meshPositions, randomVertices);
+		GetRandomVertices(_modelDescriptor, 2, meshPositions, randomVertices);
 
 		//Calculate distance between the two vertices
 		glm::vec3 diff = randomVertices[0] - randomVertices[1];
@@ -265,11 +262,11 @@ HistogramFeature ExtractD2(const Model& _model)
 	return d2Feature;
 }
 
-HistogramFeature ExtractD3(const Model& _model)
+HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 {
 	//Get the start positions for each mesh so that we can pick a random vertex out of all meshes.
-	int* meshPositions = new int[_model.m_meshes.size()];
-	GetMeshPositions(_model, meshPositions);
+	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];
+	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
 	float minArea = std::numeric_limits<float>::max();
@@ -280,7 +277,7 @@ HistogramFeature ExtractD3(const Model& _model)
 	glm::vec3 randomVertices[3];
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		GetRandomVertices(_model, 3, meshPositions, randomVertices);
+		GetRandomVertices(_modelDescriptor, 3, meshPositions, randomVertices);
 
 
 		float area = std::sqrt(ExtractTriangleArea(randomVertices[0], randomVertices[1], randomVertices[2]));
@@ -311,11 +308,11 @@ HistogramFeature ExtractD3(const Model& _model)
 	return d3Feature;
 }
 
-HistogramFeature ExtractD4(const Model& _model)
+HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 {
 	//Get the start positions for each mesh so that we can pick a random vertex out of all meshes.
-	int* meshPositions = new int[_model.m_meshes.size()];
-	GetMeshPositions(_model, meshPositions);
+	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];
+	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
 	float maxVolume = std::numeric_limits<float>::lowest();
@@ -326,7 +323,7 @@ HistogramFeature ExtractD4(const Model& _model)
 	glm::vec3 randomVertices[4];
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		GetRandomVertices(_model, 4, meshPositions, randomVertices);
+		GetRandomVertices(_modelDescriptor, 4, meshPositions, randomVertices);
 
 		float volume = std::cbrt(ExtractVolumeOfTetrahedron(randomVertices[0], randomVertices[1], randomVertices[2], randomVertices[3]));
 		tetVolumes[i] = volume;
@@ -355,4 +352,3 @@ HistogramFeature ExtractD4(const Model& _model)
 	delete[] tetVolumes;
 	return d4Feature;
 }
-

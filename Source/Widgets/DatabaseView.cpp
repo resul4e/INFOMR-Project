@@ -139,8 +139,8 @@ void DatabaseView::Update()
 	int modelCount[DIVISION_COUNT];
 
 	//Sort the model from largest to smallest and get the largest vertex count (or the range set by the slider)
-	std::sort(modelDatabase.begin(), modelDatabase.end(), [](ModelDescriptor& lhs, ModelDescriptor& rhs) { return lhs.m_model->m_vertexCount < rhs.m_model->m_vertexCount; });
-	const int largestModelVertexCount = std::min(static_cast<int>(modelDatabase.back().m_model->m_vertexCount), m_maxVertexCount);
+	std::sort(modelDatabase.begin(), modelDatabase.end(), [](ModelDescriptor& lhs, ModelDescriptor& rhs) { return lhs.m_vertexCount < rhs.m_vertexCount; });
+	const int largestModelVertexCount = std::min(static_cast<int>(modelDatabase.back().m_vertexCount), m_maxVertexCount);
 
 	//Go through each division, and count how many models fall in that range.
 	//Then update the chart to reflect this.
@@ -158,7 +158,7 @@ void DatabaseView::Update()
 
 		//Get how many models lie in this range.
 		modelCount[i] = 0;
-		while(index < modelDatabase.size() && modelDatabase[index].m_model->m_vertexCount <= maxRange)
+		while(index < modelDatabase.size() && modelDatabase[index].m_vertexCount <= maxRange)
 		{
 			modelCount[i]++;
 			index++;
@@ -176,8 +176,8 @@ void DatabaseView::Update()
 	}
 
 	//Update the vertex count slider.
-	m_vertexCountSlider->setMaximum(modelDatabase.back().m_model->m_vertexCount);
-	m_vertexCountSlider->setTickInterval(modelDatabase.back().m_model->m_vertexCount * 0.1);
+	m_vertexCountSlider->setMaximum(modelDatabase.back().m_vertexCount);
+	m_vertexCountSlider->setTickInterval(modelDatabase.back().m_vertexCount * 0.1);
 	m_vertexCountSlider->setEnabled(true);
 
 	//Set the correct range for the y axis

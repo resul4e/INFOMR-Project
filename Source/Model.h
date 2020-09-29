@@ -82,9 +82,6 @@ public:
 	/**
 	 * @brief The shape class of the model.
 	*/
-	Bounds m_bounds;
-	size_t m_vertexCount;
-	size_t m_faceCount;
 	std::vector<glm::vec3> m_orientedPoints;
 	
 private:

@@ -172,8 +172,8 @@ void FeatureView::SetModel(ModelDescriptor _modelDescriptor)
 	m_modelDescriptor = _modelDescriptor;
 
 	m_modelNameField->setText(m_modelDescriptor.m_name.c_str());
-	m_verticesField->setText(QString::number(m_modelDescriptor.m_model->m_vertexCount));
-	m_facesField->setText(QString::number(m_modelDescriptor.m_model->m_faceCount));
+	m_verticesField->setText(QString::number(m_modelDescriptor.m_vertexCount));
+	m_facesField->setText(QString::number(m_modelDescriptor.m_faceCount));
 
 	m_surfaceAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.surfaceArea));
 	m_AABBAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.boundsArea));
@@ -188,7 +188,7 @@ void FeatureView::SetModel(ModelDescriptor _modelDescriptor)
 void FeatureView::UpdateFaceAreaHistogram(ModelDescriptor& _modelDescriptor)
 {
 	//get the areas of each of the triangles in the model
-	std::vector<double> areas = ExtractFaceAreas(*_modelDescriptor.m_model);
+	std::vector<double> areas = ExtractFaceAreas(_modelDescriptor);
 	std::sort(areas.begin(), areas.end(), [](double lhs, double rhs) { return lhs < rhs; });
 
 	//How many histogram bars there are.

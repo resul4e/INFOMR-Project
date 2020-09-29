@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Model.h"
+#include "ModelDescriptor.h"
 
 #include <glm/glm.hpp>
 #include <iostream>
 
-float ExtractSurfaceArea(Model& model);
-float ExtractAABBArea(Model& _model);
-float ExtractAABBVolume(Model& _model);
-std::vector<double> ExtractFaceAreas(Model& model);
-float ExtractVolume(const Model& _model);
-HistogramFeature ExtractA1(const Model& _model);
-HistogramFeature ExtractD1(const Model& _model);
-HistogramFeature ExtractD2(const Model& _model);
-HistogramFeature ExtractD3(const Model& _model);
-HistogramFeature ExtractD4(const Model& _model);
+float ExtractSurfaceArea(ModelDescriptor& _modelDescriptor);
+float ExtractAABBArea(ModelDescriptor& _modelDescriptor);
+float ExtractAABBVolume(ModelDescriptor& _modelDescriptor);
+std::vector<double> ExtractFaceAreas(ModelDescriptor& _modelDescriptor);
+float ExtractVolume(const ModelDescriptor& _modelDescriptor);
+HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor);
+HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor);
+HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor);
+HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor);
+HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor);

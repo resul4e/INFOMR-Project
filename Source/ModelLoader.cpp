@@ -51,7 +51,6 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 		if (aiMesh->HasPositions())
 		{
 			mesh.positions.resize(aiMesh->mNumVertices);
-			model->m_vertexCount += aiMesh->mNumVertices;
 			std::memcpy(mesh.positions.data(), aiMesh->mVertices, aiMesh->mNumVertices * sizeof(glm::vec3));
 		}
 		
@@ -77,7 +76,6 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 
 		// Copy faces from assimp mesh to our mesh
 		mesh.faces.resize(aiMesh->mNumFaces);
-		model->m_faceCount += aiMesh->mNumFaces;
 		for (unsigned int i = 0; i < aiMesh->mNumFaces; i++)
 		{
 			for (unsigned int v = 0; v < 3; v++)

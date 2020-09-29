@@ -5,6 +5,14 @@
 #include <filesystem>
 #include <memory>
 
+constexpr size_t HISTOGRAM_BIN_SIZE = 10;
+struct HistogramFeature
+{
+	int binCount[HISTOGRAM_BIN_SIZE];
+	float max;
+	float min;
+};
+
 struct Features3D
 {
 	Bounds bounds;
@@ -20,6 +28,8 @@ struct Features3D
 
 struct ModelDescriptor
 {
+	ModelDescriptor();
+
 	void UpdateFeatures();
 	void UpdateBounds();
 
@@ -29,8 +39,9 @@ struct ModelDescriptor
 	std::shared_ptr<Model> m_model;
 
 	std::string m_class;
-	//size_t m_vertexCount;
-	//size_t m_faceCount;
+	size_t m_vertexCount;
+	size_t m_faceCount;
+	Bounds m_bounds;
 
 	Features3D m_3DFeatures;
 };

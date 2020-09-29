@@ -65,9 +65,7 @@ void Mesh::Upload()
 }
 
 Model::Model() :
-	m_isUploaded(false),
-	m_vertexCount(0),
-	m_faceCount(0)
+	m_isUploaded(false)
 {
 
 }
@@ -114,16 +112,13 @@ void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 
 void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 {
-	m_vertexCount = 0;
-	m_faceCount = 0;
-	
 	for (int i = 0; i < m_meshes.size(); i++)
 	{
 		pmp::SurfaceMesh& pmpMesh = pmpMeshes[i];
 		Mesh& mesh = m_meshes[i];
 
 		mesh.positions.resize(pmpMesh.n_vertices(), glm::vec3(0, 0, 0));
-		m_vertexCount += pmpMesh.n_vertices();
+		
 		for (int j = 0; j < pmpMesh.positions().size(); j++)
 		{
 			mesh.positions[j] = glm::vec3(pmpMesh.positions()[j][0], pmpMesh.positions()[j][1], pmpMesh.positions()[j][2]);
@@ -139,7 +134,6 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 		mesh.faces.clear();
 		for (pmp::Face pmpFace : pmpMesh.faces())
 		{
-			m_faceCount++;
 			Face face;
 			int c = 0;
 			for (pmp::Vertex v : pmpMesh.vertices(pmpFace))
@@ -152,25 +146,6 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 	}
 
 	m_isUploaded = false;
-}
-
-void Model::UpdateBounds()
-{
-	m_bounds.max = glm::vec3(0, 0, 0);
-	m_bounds.min = glm::vec3(0, 0, 0);
-	for(int k = 0; k < m_meshes.size(); k++)
-	{
-		for(int j = 0; j < m_meshes[k].positions.size(); j++)
-		{
-			glm::vec3 v = m_meshes[k].positions[j];
-			for (int d = 0; d < 3; d++)
-			{
-				m_bounds.min[d] = v[d] < m_bounds.min[d] ? v[d] : m_bounds.min[d];
-				m_bounds.max[d] = v[d] > m_bounds.max[d] ? v[d] : m_bounds.max[d];
-			}
-		}
-	}
-
 }
 
 void Model::CalculateOBB()
