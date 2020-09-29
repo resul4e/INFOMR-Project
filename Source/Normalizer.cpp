@@ -95,7 +95,7 @@ void Normalizer::AlignModel(Model& _model)
 	
 	auto newPath = modifiedMeshesPath;
 	newPath /= _model.m_path.filename();
-	system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcasnap " + newPath.string()).c_str());
+	system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcarot " + newPath.string()).c_str());
 
 	std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
 	std::swap(_model, *newModel);
