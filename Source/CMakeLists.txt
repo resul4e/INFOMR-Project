@@ -7,6 +7,8 @@ set(BASE_SOURCES
     ${DIR}/MainWindow.h
     ${DIR}/FeatureExtraction.h
     ${DIR}/FeatureExtraction.cpp
+    ${DIR}/ModelDescriptor.h
+    ${DIR}/ModelDescriptor.cpp
     ${DIR}/Model.h
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
