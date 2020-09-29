@@ -116,7 +116,7 @@ void Database::ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path 
 				descriptor.m_path = modelPath;
 
 				AddModel(descriptor);
-				std::cout << "Added model: " << _modelDirectoryPath << std::endl;
+				std::cout << "Added model: " << descriptor.m_name << std::endl;
 			}
 			else
 			{

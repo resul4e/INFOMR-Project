@@ -193,8 +193,6 @@ void MainWindow::importModelFromFile()
 	ModelDescriptor modelDescriptor;
 	modelDescriptor.m_path = filePath.toStdString();
 	modelDescriptor.m_name = fileName.toStdString();
-	modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(filePath.toStdString()));
-	modelDescriptor.UpdateFeatures();
 
 	selectModel(modelDescriptor);
 }
@@ -265,10 +263,13 @@ void MainWindow::populateDatabaseModelSelector()
 	}
 }
 
-void MainWindow::selectModel(ModelDescriptor _model)
+void MainWindow::selectModel(ModelDescriptor _modelDescriptor)
 {
-    _modelViewer->setModel(_model);
-	_featureWidget->SetModel(_model);
+	_modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(_modelDescriptor.m_path));
+	_modelDescriptor.UpdateFeatures();
+
+    _modelViewer->setModel(_modelDescriptor);
+	_featureWidget->SetModel(_modelDescriptor);
 }
 
 void MainWindow::normalizeCurrentModel()

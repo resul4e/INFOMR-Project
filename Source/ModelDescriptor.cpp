@@ -16,6 +16,14 @@ void ModelDescriptor::UpdateFeatures()
 {
 	if (m_model != nullptr)
 	{
+		m_vertexCount = 0;
+		m_faceCount = 0;
+		for (Mesh& mesh : m_model->m_meshes)
+		{
+			m_vertexCount += mesh.positions.size();
+			m_faceCount += mesh.faces.size();
+		}
+
 		UpdateBounds();
 		m_model->CalculateOBB();
 	}
