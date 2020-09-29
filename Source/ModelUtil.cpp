@@ -68,17 +68,13 @@ namespace util
 
 		GetSortedEigenVectors(eigenVectors, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
 		
-		for (Mesh& mesh : model.m_meshes)
-		{
-			for (glm::vec3& p : mesh.positions)
-			{
-				float x = glm::dot(p, majorEigenVector);
-				float y = glm::dot(p, medianEigenVector);
-				float z = glm::dot(p, minorEigenVector);
+		glm::mat3x3 rotMat{ majorEigenVector.x, medianEigenVector.x, minorEigenVector.x,
+							majorEigenVector.y, medianEigenVector.y, minorEigenVector.y,
+							majorEigenVector.z, medianEigenVector.z, minorEigenVector.z };
 
-				p = glm::vec3(x, y, z);
-			}
-		}
+		for (Mesh& mesh : model.m_meshes)
+			for (glm::vec3& p : mesh.positions)
+				p = rotMat * p;
 	}
 
 	void GetSortedEigenValues(const Model& model, glm::vec3& eigenValues)
