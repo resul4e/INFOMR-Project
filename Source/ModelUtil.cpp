@@ -46,9 +46,9 @@ namespace util
 		Eigen::Matrix3d eigenVectors = solver.eigenvectors().real();
 		Eigen::Vector3d eigenValues = solver.eigenvalues().real();
 
-		eVec1 = glm::vec3(eigenVectors.row(0).x(), eigenVectors.row(0).y(), eigenVectors.row(0).z());
-		eVec2 = glm::vec3(eigenVectors.row(1).x(), eigenVectors.row(1).y(), eigenVectors.row(1).z());
-		eVec3 = glm::vec3(eigenVectors.row(2).x(), eigenVectors.row(2).y(), eigenVectors.row(2).z());
+		eVec1 = glm::vec3(eigenVectors.col(0).x(), eigenVectors.col(0).y(), eigenVectors.col(0).z());
+		eVec2 = glm::vec3(eigenVectors.col(1).x(), eigenVectors.col(1).y(), eigenVectors.col(1).z());
+		eVec3 = glm::vec3(eigenVectors.col(2).x(), eigenVectors.col(2).y(), eigenVectors.col(2).z());
 		eValues = glm::vec3(eigenValues.x(), eigenValues.y(), eigenValues.z());
 	}
 
