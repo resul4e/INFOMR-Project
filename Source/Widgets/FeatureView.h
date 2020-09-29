@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ModelDescriptor.h"
+
 #include <QDockWidget>
 
 class Model;
@@ -16,15 +18,15 @@ public:
 	FeatureView();
 	QtCharts::QChart* CreateFaceAreaHistogram();
 
-	void SetModel(std::shared_ptr<Model> _model);
+	void SetModel(ModelDescriptor _modelDescriptor);
 	
 private:
 	const int FACE_AREA_HISTOGRAM_PRECISION = 10000;
 	
-	void UpdateFaceAreaHistogram(std::shared_ptr<Model> _model);
+	void UpdateFaceAreaHistogram(ModelDescriptor& _modelDescriptor);
 	
 	bool updated;
-	std::shared_ptr<Model> m_model;
+	ModelDescriptor m_modelDescriptor;
 
 	QLineEdit* m_modelNameField;
 	QLineEdit* m_verticesField;

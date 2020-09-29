@@ -30,12 +30,12 @@ bool hasEnding(std::string const& fullString, std::string const& ending) {
 	}
 }
 
-void Database::AddModel(std::shared_ptr<Model> _model)
+void Database::AddModel(ModelDescriptor _model)
 {
 	m_modelDatabase.push_back(_model);
 }
 
-std::vector<std::shared_ptr<Model>> Database::GetModelDatabase()
+std::vector<ModelDescriptor> Database::GetModelDatabase()
 {
 	return m_modelDatabase;
 }
@@ -51,16 +51,15 @@ void Database::LoadLabelledPSB(const fs::path& _labelledPSBDirectory)
 		{
 			if (m.path().extension() == ".off")
 			{
-				std::string fileName = m.path().filename().string();
+				std::string modelPath = m.path().string();
+				std::string modelName = m.path().filename().replace_extension("").string();
 
-				std::shared_ptr<Model> model = LoadModifiedModel(fileName);
-				if(model == nullptr)
-				{
-					model = ModelLoader::LoadModel(m.path());
-				}
-				model->m_class = cls;
-				model->m_name = cls + fileName;
-				AddModel(model);
+				ModelDescriptor descriptor;
+				descriptor.m_class = cls;
+				descriptor.m_name = cls + modelName;
+				descriptor.m_path = modelPath;
+
+				AddModel(descriptor);
 			}
 		}
 	}
@@ -110,14 +109,14 @@ void Database::ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path 
 				}
 
 				fs::path modelPath = _modelDirectoryPath / db / ("m" + line) / ("m" + line + ".off");
-				std::shared_ptr<Model> model = LoadModifiedModel(("m" + line + ".off"));
-				if (model == nullptr)
-				{
-					model = ModelLoader::LoadModel(modelPath);
-				}
-				model->m_class = cls;
-				model->m_name = cls + line;
-				AddModel(model);
+
+				ModelDescriptor descriptor;
+				descriptor.m_class = cls;
+				descriptor.m_name = cls + line;
+				descriptor.m_path = modelPath;
+
+				AddModel(descriptor);
+				std::cout << "Added model: " << _modelDirectoryPath << std::endl;
 			}
 			else
 			{

@@ -13,15 +13,15 @@
 
 namespace fs = std::filesystem;
 
-void Normalizer::Normalize(Model& _model)
+void Normalizer::Normalize(ModelDescriptor& _modelDescriptor)
 {
-	AlignModel(_model);
-	CenterModel(_model);
-	FlipModel(_model);
-	ScaleModel(_model);
+	AlignModel(*_modelDescriptor.m_model);
+	CenterModel(*_modelDescriptor.m_model);
+	FlipModel(*_modelDescriptor.m_model);
+	ScaleModel(*_modelDescriptor.m_model);
 
-	_model.UpdateFeatures();
-	_model.m_isUploaded = false;
+	_modelDescriptor.UpdateFeatures();
+	_modelDescriptor.m_model->m_isUploaded = false;
 }
 
 void Normalizer::CenterModel(Model& _model)
@@ -124,21 +124,7 @@ void Normalizer::FlipModel(Model& _model)
 	}
 }
 
-void Normalizer::Remesh(Model& model)
+void Normalizer::Remesh(ModelDescriptor& model)
 {
-	std::vector<pmp::SurfaceMesh> pmpMeshes;
-	model.ToPmpModel(pmpMeshes);
 
-	for (pmp::SurfaceMesh& pmpMesh : pmpMeshes)
-	{
-		auto bb = pmpMesh.bounds().size();
-		pmp::SurfaceRemeshing(pmpMesh).adaptive_remeshing(
-			0.0010 * bb,  // min length
-			0.010 * bb,  // max length
-			0.0005 * bb
-		); // approx. error
-	}
-
-	model.FromPmpModel(pmpMeshes);
-	model.UpdateFeatures();
 }

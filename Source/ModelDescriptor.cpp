@@ -22,7 +22,7 @@ void ModelDescriptor::UpdateFeatures()
 	util::GetSortedEigenValues(*m_model, eigenValues);
 	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
 
-	ExtractA1(*m_model);
+	m_3DFeatures.a1 = ExtractA1(*this);
 	ExtractD1(*m_model);
 	ExtractD2(*m_model);
 	ExtractD3(*m_model);

@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "ModelDescriptor.h"
 
 class Normalizer
 {
@@ -11,9 +12,9 @@ public:
 	 * @brief Performs normalization on a model. This centers the model, aligns it to its eigenvectors, flips the model and scales it to a unit cube.
 	 * @param _model The model to perform the normalization on.
 	*/
-	static void Normalize(Model& _model);
+	static void Normalize(ModelDescriptor& _modelDescriptor);
 
-	static void Remesh(Model& _model);
+	static void Remesh(ModelDescriptor& _model);
 
 	
 	

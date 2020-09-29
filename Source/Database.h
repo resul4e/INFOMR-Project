@@ -1,4 +1,7 @@
 #pragma once
+
+#include "ModelDescriptor.h"
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -28,7 +31,7 @@ public:
 	 * @brief Adds a model to the database.
 	 * @param _model The model to be added.
 	*/
-	void AddModel(std::shared_ptr<Model> _model);
+	void AddModel(ModelDescriptor _model);
 
 	/**
 	 * @brief Given a path to the labelled PSB data loads all models and their shape class.
@@ -46,7 +49,7 @@ public:
 	 * @brief Returns the list of all models.
 	 * @return All of the models in this database.
 	*/
-	std::vector<std::shared_ptr<Model>> GetModelDatabase();
+	std::vector<ModelDescriptor> GetModelDatabase();
 
 	/**
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
@@ -69,9 +72,7 @@ private:
 
 	void ReadPSBClassificationFile(std::filesystem::path _modelDirectoryPath, std::filesystem::path _filePath);
 	
-
-	
 	std::shared_ptr<Model> LoadModifiedModel(std::filesystem::path _modelFileName);
 	
-	std::vector<std::shared_ptr<Model>> m_modelDatabase;
+	std::vector<ModelDescriptor> m_modelDatabase;
 };

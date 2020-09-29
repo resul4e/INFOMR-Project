@@ -13,14 +13,14 @@
 #include <iostream>
 #include <cmath>
 
-void ModelViewer::setModel(std::shared_ptr<Model> model)
+void ModelViewer::setModel(ModelDescriptor modelDescriptor)
 {
-	m_model = model;
+	m_modelDescriptor = modelDescriptor;
 }
 
-std::shared_ptr<Model>& ModelViewer::getModel()
+ModelDescriptor& ModelViewer::getModel()
 {
-	return m_model;
+	return m_modelDescriptor;
 }
 
 void ModelViewer::initializeGL()
@@ -69,12 +69,12 @@ void ModelViewer::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// If no model is set, don't call any rendering functions
-	if (!m_model)
+	if (!m_modelDescriptor.m_model)
 		return;
 
 	// If a model is set, but has not been uploaded yet, do so
-	if (!m_model->isUploaded())
-		m_model->Upload();
+	if (!m_modelDescriptor.m_model->isUploaded())
+		m_modelDescriptor.m_model->Upload();
 
 	// Reset the blending function
 	glEnable(GL_BLEND);
@@ -126,7 +126,7 @@ void ModelViewer::drawModel(bool wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	for (Mesh& mesh : m_model->m_meshes)
+	for (Mesh& mesh : m_modelDescriptor.m_model->m_meshes)
 	{
 		glBindVertexArray(mesh.vao);
 		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);

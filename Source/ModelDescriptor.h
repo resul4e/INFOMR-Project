@@ -14,11 +14,14 @@ struct Features3D
 	float boundsArea;
 	float boundsVolume;
 	float eccentricity;
+
+	HistogramFeature a1;
 };
 
 struct ModelDescriptor
 {
 	void UpdateFeatures();
+	void UpdateBounds();
 
 	std::string m_name;
 	std::filesystem::path m_path;

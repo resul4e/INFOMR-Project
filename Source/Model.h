@@ -57,19 +57,6 @@ struct Mesh
 	unsigned int tbo;
 };
 
-struct Features3D
-{
-	Bounds bounds;
-	float volume;
-	float surfaceArea;
-	float compactness;
-	float boundsArea;
-	float boundsVolume;
-	float eccentricity;
-
-	HistogramFeature a1;
-};
-
 class Model
 {
 public:
@@ -86,28 +73,22 @@ public:
 	void ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 	void FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 
-	void UpdateFeatures();
-	void UpdateBounds();
-
 	std::vector<Mesh> m_meshes;
 
 	bool m_isUploaded;
 
-	std::string m_name;
-	std::filesystem::path m_path;
 
 	///FILTER DATA
 	/**
 	 * @brief The shape class of the model.
 	*/
-	std::string m_class;
 	Bounds m_bounds;
-	Features3D m_3DFeatures;
 	size_t m_vertexCount;
 	size_t m_faceCount;
 	std::vector<glm::vec3> m_orientedPoints;
 	
 private:
-
 	void CalculateOBB();
+
+	friend struct ModelDescriptor;
 };

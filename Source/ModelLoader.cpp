@@ -35,10 +35,8 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 	}
 
 	std::shared_ptr<Model> model = std::make_shared<Model>();
-	model->m_path = _filePath;
 	model->m_meshes.resize(scene->mNumMeshes);
-	model->m_name = _filePath.filename().replace_extension("").string();
-	
+
 	// Initial minimum and maximum bounds of the model
 	glm::vec3 minBounds = glm::vec3(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
 	glm::vec3 maxBounds = glm::vec3(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
@@ -93,6 +91,5 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 		}
 	}
 
-	model->UpdateBounds();
 	return model;
 }

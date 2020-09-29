@@ -6,8 +6,6 @@
 #include "FeatureExtraction.h"
 #include "ModelUtil.h"
 
-# define M_PI           3.14159265358979323846  /* pi */
-
 Mesh::Mesh() :
 	vao(0),
 	pbo(0),
@@ -68,7 +66,6 @@ void Mesh::Upload()
 
 Model::Model() :
 	m_isUploaded(false),
-	m_class(""),
 	m_vertexCount(0),
 	m_faceCount(0)
 {
@@ -155,27 +152,6 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 	}
 
 	m_isUploaded = false;
-}
-
-void Model::UpdateFeatures()
-{
-	UpdateBounds();
-	CalculateOBB();
-
-	m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
-	m_3DFeatures.volume = ExtractVolume(*this);
-	m_3DFeatures.boundsArea = ExtractAABBArea(*this);
-	m_3DFeatures.boundsVolume = ExtractAABBVolume(*this);
-	m_3DFeatures.compactness = (std::pow(M_PI, 1.0/3.0) * std::pow((6.0 * m_3DFeatures.volume), 2.0/3.0)) / m_3DFeatures.surfaceArea;
-	glm::vec3 eigenValues{0};
-	util::GetSortedEigenValues(*this, eigenValues);
-	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
-
-	m_3DFeatures.a1 = ExtractA1(*this);
-	ExtractD1(*this);
-	ExtractD2(*this);
-	ExtractD3(*this);
-	ExtractD4(*this);
 }
 
 void Model::UpdateBounds()

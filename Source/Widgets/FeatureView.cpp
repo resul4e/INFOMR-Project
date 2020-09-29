@@ -28,8 +28,7 @@ QLineEdit* createField(std::string text, int maxWidth)
 	return field;
 }
 
-FeatureView::FeatureView() :
-	m_model(nullptr)
+FeatureView::FeatureView()
 {
 	setWindowTitle("Feature View");
 	setMinimumWidth(250);
@@ -168,28 +167,28 @@ QChart* FeatureView::CreateFaceAreaHistogram()
 }
 
 
-void FeatureView::SetModel(std::shared_ptr<Model> _model)
+void FeatureView::SetModel(ModelDescriptor _modelDescriptor)
 {
-	m_model = _model;
+	m_modelDescriptor = _modelDescriptor;
 
-	m_modelNameField->setText(m_model->m_name.c_str());
-	m_verticesField->setText(QString::number(m_model->m_vertexCount));
-	m_facesField->setText(QString::number(m_model->m_faceCount));
+	m_modelNameField->setText(m_modelDescriptor.m_name.c_str());
+	m_verticesField->setText(QString::number(m_modelDescriptor.m_model->m_vertexCount));
+	m_facesField->setText(QString::number(m_modelDescriptor.m_model->m_faceCount));
 
-	m_surfaceAreaField->setText(QString::number(_model->m_3DFeatures.surfaceArea));
-	m_AABBAreaField->setText(QString::number(_model->m_3DFeatures.boundsArea));
-	m_AABBVolumeField->setText(QString::number(_model->m_3DFeatures.boundsVolume));
-	m_shapeVolumeField->setText(QString::number(_model->m_3DFeatures.volume));
-	m_vsaRatioField->setText(QString::number(_model->m_3DFeatures.compactness));
-	m_eccentricityRatioField->setText(QString::number(_model->m_3DFeatures.eccentricity));
+	m_surfaceAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.surfaceArea));
+	m_AABBAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.boundsArea));
+	m_AABBVolumeField->setText(QString::number(m_modelDescriptor.m_3DFeatures.boundsVolume));
+	m_shapeVolumeField->setText(QString::number(m_modelDescriptor.m_3DFeatures.volume));
+	m_vsaRatioField->setText(QString::number(m_modelDescriptor.m_3DFeatures.compactness));
+	m_eccentricityRatioField->setText(QString::number(m_modelDescriptor.m_3DFeatures.eccentricity));
 	
-	UpdateFaceAreaHistogram(_model);
+	UpdateFaceAreaHistogram(_modelDescriptor);
 }
 
-void FeatureView::UpdateFaceAreaHistogram(std::shared_ptr<Model> _model)
+void FeatureView::UpdateFaceAreaHistogram(ModelDescriptor& _modelDescriptor)
 {
 	//get the areas of each of the triangles in the model
-	std::vector<double> areas = ExtractFaceAreas(*_model);
+	std::vector<double> areas = ExtractFaceAreas(*_modelDescriptor.m_model);
 	std::sort(areas.begin(), areas.end(), [](double lhs, double rhs) { return lhs < rhs; });
 
 	//How many histogram bars there are.

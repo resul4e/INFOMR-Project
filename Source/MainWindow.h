@@ -56,7 +56,7 @@ public:
 	 * @brief Set the model to the selected model in the Model database selector.
 	 * @param _model The model to display on the screen.
 	*/
-	void selectModel(std::shared_ptr<Model> _model);
+	void selectModel(ModelDescriptor _model);
 
 	void normalizeCurrentModel();
 	void remeshCurrentModel();

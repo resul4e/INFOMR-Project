@@ -181,17 +181,22 @@ QAction* MainWindow::addExportOption(QString menuName)
 
 void MainWindow::importModelFromFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(Q_NULLPTR, "Load File", "", "Model Files (*.off *.ply *)");
+	QString filePath = QFileDialog::getOpenFileName(Q_NULLPTR, "Load File", "", "Model Files (*.off *.ply *)");
 
-    // Don't try to load a file if the dialog was cancelled or the file name is empty
-    if (fileName.isNull() || fileName.isEmpty())
-        return;
+	// Don't try to load a file if the dialog was cancelled or the file name is empty
+	if (filePath.isNull() || filePath.isEmpty())
+		return;
 
-    qDebug() << "Loading Model file: " << fileName;
+	QFileInfo fi(filePath);
+	QString fileName = fi.fileName();
 
-    std::shared_ptr<Model> model = ModelLoader::LoadModel(std::filesystem::path(fileName.toStdString()));
+	ModelDescriptor modelDescriptor;
+	modelDescriptor.m_path = filePath.toStdString();
+	modelDescriptor.m_name = fileName.toStdString();
+	modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(filePath.toStdString()));
+	modelDescriptor.UpdateFeatures();
 
-	selectModel(model);
+	selectModel(modelDescriptor);
 }
 
 void MainWindow::exportModelToFile()
@@ -204,12 +209,12 @@ void MainWindow::exportModelToFile()
 
 	qDebug() << "Saving Model file: " << fileName;
 
-	std::shared_ptr<Model> model = _modelViewer->getModel();
-	if(model != nullptr)
+	ModelDescriptor modelDescriptor = _modelViewer->getModel();
+	if(modelDescriptor.m_model != nullptr)
 	{
-		ModelSaver::SavePly(*model, std::filesystem::path(fileName.toStdString()));
+		ModelSaver::SavePly(modelDescriptor, std::filesystem::path(fileName.toStdString()));
 	}
-	_featureWidget->SetModel(model);
+	_featureWidget->SetModel(modelDescriptor);
 }
 
 void MainWindow::loadLabelledPSB()
@@ -245,14 +250,14 @@ void MainWindow::populateDatabaseModelSelector()
         return;
 	}
 	
-	for(std::shared_ptr<Model> m : m_queryManager->GetDatabase()->GetModelDatabase())
+	for(ModelDescriptor m : m_queryManager->GetDatabase()->GetModelDatabase())
 	{
         auto selectModelLamda = [=]()
         {
             selectModel(m);
         };
 		
-        QAction* modelAction = new QAction(m->m_name.c_str());
+        QAction* modelAction = new QAction(m.m_name.c_str());
         connect(modelAction, &QAction::triggered, this, selectModelLamda);
         m_menuModelSelect->addAction(modelAction);
         m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
@@ -260,7 +265,7 @@ void MainWindow::populateDatabaseModelSelector()
 	}
 }
 
-void MainWindow::selectModel(std::shared_ptr<Model> _model)
+void MainWindow::selectModel(ModelDescriptor _model)
 {
     _modelViewer->setModel(_model);
 	_featureWidget->SetModel(_model);
@@ -268,27 +273,27 @@ void MainWindow::selectModel(std::shared_ptr<Model> _model)
 
 void MainWindow::normalizeCurrentModel()
 {
-	std::shared_ptr<Model> model = _modelViewer->getModel();
-	if(model != nullptr)
-    {
+	ModelDescriptor& modelDescriptor = _modelViewer->getModel();
+	if(modelDescriptor.m_model != nullptr)
+	{
 		//Normalizer::Remesh(*model);
-        Normalizer::Normalize(*model);
-		_featureWidget->SetModel(model);
-    }
-    else
-    {
-        std::cerr << "No Model to perform normalization on!" << std::endl;
-    }
+		Normalizer::Normalize(modelDescriptor);
+
+		_featureWidget->SetModel(modelDescriptor);
+	}
+	else
+	{
+		std::cerr << "No Model to perform normalization on!" << std::endl;
+	}
 }
 
 void MainWindow::remeshCurrentModel()
 {
-	std::shared_ptr<Model> model = _modelViewer->getModel();
-	if (model != nullptr)
+	ModelDescriptor& modelDescriptor = _modelViewer->getModel();
+	if (modelDescriptor.m_model != nullptr)
 	{
-		Normalizer::Remesh(*model);
-		//Normalizer::Normalize(*model);
-		_featureWidget->SetModel(model);
+		Normalizer::Remesh(modelDescriptor);
+		_featureWidget->SetModel(modelDescriptor);
 	}
 	else
 	{
@@ -355,7 +360,7 @@ void MainWindow::keyPressEvent(QKeyEvent* _event)
 		m_selectedModelIndex--;
 	}
 
-	std::vector<std::shared_ptr<Model>> db = m_queryManager->GetDatabase()->GetModelDatabase();
+	std::vector<ModelDescriptor> db = m_queryManager->GetDatabase()->GetModelDatabase();
 	if(m_selectedModelIndex < db.size())
 	{
 		selectModel(db[m_selectedModelIndex]);

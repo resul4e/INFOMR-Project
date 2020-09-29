@@ -4,7 +4,7 @@
 #include <memory>
 #include <map>
 
-class Model;
+struct ModelDescriptor;
 
 /**
  * \brief Class that saves a model
@@ -18,5 +18,5 @@ public:
 	 * \param _model The mode to be saved
 	 * \param _filePath The filepath to save the model to. The m_path property will be changed to this path in _model 
 	 */
-	static void SavePly(Model& _model, std::filesystem::path _filePath);
+	static void SavePly(ModelDescriptor& _modelDescriptor, std::filesystem::path _filePath);
 };

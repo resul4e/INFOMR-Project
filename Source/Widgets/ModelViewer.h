@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ModelDescriptor.h"
+
 #include "Graphics/Shader.h"
 #include "Graphics/ArcBall.h"
 
@@ -18,7 +20,6 @@ class ModelViewer : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
 	Q_OBJECT
 public:
 	ModelViewer(QWidget* parent = 0) :
-		m_model(nullptr),
 		m_projMatrix(1.0f),
 		m_viewMatrix(1.0f),
 		m_modelMatrix(1.0f)
@@ -26,8 +27,8 @@ public:
 		//setStyleSheet("background-color:black;");
 	}
 
-	void setModel(std::shared_ptr<Model> model);
-	std::shared_ptr<Model>& getModel();
+	void setModel(ModelDescriptor model);
+	ModelDescriptor& getModel();
 
 protected:
 	void initializeGL()         Q_DECL_OVERRIDE;
@@ -43,7 +44,7 @@ private:
 	void drawGroundPlane();
 	void drawModel(bool wireframe = false);
 
-	std::shared_ptr<Model> m_model;
+	ModelDescriptor m_modelDescriptor;
 	std::shared_ptr<Model> m_planeModel;
 	std::shared_ptr<Camera> m_camera;
 	ArcBall m_arcBall;
