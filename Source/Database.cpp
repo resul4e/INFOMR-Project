@@ -140,9 +140,9 @@ void Database::ProcessAllModels()
 
 void Database::RemeshAllModels()
 {
-	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		Normalizer::Remesh(*model);
+		Normalizer::Remesh(modelDescriptor);
 	}
 }
 

@@ -12,14 +12,6 @@
 #include <memory>
 #include <filesystem>
 
-constexpr size_t HISTOGRAM_BIN_SIZE = 10;
-struct HistogramFeature
-{
-	int binCount[HISTOGRAM_BIN_SIZE];
-	float max;
-	float min;
-};
-
 struct Face
 {
 	unsigned int indices[3];

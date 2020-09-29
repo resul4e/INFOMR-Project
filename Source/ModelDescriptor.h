@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <memory>
 
-constexpr size_t HISTOGRAM_BIN_SIZE = 10;
+static constexpr size_t HISTOGRAM_BIN_SIZE = 10;
 struct HistogramFeature
 {
 	int binCount[HISTOGRAM_BIN_SIZE];

@@ -59,8 +59,8 @@ public:
 	void SaveAllModels();
 	void NormalizeAllModels();
 
-	void SubdivideModel(std::shared_ptr<Model>& _model);
-	void CrunchModel(std::shared_ptr<Model>& _model);
+	void SubdivideModel(ModelDescriptor& _model);
+	void CrunchModel(ModelDescriptor& _model);
 	
 	/**
 	 * @brief Sorts the model database on the given SortingOptions.
