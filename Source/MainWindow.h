@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelViewer.h"
+#include "Widgets/ModelViewer.h"
 
 #include "../Resources/ui_MainWindow.h"
 

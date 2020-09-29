@@ -5,16 +5,8 @@ set(BASE_SOURCES
     ${DIR}/Main.cpp
     ${DIR}/MainWindow.cpp
     ${DIR}/MainWindow.h
-    ${DIR}/ModelViewer.h
-    ${DIR}/ModelViewer.cpp
-    ${DIR}/FeatureView.h
-    ${DIR}/FeatureView.cpp
     ${DIR}/FeatureExtraction.h
     ${DIR}/FeatureExtraction.cpp
-    ${DIR}/DatabaseView.h
-    ${DIR}/DatabaseView.cpp
-    ${DIR}/Shader.h
-    ${DIR}/Shader.cpp
     ${DIR}/Model.h
     ${DIR}/Model.cpp
     ${DIR}/ModelLoader.h
@@ -31,11 +23,27 @@ set(BASE_SOURCES
     ${DIR}/ModelUtil.cpp
     ${DIR}/QueryManager.h
     ${DIR}/QueryManager.cpp
-    ${DIR}/Camera.h
-    ${DIR}/Camera.cpp
-    ${DIR}/ArcBall.h
-    ${DIR}/ArcBall.cpp
     ${DIR}/../Resources/MainWindow.ui
     ${DIR}/../Resources/resources.qrc
+    PARENT_SCOPE
+)
+
+set(GRAPHICS_SOURCES
+    ${DIR}/Graphics/ArcBall.h
+    ${DIR}/Graphics/ArcBall.cpp
+    ${DIR}/Graphics/Camera.h
+    ${DIR}/Graphics/Camera.cpp
+    ${DIR}/Graphics/Shader.h
+    ${DIR}/Graphics/Shader.cpp
+    PARENT_SCOPE
+)
+
+set(WIDGETS_SOURCES
+    ${DIR}/Widgets/ModelViewer.h
+    ${DIR}/Widgets/ModelViewer.cpp
+    ${DIR}/Widgets/FeatureView.h
+    ${DIR}/Widgets/FeatureView.cpp
+    ${DIR}/Widgets/DatabaseView.h
+    ${DIR}/Widgets/DatabaseView.cpp
     PARENT_SCOPE
 )

@@ -1,8 +1,8 @@
 #include "MainWindow.h"
 
 #include "QueryManager.h"
-#include "FeatureView.h"
-#include "DatabaseView.h"
+#include "Widgets/FeatureView.h"
+#include "Widgets/DatabaseView.h"
 #include "ModelLoader.h"
 #include "Normalizer.h"
 

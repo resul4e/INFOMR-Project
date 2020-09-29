@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Shader.h"
-#include "ArcBall.h"
+#include "Graphics/Shader.h"
+#include "Graphics/ArcBall.h"
 
 #include <glm/glm.hpp>
 
