@@ -21,6 +21,24 @@ namespace util
 
 		return barycenter;
 	}
+	
+	void ComputeAABB(const Model& model, glm::vec3& min, glm::vec3& max)
+	{
+		min = glm::vec3{ std::numeric_limits<float>::max() };
+		max = glm::vec3{ -std::numeric_limits<float>::max() };
+
+		for (const Mesh& mesh : model.m_meshes)
+		{
+			for (const glm::vec3& p : mesh.positions)
+			{
+				for (int d = 0; d < 3; d++)
+				{
+					min[d] = p[d] < min[d] ? p[d] : min[d];
+					max[d] = p[d] > max[d] ? p[d] : max[d];
+				}
+			}
+		}
+	}
 
 	void ComputeEigenVectors(const Model& model, glm::vec3& eVec1, glm::vec3& eVec2, glm::vec3& eVec3, glm::vec3& eValues)
 	{

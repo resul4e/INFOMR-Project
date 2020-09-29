@@ -157,13 +157,13 @@ void Database::NormalizeAllModels()
 	{
 		barycenterRecorder.preRecord(analytics::ComputeBarycenterDistance(*model));
 		alignmentRecorder.preRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
-		scaleRecorder.preRecord(analytics::ComputeLongestAxis(*model));
+		scaleRecorder.preRecord(analytics::ComputeLongestAABBAxis(*model));
 
 		Normalizer::Normalize(*model);
 
 		barycenterRecorder.postRecord(analytics::ComputeBarycenterDistance(*model));
 		alignmentRecorder.postRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
-		scaleRecorder.postRecord(analytics::ComputeLongestAxis(*model));
+		scaleRecorder.postRecord(analytics::ComputeLongestAABBAxis(*model));
 	}
 
 	barycenterRecorder.saveData("barycenters.csv");
