@@ -8,6 +8,7 @@
 #include "Model.h"
 #include "Normalizer.h"
 #include "ModelSaver.h"
+#include "ModelAnalytics.h"
 
 namespace fs = std::filesystem;
 
@@ -148,49 +149,26 @@ void Database::SaveAllModels()
 
 void Database::NormalizeAllModels()
 {
-	float distBeforeNorm = 0;
-	float distAfterNorm = 0;
-	
+	analytics::DataRecorder barycenterRecorder;
+	analytics::DataRecorder alignmentRecorder;
+	analytics::DataRecorder scaleRecorder;
+
 	for (std::shared_ptr<Model>& model : m_modelDatabase)
 	{
-		glm::highp_dvec3 mean{ .0,.0,.0 };
-		for (int i = 0; i < 3; i++)
-		{
-			int positionAmounts = 0;
-			for (int k = 0; k < model->m_meshes.size(); k++)
-			{
-				positionAmounts += model->m_meshes[k].positions.size();
-				for (int j = 0; j < model->m_meshes[k].positions.size(); j++)
-				{
-					mean[i] += model->m_meshes[k].positions[j][i];
-				}
-			}
-			mean[i] /= static_cast<double>(positionAmounts);
-		}
-		
-		distBeforeNorm += glm::length(mean);
+		barycenterRecorder.preRecord(analytics::ComputeBarycenterDistance(*model));
+		alignmentRecorder.preRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
+		scaleRecorder.preRecord(analytics::ComputeLongestAxis(*model));
+
 		Normalizer::Normalize(*model);
 
-		mean = { .0,.0,.0 };
-		for (int i = 0; i < 3; i++)
-		{
-			int positionAmounts = 0;
-			for (int k = 0; k < model->m_meshes.size(); k++)
-			{
-				positionAmounts += model->m_meshes[k].positions.size();
-				for (int j = 0; j < model->m_meshes[k].positions.size(); j++)
-				{
-					mean[i] += model->m_meshes[k].positions[j][i];
-				}
-			}
-			mean[i] /= static_cast<double>(positionAmounts);
-		}
-		
-		distAfterNorm += glm::length(mean);
-		std::cout << distAfterNorm << "\n";
+		barycenterRecorder.postRecord(analytics::ComputeBarycenterDistance(*model));
+		alignmentRecorder.postRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*model));
+		scaleRecorder.postRecord(analytics::ComputeLongestAxis(*model));
 	}
 
-	std::cout << distBeforeNorm << " & " << distAfterNorm << "\n";
+	barycenterRecorder.saveData("barycenters.csv");
+	alignmentRecorder.saveData("alignment.csv");
+	scaleRecorder.saveData("scale.csv");
 }
 
 void Database::SubdivideModel(std::shared_ptr<Model>& _model)
