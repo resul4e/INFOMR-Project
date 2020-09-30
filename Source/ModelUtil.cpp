@@ -62,9 +62,11 @@ namespace util
 		std::vector<float> sortedEigenValues = { eigenValues.x, eigenValues.y, eigenValues.z };
 		std::sort(std::begin(sortedIndices), std::end(sortedIndices), [&](int i1, int i2) { return sortedEigenValues[i1] > sortedEigenValues[i2]; });
 
-		glm::vec3 majorEigenVector = eigenVectors[sortedIndices[0]];
-		glm::vec3 medianEigenVector = eigenVectors[sortedIndices[1]];
-		glm::vec3 minorEigenVector = glm::cross(majorEigenVector, medianEigenVector);
+		glm::vec3 majorEigenVector;
+		glm::vec3 medianEigenVector;
+		glm::vec3 minorEigenVector;
+
+		GetSortedEigenVectors(eigenVectors, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
 		
 		for (Mesh& mesh : model.m_meshes)
 		{
@@ -77,5 +79,32 @@ namespace util
 				p = glm::vec3(x, y, z);
 			}
 		}
+	}
+
+	void GetSortedEigenValues(const Model& model, glm::vec3& eigenValues)
+	{
+		glm::vec3 eigenVectors[3];
+		ComputeEigenVectors(model, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
+		GetSortedEigenVectors(eigenVectors, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
+	}
+
+	void GetSortedEigenVectors(const Model& model, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector,
+	                           glm::vec3& minorEigenVector)
+	{
+		glm::vec3 eigenVectors[3];
+		glm::vec3 eigenValues;
+		ComputeEigenVectors(model, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
+		GetSortedEigenVectors(eigenVectors, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
+	}
+
+	void GetSortedEigenVectors(glm::vec3* eigenVectors, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector, glm::vec3& minorEigenVector, const glm::vec3& eValues)
+	{
+		std::vector<int> sortedIndices = { 0, 1, 2 };
+		std::vector<float> sortedEigenValues = { eValues.x, eValues.y, eValues.z };
+		std::sort(std::begin(sortedIndices), std::end(sortedIndices), [&](int i1, int i2) { return sortedEigenValues[i1] > sortedEigenValues[i2]; });
+
+		majorEigenVector = eigenVectors[sortedIndices[0]];
+		medianEigenVector = eigenVectors[sortedIndices[1]];
+		minorEigenVector = glm::cross(majorEigenVector, medianEigenVector);
 	}
 }

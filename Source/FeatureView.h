@@ -35,6 +35,7 @@ private:
 	QLineEdit* m_AABBVolumeField;
 	QLineEdit* m_shapeVolumeField;
 	QLineEdit* m_vsaRatioField;
+	QLineEdit* m_eccentricityRatioField;
 };
 
 QLineEdit* createField(std::string text, int maxWidth = 75);

@@ -50,6 +50,7 @@ FeatureView::FeatureView() :
 	QLabel* AABBVolumeLabel = new QLabel("AABB Volume");
 	QLabel* surfaceAreaLabel = new QLabel("Surface Area");
 	QLabel* vsaRatioLabel = new QLabel("Volume-to-Surface Area Ratio");
+	QLabel* eccentricityRatioLabel = new QLabel("Eccentricity");
 	QLabel* bbaRatioLabel = new QLabel("Bounding-Box Aspect Ratio");
 
 	m_verticesField = createField("0");
@@ -59,6 +60,7 @@ FeatureView::FeatureView() :
 	m_surfaceAreaField = createField("0");
 	m_AABBVolumeField = createField("0");
 	m_vsaRatioField = createField("0");
+	m_eccentricityRatioField = createField("0");
 	QLineEdit* bbaRatioField = createField("0");
 
 	m_faceAreaHistogram = CreateFaceAreaHistogram();
@@ -87,7 +89,9 @@ FeatureView::FeatureView() :
 	featureLayout->addWidget(bbaRatioField, 3, 1);
 	featureLayout->addWidget(AABBVolumeLabel, 4, 0);
 	featureLayout->addWidget(m_AABBVolumeField, 4, 1);
-	featureLayout->addItem(spacer, 5, 0);
+	featureLayout->addWidget(eccentricityRatioLabel, 5, 0);
+	featureLayout->addWidget(m_eccentricityRatioField, 5, 1);
+	featureLayout->addItem(spacer, 6, 0);
 
 	QGroupBox* attributeBox = new QGroupBox("Model attributes");
 	attributeBox->setLayout(attributeLayout);
@@ -172,6 +176,7 @@ void FeatureView::SetModel(std::shared_ptr<Model> _model)
 	m_AABBVolumeField->setText(QString::number(_model->m_3DFeatures.boundsArea));
 	m_shapeVolumeField->setText(QString::number(_model->m_3DFeatures.volume));
 	m_vsaRatioField->setText(QString::number(_model->m_3DFeatures.compactness));
+	m_eccentricityRatioField->setText(QString::number(_model->m_3DFeatures.eccentricity));
 	
 	UpdateFaceAreaHistogram(_model);
 }
