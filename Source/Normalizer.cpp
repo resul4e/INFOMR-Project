@@ -12,13 +12,8 @@ namespace fs = std::filesystem;
 
 void Normalizer::Normalize(Model& _model)
 {
-	//The folder where we will save the centered mesh
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	
-	CenterModel(_model);
-	//We save it so that we load the correct model when aligning
-	ModelSaver::SavePly(_model, modifiedMeshesPath / _model.m_path.filename().replace_extension(".ply"));
 	AlignModel(_model);
+	CenterModel(_model);
 	FlipModel(_model);
 	ScaleModel(_model);
 
@@ -76,15 +71,16 @@ void Normalizer::ScaleModel(Model& _model)
 
 void Normalizer::AlignModel(Model& _model)
 {
-	//The folder where we will save the subdivided mesh
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	
-	auto newPath = modifiedMeshesPath;
-	newPath /= _model.m_path.filename();
-	system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcarot " + newPath.string()).c_str());
+	util::RotateMajorEigenVectorToXAxis(_model);
+	////The folder where we will save the subdivided mesh
+	//fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+	//
+	//auto newPath = modifiedMeshesPath;
+	//newPath /= _model.m_path.filename();
+	//system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcarot " + newPath.string()).c_str());
 
-	std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
-	std::swap(_model, *newModel);
+	//std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
+	//std::swap(_model, *newModel);
 }
 
 template <typename T> int sgn(T val) {
