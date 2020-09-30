@@ -8,6 +8,11 @@
 
 namespace analytics
 {
+	float ComputeBarycenterDistance(const Model& model)
+	{
+		return glm::length(util::ComputeBarycenter(model));
+	}
+
 	glm::vec3 ComputeExtents(const Model& model)
 	{
 		glm::vec3 extent(0, 0, 0);
