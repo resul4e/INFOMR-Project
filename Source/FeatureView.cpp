@@ -47,6 +47,7 @@ FeatureView::FeatureView() :
 	QLabel* verticesLabel = new QLabel("# Vertices");
 	QLabel* facesLabel = new QLabel("# Faces");
 	QLabel* volumeLabel = new QLabel("Volume");
+	QLabel* AABBAreaLabel = new QLabel("AABB Area");
 	QLabel* AABBVolumeLabel = new QLabel("AABB Volume");
 	QLabel* surfaceAreaLabel = new QLabel("Surface Area");
 	QLabel* vsaRatioLabel = new QLabel("Volume-to-Surface Area Ratio");
@@ -58,6 +59,7 @@ FeatureView::FeatureView() :
 	m_modelNameField = createField("NULL", 150);
 	m_shapeVolumeField = createField("0");
 	m_surfaceAreaField = createField("0");
+	m_AABBAreaField = createField("0");
 	m_AABBVolumeField = createField("0");
 	m_vsaRatioField = createField("0");
 	m_eccentricityRatioField = createField("0");
@@ -87,11 +89,13 @@ FeatureView::FeatureView() :
 	featureLayout->addWidget(m_vsaRatioField, 2, 1);
 	featureLayout->addWidget(bbaRatioLabel, 3, 0);
 	featureLayout->addWidget(bbaRatioField, 3, 1);
-	featureLayout->addWidget(AABBVolumeLabel, 4, 0);
-	featureLayout->addWidget(m_AABBVolumeField, 4, 1);
-	featureLayout->addWidget(eccentricityRatioLabel, 5, 0);
-	featureLayout->addWidget(m_eccentricityRatioField, 5, 1);
-	featureLayout->addItem(spacer, 6, 0);
+	featureLayout->addWidget(AABBAreaLabel, 4, 0);
+	featureLayout->addWidget(m_AABBAreaField, 4, 1);
+	featureLayout->addWidget(AABBVolumeLabel, 5, 0);
+	featureLayout->addWidget(m_AABBVolumeField, 5, 1);
+	featureLayout->addWidget(eccentricityRatioLabel, 6, 0);
+	featureLayout->addWidget(m_eccentricityRatioField, 6, 1);
+	featureLayout->addItem(spacer, 7, 0);
 
 	QGroupBox* attributeBox = new QGroupBox("Model attributes");
 	attributeBox->setLayout(attributeLayout);
@@ -173,7 +177,8 @@ void FeatureView::SetModel(std::shared_ptr<Model> _model)
 	m_facesField->setText(QString::number(m_model->m_faceCount));
 
 	m_surfaceAreaField->setText(QString::number(_model->m_3DFeatures.surfaceArea));
-	m_AABBVolumeField->setText(QString::number(_model->m_3DFeatures.boundsArea));
+	m_AABBAreaField->setText(QString::number(_model->m_3DFeatures.boundsArea));
+	m_AABBVolumeField->setText(QString::number(_model->m_3DFeatures.boundsVolume));
 	m_shapeVolumeField->setText(QString::number(_model->m_3DFeatures.volume));
 	m_vsaRatioField->setText(QString::number(_model->m_3DFeatures.compactness));
 	m_eccentricityRatioField->setText(QString::number(_model->m_3DFeatures.eccentricity));

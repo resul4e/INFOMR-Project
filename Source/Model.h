@@ -56,6 +56,7 @@ struct Features3D
 	float surfaceArea;
 	float compactness;
 	float boundsArea;
+	float boundsVolume;
 	float eccentricity;
 };
 

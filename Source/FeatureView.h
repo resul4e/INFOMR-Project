@@ -32,6 +32,7 @@ private:
 	QtCharts::QChart* m_faceAreaHistogram;
 
 	QLineEdit* m_surfaceAreaField;
+	QLineEdit* m_AABBAreaField;
 	QLineEdit* m_AABBVolumeField;
 	QLineEdit* m_shapeVolumeField;
 	QLineEdit* m_vsaRatioField;

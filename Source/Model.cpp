@@ -164,6 +164,7 @@ void Model::UpdateFeatures()
 	m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
 	m_3DFeatures.volume = ExtractVolume(*this);
 	m_3DFeatures.boundsArea = ExtractAABBArea(*this);
+	m_3DFeatures.boundsVolume = ExtractAABBVolume(*this);
 	m_3DFeatures.compactness = (std::pow(M_PI, 1.0/3.0) * std::pow((6.0 * m_3DFeatures.volume), 2.0/3.0)) / m_3DFeatures.surfaceArea;
 	glm::vec3 eigenValues{0};
 	util::GetSortedEigenValues(*this, eigenValues);

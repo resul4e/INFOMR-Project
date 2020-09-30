@@ -45,6 +45,14 @@ float ExtractAABBArea(Model& _model)
 {
 	glm::vec3 AABB = _model.m_bounds.max - _model.m_bounds.min;
 
+	return 2 * (AABB.x * AABB.y + AABB.x * AABB.z + AABB.y * AABB.z);
+}
+
+
+float ExtractAABBVolume(Model& _model)
+{
+	glm::vec3 AABB = _model.m_bounds.max - _model.m_bounds.min;
+
 	return AABB.x * AABB.y * AABB.z;
 }
 
