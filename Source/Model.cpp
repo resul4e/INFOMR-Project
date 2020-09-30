@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "FeatureExtraction.h"
+#include "ModelUtil.h"
 
 # define M_PI           3.14159265358979323846  /* pi */
 
@@ -158,7 +159,7 @@ void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 void Model::UpdateFeatures()
 {
 	UpdateBounds();
-	CalculateOBB(m_meshes[0].positions);	
+	CalculateOBB();
 
 	m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
 	m_3DFeatures.volume = ExtractVolume(*this);
@@ -185,56 +186,44 @@ void Model::UpdateBounds()
 
 }
 
-void Model::CalculateOBB(std::vector<glm::vec3>& vertices)
+void Model::CalculateOBB()
 {
+	
 	m_orientedPoints.clear();
 
-	// compute mean
-	Eigen::Vector3d center;
-	center.setZero();
-	for (std::vector<glm::vec3>::const_iterator v = vertices.begin(); v != vertices.end(); v++) {
-		center += Eigen::Vector3d{ v->x, v->y, v->z };
-	}
-	center /= (double)vertices.size();
-
-	// adjust for mean and compute covariance
-	Eigen::Matrix3d covariance;
-	covariance.setZero();
-	for (std::vector<glm::vec3>::iterator v = vertices.begin(); v != vertices.end(); v++) {
-		Eigen::Vector3d pAdg = Eigen::Vector3d{ v->x, v->y, v->z } - center;
-		covariance += pAdg * pAdg.transpose();
-	}
-	covariance /= (double)vertices.size();
-
-	// compute eigenvectors for the covariance matrix
-	Eigen::EigenSolver<Eigen::Matrix3d> solver(covariance);
-	Eigen::Matrix3d eigenVectors = solver.eigenvectors().real();
+	glm::vec3 eigenVectors[3];
+	glm::vec3 eigenValues;
+	util::ComputeEigenVectors(*this, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
 
 	// project min and max points on each principal axis
-	double min1 = INFINITY, max1 = -INFINITY;
-	double min2 = INFINITY, max2 = -INFINITY;
-	double min3 = INFINITY, max3 = -INFINITY;
-	double d = 0.0;
-	eigenVectors.transpose();
-	for (std::vector<glm::vec3>::iterator v = vertices.begin(); v != vertices.end(); v++) {
-		d = eigenVectors.row(0).dot(Eigen::Vector3d{ v->x, v->y, v->z });
-		if (min1 > d) min1 = d;
-		if (max1 < d) max1 = d;
+	float min1 = INFINITY, max1 = -INFINITY;
+	float min2 = INFINITY, max2 = -INFINITY;
+	float min3 = INFINITY, max3 = -INFINITY;
+	float d = 0.0;
 
-		d = eigenVectors.row(1).dot(Eigen::Vector3d{ v->x, v->y, v->z });
-		if (min2 > d) min2 = d;
-		if (max2 < d) max2 = d;
+	for (const Mesh& mesh : m_meshes)
+	{
+		for (const glm::vec3& p : mesh.positions)
+		{
+			d = glm::dot(eigenVectors[0], p);
+			if (min1 > d) min1 = d;
+			if (max1 < d) max1 = d;
 
-		d = eigenVectors.row(2).dot(Eigen::Vector3d{ v->x, v->y, v->z });
-		if (min3 > d) min3 = d;
-		if (max3 < d) max3 = d;
+			d = glm::dot(eigenVectors[1], p);
+			if (min2 > d) min2 = d;
+			if (max2 < d) max2 = d;
+
+			d = glm::dot(eigenVectors[2], p);
+			if (min3 > d) min3 = d;
+			if (max3 < d) max3 = d;
+		}
 	}
-
+	
 	// add points to vector
-	m_orientedPoints.push_back(eigenVectors.row(0) * min1);
-	m_orientedPoints.push_back(eigenVectors.row(0) * max1);
-	m_orientedPoints.push_back(eigenVectors.row(1) * min2);
-	m_orientedPoints.push_back(eigenVectors.row(1) * max2);
-	m_orientedPoints.push_back(eigenVectors.row(2) * min3);
-	m_orientedPoints.push_back(eigenVectors.row(2) * max3);
+	m_orientedPoints.push_back(eigenVectors[0] * min1);
+	m_orientedPoints.push_back(eigenVectors[0] * max1);
+	m_orientedPoints.push_back(eigenVectors[1] * min2);
+	m_orientedPoints.push_back(eigenVectors[1] * max2);
+	m_orientedPoints.push_back(eigenVectors[2] * min3);
+	m_orientedPoints.push_back(eigenVectors[2] * max3);
 }

@@ -92,9 +92,9 @@ public:
 	Features3D m_3DFeatures;
 	size_t m_vertexCount;
 	size_t m_faceCount;
-	std::vector<Eigen::Vector3d> m_orientedPoints;
+	std::vector<glm::vec3> m_orientedPoints;
 	
 private:
 	void UpdateBounds();
-	void CalculateOBB(std::vector<glm::vec3>& vertices);
+	void CalculateOBB();
 };

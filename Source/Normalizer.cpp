@@ -1,5 +1,7 @@
 #include "Normalizer.h"
 
+#include "ModelUtil.h"
+
 #include <pmp/algorithms/SurfaceRemeshing.h>
 
 #include <iostream>
@@ -26,28 +28,12 @@ void Normalizer::Normalize(Model& _model)
 
 void Normalizer::CenterModel(Model& _model)
 {
-	glm::vec3 mean{ 0,0,0 };
-	for (int i = 0; i < 3; i++)
-	{
-		int positionAmounts = 0;
-		for (int k = 0; k < _model.m_meshes.size(); k++)
-		{
-			positionAmounts += _model.m_meshes[k].positions.size();
-			for (int j = 0; j < _model.m_meshes[k].positions.size(); j++)
-			{
-				mean[i] += _model.m_meshes[k].positions[j][i];
-			}
-		}
-		mean[i] /= static_cast<float>(positionAmounts);
-	}
+	glm::vec3 mean = util::ComputeBarycenter(_model);
 
-	for (int k = 0; k < _model.m_meshes.size(); k++)
-	{
-		for (int j = 0; j < _model.m_meshes[k].positions.size(); j++)
-		{
-			_model.m_meshes[k].positions[j] -= mean;
-		}
-	}
+	// Subtract mean from each vertex position
+	for (Mesh& mesh : _model.m_meshes)
+		for (glm::vec3& p : mesh.positions)
+			p -= mean;
 }
 
 void Normalizer::ScaleModel(Model& _model)
@@ -95,7 +81,7 @@ void Normalizer::AlignModel(Model& _model)
 	
 	auto newPath = modifiedMeshesPath;
 	newPath /= _model.m_path.filename();
-	system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcasnap " + newPath.string()).c_str());
+	system(("..\\Scripts\\mesh_filter.exe " + _model.m_path.string() + " -pcarot " + newPath.string()).c_str());
 
 	std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
 	std::swap(_model, *newModel);

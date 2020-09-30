@@ -11,7 +11,7 @@ namespace
 		glm::vec3 e1 = v1 - v0;
 		glm::vec3 e2 = v2 - v0;
 
-		float triangleArea = 0.5 * glm::length(glm::cross(e1, e2));
+		float triangleArea = 0.5f * glm::length(glm::cross(e1, e2));
 		return triangleArea;
 	}
 }

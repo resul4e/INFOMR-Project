@@ -25,6 +25,10 @@ set(BASE_SOURCES
     ${DIR}/Database.cpp
     ${DIR}/Normalizer.h
     ${DIR}/Normalizer.cpp
+    ${DIR}/ModelAnalytics.h
+    ${DIR}/ModelAnalytics.cpp
+    ${DIR}/ModelUtil.h
+    ${DIR}/ModelUtil.cpp
     ${DIR}/QueryManager.h
     ${DIR}/QueryManager.cpp
     ${DIR}/Camera.h
