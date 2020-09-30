@@ -6,8 +6,35 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/component_wise.hpp>
 
+#include <fstream>
+
 namespace analytics
 {
+	DataRecorder::DataRecorder()
+	{
+
+	}
+
+	void DataRecorder::preRecord(float data)
+	{
+		m_preData.push_back(data);
+	}
+
+	void DataRecorder::postRecord(float data)
+	{
+		m_postData.push_back(data);
+	}
+	
+	void DataRecorder::saveData(std::string fileName)
+	{
+		std::ofstream outFile;
+		outFile.open(fileName);
+		for (int i = 0; i < m_preData.size(); i++)
+		{
+			outFile << m_preData[i] << "," << m_postData[i] << "\n";
+		}
+		outFile.close();
+	}
 	float ComputeBarycenterDistance(const Model& model)
 	{
 		return glm::length(util::ComputeBarycenter(model));
