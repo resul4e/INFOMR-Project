@@ -7,6 +7,8 @@
 
 int main(int argc, char** argv)
 {
+	srand(time(nullptr));
+	
 	__noop(argc);
 	__noop(argv);
 
