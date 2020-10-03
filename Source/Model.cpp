@@ -35,7 +35,7 @@ void Mesh::Upload()
 			linearPositions[i * 3 + v] = positions[face.indices[v]];
 			linearNormals[i * 3 + v] = normals[face.indices[v]];
 
-			if (texCoords.size() != 0) {
+			if (texCoords.size() != 0 && texCoords.size() > face.indices[v]) {
 				linearTextureCoords[i * 3 + v] = texCoords[face.indices[v]];
 			}
 		}
@@ -169,6 +169,12 @@ void Model::UpdateFeatures()
 	glm::vec3 eigenValues{0};
 	util::GetSortedEigenValues(*this, eigenValues);
 	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
+
+	ExtractA1(*this);
+	ExtractD1(*this);
+	ExtractD2(*this);
+	ExtractD3(*this);
+	ExtractD4(*this);
 }
 
 void Model::UpdateBounds()
