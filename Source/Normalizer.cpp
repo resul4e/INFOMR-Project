@@ -105,6 +105,12 @@ void Normalizer::FlipModel(Model& _model)
 		}
 	}
 
+	//If we are going to put all vertices on the origin just return
+	if(glm::length(f) < 0.0001f)
+	{
+		return;
+	}
+	
 	glm::mat<3, 3, float, glm::defaultp> flip{ sgn(f.x), 0, 0,
 					  0, sgn(f.y), 0,
 					  0, 0, sgn(f.z) };
