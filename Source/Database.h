@@ -52,9 +52,13 @@ public:
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
 	*/
 	void ProcessAllModels();
+	void RemeshAllModels();
 	void SaveAllModels();
 	void NormalizeAllModels();
 
+	void SubdivideModel(std::shared_ptr<Model>& _model);
+	void CrunchModel(std::shared_ptr<Model>& _model);
+	
 	/**
 	 * @brief Sorts the model database on the given SortingOptions.
 	 * @param _option The sorting option, current supports Vertex count, Face count and AABB cross section.
@@ -65,8 +69,7 @@ private:
 
 	void ReadPSBClassificationFile(std::filesystem::path _modelDirectoryPath, std::filesystem::path _filePath);
 	
-	void SubdivideModel(std::shared_ptr<Model>& _model);
-	void CrunchModel(std::shared_ptr<Model>& _model);
+
 	
 	std::shared_ptr<Model> LoadModifiedModel(std::filesystem::path _modelFileName);
 	

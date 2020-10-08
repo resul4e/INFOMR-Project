@@ -43,7 +43,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	_databaseWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
 	addDockWidget(Qt::LeftDockWidgetArea, _databaseWidget);
 
-
+	auto processModelFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->SubdivideModel(_modelViewer->getModel());
+		m_queryManager->GetDatabase()->CrunchModel(_modelViewer->getModel());
+		_modelViewer->getModel()->m_isUploaded = false;
+		_databaseWidget->Update();
+	};
 
     QAction* importModelAction = new QAction("3D Model");
     connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
@@ -53,6 +59,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(exportModelAction, &QAction::triggered, this, &MainWindow::exportModelToFile);
 	exportDataFileMenu->addAction(exportModelAction);
 
+	QAction* processModelAction = new QAction("Process Model");
+	connect(processModelAction, &QAction::triggered, this, processModelFunc);
+	menuFile->insertAction(exitAction, processModelAction);
+	
     QAction* normalizeModelAction = new QAction("Normalize Model");
     connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
     menuFile->insertAction(exitAction, normalizeModelAction);
@@ -71,6 +81,12 @@ void MainWindow::addDatabaseMenuActions()
         m_queryManager->GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
     };
+
+	auto remeshModelsFunc = [=]()
+	{
+		m_queryManager->GetDatabase()->RemeshAllModels();
+		_databaseWidget->Update();
+	};
 
 	auto saveModifiedModelsFunc = [=]()
 	{
@@ -136,6 +152,10 @@ void MainWindow::addDatabaseMenuActions()
     connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
     menuDatabase->addAction(menuProcessDatabase);
 
+	QAction* menuRemeshDatabase = new QAction("Remesh database");
+	connect(menuRemeshDatabase, &QAction::triggered, this, remeshModelsFunc);
+	menuDatabase->addAction(menuRemeshDatabase);
+	
 	QAction* menuNormalizeDatabase = new QAction("Normalize database");
 	connect(menuNormalizeDatabase, &QAction::triggered, this, normalizeModelsFunc);
 	menuDatabase->addAction(menuNormalizeDatabase);

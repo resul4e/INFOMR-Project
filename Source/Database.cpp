@@ -137,6 +137,14 @@ void Database::ProcessAllModels()
 	}
 }
 
+void Database::RemeshAllModels()
+{
+	for (std::shared_ptr<Model>& model : m_modelDatabase)
+	{
+		Normalizer::Remesh(*model);
+	}
+}
+
 void Database::SaveAllModels()
 {
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
@@ -180,7 +188,7 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 	bool subdivide = false;
 	for (const Mesh& mesh : _model->m_meshes)
 	{
-		if (mesh.positions.size() < 1000 || mesh.faces.size() < 1000)
+		if (mesh.positions.size() < 10000 || mesh.faces.size() < 10000)
 		{
 			subdivide = true;
 			std::cerr << "Not enough verts/faces in model with name: " << _model->m_name << std::endl;
