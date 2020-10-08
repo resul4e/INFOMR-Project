@@ -20,15 +20,20 @@ include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/assimp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/glm/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/pmp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/Eigen/include/)
+include_directories(${CMAKE_SOURCE_DIR}/Source)
 
 # Add source subdirectory which contains the source files
 add_subdirectory(Source)
 
 add_executable(${PROJECT_NAME}
     ${BASE_SOURCES}
+    ${GRAPHICS_SOURCES}
+    ${WIDGETS_SOURCES}
 )
 
 source_group(Source FILES ${BASE_SOURCES})
+source_group(Graphics FILES ${GRAPHICS_SOURCES})
+source_group(Widgets FILES ${WIDGETS_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 target_link_libraries(${PROJECT_NAME} Qt5::Charts)

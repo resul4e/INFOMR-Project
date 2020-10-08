@@ -28,7 +28,7 @@ namespace analytics
 
 	glm::vec3 ComputeExtents(const Model& model);
 
-	float ComputeLongestAxis(const Model& model);
+	float ComputeLongestAABBAxis(const Model& model);
 
 	float ComputeAbsCosineMajorEigenToXAxis(const Model& model);
 }

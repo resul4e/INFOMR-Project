@@ -56,9 +56,12 @@ namespace analytics
 		return extent;
 	}
 
-	float ComputeLongestAxis(const Model& model)
+	float ComputeLongestAABBAxis(const Model& model)
 	{
-		return glm::compMax(ComputeExtents(model));
+		glm::vec3 min, max;
+		util::ComputeAABB(model, min, max);
+		glm::vec3 range = max - min;
+		return glm::compMax(range);
 	}
 
 	float ComputeAbsCosineMajorEigenToXAxis(const Model& model)

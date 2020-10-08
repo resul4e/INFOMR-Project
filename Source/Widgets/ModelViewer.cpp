@@ -2,7 +2,7 @@
 
 #include "ModelLoader.h"
 #include "Model.h"
-#include "Camera.h"
+#include "Graphics/Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
