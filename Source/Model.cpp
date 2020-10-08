@@ -89,7 +89,8 @@ bool Model::isUploaded()
 	return m_isUploaded;
 }
 
-void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
+
+void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes) 
 {
 	pmpMeshes.resize(m_meshes.size());
 
@@ -170,7 +171,7 @@ void Model::UpdateFeatures()
 	util::GetSortedEigenValues(*this, eigenValues);
 	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
 
-	ExtractA1(*this);
+	m_3DFeatures.a1 = ExtractA1(*this);
 	ExtractD1(*this);
 	ExtractD2(*this);
 	ExtractD3(*this);

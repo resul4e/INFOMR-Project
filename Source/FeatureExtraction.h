@@ -5,14 +5,6 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-constexpr size_t HISTOGRAM_BIN_SIZE = 10;
-struct HistogramFeature
-{
-	int binCount[HISTOGRAM_BIN_SIZE];
-	float max;
-	float min;
-};
-
 float ExtractSurfaceArea(Model& model);
 float ExtractAABBArea(Model& _model);
 float ExtractAABBVolume(Model& _model);

@@ -12,6 +12,14 @@
 #include <memory>
 #include <filesystem>
 
+constexpr size_t HISTOGRAM_BIN_SIZE = 10;
+struct HistogramFeature
+{
+	int binCount[HISTOGRAM_BIN_SIZE];
+	float max;
+	float min;
+};
+
 struct Face
 {
 	unsigned int indices[3];
@@ -58,6 +66,8 @@ struct Features3D
 	float boundsArea;
 	float boundsVolume;
 	float eccentricity;
+
+	HistogramFeature a1;
 };
 
 class Model
@@ -73,10 +83,11 @@ public:
 
 	bool isUploaded();
 
-	void ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
+	bool ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 	void FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
 
 	void UpdateFeatures();
+	void UpdateBounds();
 
 	std::vector<Mesh> m_meshes;
 
@@ -97,6 +108,6 @@ public:
 	std::vector<glm::vec3> m_orientedPoints;
 	
 private:
-	void UpdateBounds();
+
 	void CalculateOBB();
 };
