@@ -50,7 +50,7 @@ FeatureView::FeatureView() :
 	QLabel* AABBAreaLabel = new QLabel("AABB Area");
 	QLabel* AABBVolumeLabel = new QLabel("AABB Volume");
 	QLabel* surfaceAreaLabel = new QLabel("Surface Area");
-	QLabel* vsaRatioLabel = new QLabel("Volume-to-Surface Area Ratio");
+	QLabel* vsaRatioLabel = new QLabel("Compactness");
 	QLabel* eccentricityRatioLabel = new QLabel("Eccentricity");
 	QLabel* bbaRatioLabel = new QLabel("Bounding-Box Aspect Ratio");
 
