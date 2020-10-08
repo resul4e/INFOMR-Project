@@ -18,7 +18,7 @@ void ModelViewer::setModel(std::shared_ptr<Model> model)
 	m_model = model;
 }
 
-std::shared_ptr<Model> ModelViewer::getModel() const
+std::shared_ptr<Model>& ModelViewer::getModel()
 {
 	return m_model;
 }

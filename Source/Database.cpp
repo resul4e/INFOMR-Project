@@ -10,6 +10,9 @@
 #include "ModelSaver.h"
 #include "ModelAnalytics.h"
 
+#include "pmp/algorithms/SurfaceSubdivision.h"
+#include "pmp/algorithms/SurfaceNormals.h"
+
 namespace fs = std::filesystem;
 
 /**
@@ -200,13 +203,18 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 	//new model with the old one so that we immediately have access to the higher fidelity model.
 	if (subdivide)
 	{
-		auto newPath = modifiedMeshesPath;
-		newPath /= _model->m_path.filename();
-		system(("..\\Scripts\\mesh_filter.exe " + _model->m_path.string() + " -subdiv " + newPath.string()).c_str());
-
-		std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
-		SubdivideModel(newModel);
-		_model.swap(newModel);
+		std::vector<pmp::SurfaceMesh> pmpModel;
+		_model->ToPmpModel(pmpModel);
+		for(auto& mesh : pmpModel)
+		{
+			pmp::SurfaceSubdivision sbd(mesh);
+			while(mesh.n_vertices() < 5000 || mesh.n_faces() < 5000)
+			{
+				sbd.sqrt3();
+			}
+			pmp::SurfaceNormals::compute_vertex_normals(mesh);
+		}
+		_model->FromPmpModel(pmpModel);
 	}
 }
 
@@ -217,7 +225,7 @@ void Database::CrunchModel(std::shared_ptr<Model>& _model)
 	
 	for (const Mesh& mesh : _model->m_meshes)
 	{
-		if (mesh.positions.size() > 20000 || mesh.faces.size() > 20000)
+		if (mesh.positions.size() > 40000 || mesh.faces.size() > 40000)
 		{
 			auto newPath = modifiedMeshesPath;
 			newPath /= _model->m_path.filename();
@@ -258,6 +266,10 @@ void Database::SortDatabase(SortingOptions _option)
 
 std::shared_ptr<Model> Database::LoadModifiedModel(std::filesystem::path _modelFileName)
 {
+	//TODO(Resul): Remove this return
+	//For now just always load the default model
+	return nullptr;
+	
 	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 
 	fs::path offPath = _modelFileName;

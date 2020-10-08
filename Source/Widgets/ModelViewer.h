@@ -27,7 +27,7 @@ public:
 	}
 
 	void setModel(std::shared_ptr<Model> model);
-	std::shared_ptr<Model> getModel() const;
+	std::shared_ptr<Model>& getModel();
 
 protected:
 	void initializeGL()         Q_DECL_OVERRIDE;
