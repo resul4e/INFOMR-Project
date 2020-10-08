@@ -93,6 +93,6 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 		}
 	}
 
-	model->UpdateFeatures();
+	model->UpdateBounds();
 	return model;
 }
