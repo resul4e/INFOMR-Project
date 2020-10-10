@@ -1,6 +1,8 @@
 #include "ModelUtil.h"
 
 #include "Model.h"
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 
 #include <glm/glm.hpp>
 

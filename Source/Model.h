@@ -1,16 +1,10 @@
 #pragma once
 
-//#include "Bounds.h"
-
 #include <QOpenGLFunctions_3_3_Core>
 
 #include <glm/glm.hpp>
-#include <pmp/SurfaceMesh.h>
 
 #include <vector>
-#include <string>
-#include <memory>
-#include <filesystem>
 
 struct Face
 {
@@ -61,6 +55,7 @@ public:
 	void Upload();
 
 	bool isUploaded();
+
 	void markForReupload();
 
 	std::vector<Mesh> m_meshes;
