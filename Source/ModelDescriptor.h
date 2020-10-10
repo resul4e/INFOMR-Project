@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Model.h"
+#include "Graphics/Image.h"
 
 #include <filesystem>
 #include <memory>
@@ -41,6 +42,7 @@ struct ModelDescriptor
 	std::filesystem::path m_path;
 
 	std::shared_ptr<Model> m_model;
+	std::vector<Image> m_projections;
 
 	///FILTER DATA
 	/**
