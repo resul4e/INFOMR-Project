@@ -203,18 +203,13 @@ void Database::SubdivideModel(std::shared_ptr<Model>& _model)
 	//new model with the old one so that we immediately have access to the higher fidelity model.
 	if (subdivide)
 	{
-		std::vector<pmp::SurfaceMesh> pmpModel;
-		_model->ToPmpModel(pmpModel);
-		for(auto& mesh : pmpModel)
-		{
-			pmp::SurfaceSubdivision sbd(mesh);
-			while(mesh.n_vertices() < 5000 || mesh.n_faces() < 5000)
-			{
-				sbd.sqrt3();
-			}
-			pmp::SurfaceNormals::compute_vertex_normals(mesh);
-		}
-		_model->FromPmpModel(pmpModel);
+		auto newPath = modifiedMeshesPath;
+		newPath /= _model->m_path.filename();
+		newPath.replace_extension(".ply");
+		system(("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _model->m_path.string() + " -o " + newPath.string()).c_str());
+
+		std::shared_ptr<Model> newModel = ModelLoader::LoadModel(newPath);
+		_model.swap(newModel);
 	}
 }
 

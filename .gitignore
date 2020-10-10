@@ -1,3 +1,5 @@
 **/build/
 **/ModifiedMeshes/
 Binary
+**/.vs
+**/.vscode

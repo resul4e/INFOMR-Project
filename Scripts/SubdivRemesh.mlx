@@ -1,0 +1,27 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Re-Orient all faces coherentely"/>
+ <filter name="Close Holes">
+  <Param name="MaxHoleSize" description="Max size to be closed " value="30" type="RichInt" tooltip="The size is expressed as number of edges composing the hole boundary"/>
+  <Param name="Selected" description="Close holes with selected faces" value="false" type="RichBool" tooltip="Only the holes with at least one of the boundary faces selected are closed"/>
+  <Param name="NewFaceSelected" description="Select the newly created faces" value="true" type="RichBool" tooltip="After closing a hole the faces that have been created are left selected. Any previous selection is lost. Useful for example for smoothing the newly created holes."/>
+  <Param name="SelfIntersection" description="Prevent creation of selfIntersecting faces" value="true" type="RichBool" tooltip="When closing an holes it tries to prevent the creation of faces that intersect faces adjacent to the boundary of the hole. It is an heuristic, non intersetcting hole filling can be NP-complete."/>
+ </filter>
+ <filter name="Turn into a Pure-Triangular mesh"/>
+ <filter name="Subdivision Surfaces: Catmull-Clark"/>
+ <filter name="Subdivision Surfaces: Catmull-Clark"/>
+ <filter name="Remeshing: Isotropic Explicit Remeshing">
+  <Param name="Iterations" description="Iterations" value="3" type="RichInt" tooltip="Number of iterations of the remeshing operations to repeat on the mesh."/>
+  <Param name="Adaptive" description="Adaptive remeshing" value="false" type="RichBool" tooltip="Toggles adaptive isotropic remeshing."/>
+  <Param name="SelectedOnly" description="Remesh only selected faces" value="false" type="RichBool" tooltip="If checked the remeshing operations will be applied only to the selected faces."/>
+  <Param name="TargetLen" description="Target Length" min="0" value="0.012005" max="1.20045" type="RichAbsPerc" tooltip="Sets the target length for the remeshed mesh edges."/>
+  <Param name="FeatureDeg" description="Crease Angle" value="30" type="RichFloat" tooltip="Minimum angle between faces of the original to consider the shared edge as a feature to be preserved."/>
+  <Param name="CheckSurfDist" description="Check Surface Distance" value="false" type="RichBool" tooltip="If toggled each local operation must deviate from original mesh by [Max. surface distance]"/>
+  <Param name="MaxSurfDist" description="Max. Surface Distance" min="0" value="0.012005" max="1.20045" type="RichAbsPerc" tooltip="Maximal surface deviation allowed for each local operation"/>
+  <Param name="SplitFlag" description="Refine Step" value="true" type="RichBool" tooltip="If checked the remeshing operations will include a refine step."/>
+  <Param name="CollapseFlag" description="Collapse Step" value="true" type="RichBool" tooltip="If checked the remeshing operations will include a collapse step."/>
+  <Param name="SwapFlag" description="Edge-Swap Step" value="true" type="RichBool" tooltip="If checked the remeshing operations will include a edge-swap step, aimed at improving the vertex valence of the resulting mesh."/>
+  <Param name="SmoothFlag" description="Smooth Step" value="true" type="RichBool" tooltip="If checked the remeshing operations will include a smoothing step, aimed at relaxing the vertex positions in a Laplacian sense."/>
+  <Param name="ReprojectFlag" description="Reproject Step" value="true" type="RichBool" tooltip="If checked the remeshing operations will include a step to reproject the mesh vertices on the original surface."/>
+ </filter>
+</FilterScript>
