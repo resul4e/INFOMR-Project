@@ -14,11 +14,11 @@ Mesh::Mesh() :
 {
 
 }
-
+#include <QDebug>
 void Mesh::Upload()
 {
 	QOpenGLFunctions_3_3_Core* f = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_3_3_Core>();
-
+	qDebug() << "Current: " << QOpenGLContext::currentContext();
 	// Go through all faces and linearize the vertex data for uploading to the graphics card
 	std::vector<glm::vec3> linearPositions(faces.size() * 3);
 	std::vector<glm::vec3> linearNormals(faces.size() * 3);
@@ -84,8 +84,7 @@ bool Model::isUploaded()
 	return m_isUploaded;
 }
 
-
-void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes) 
+bool Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 {
 	pmpMeshes.resize(m_meshes.size());
 
@@ -104,10 +103,18 @@ void Model::ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
 			pmp::Vertex v0(face.indices[0]);
 			pmp::Vertex v1(face.indices[1]);
 			pmp::Vertex v2(face.indices[2]);
-
-			pmpMesh.add_triangle(v0, v1, v2);
+			//if (face.indices[0] == 50 && face.indices[1] == 94 && face.indices[2] == 51)
+			//	std::cout << "Beep";
+			pmp::Face face = pmpMesh.add_triangle(v0, v1, v2);
+			//if (!face.is_valid()) return false;
 		}
 	}
+
+	//pmp::SurfaceMesh compMesh;
+	//bool success = compMesh.read("E:/Masters/MultimediaRetrieval/Project/Resources/benchmark/db/13/m1312/m1312.off");
+	//std::cout << "Loaded PMP MODEL: " << success << std::endl;
+	//pmpMeshes[0] = compMesh;
+	return true;
 }
 
 void Model::FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes)
