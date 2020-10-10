@@ -5,6 +5,7 @@
 #include "Graphics/Image.h"
 
 #include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <QDebug>
@@ -100,46 +101,52 @@ void Projector::render(ModelDescriptor& _modelDescriptor)
 	modelCopy.Upload();
 
 	// Load matrices
-	glm::mat4 projMatrix = glm::ortho(-0.75f, 0.75f, -0.75f, 0.75f, -1.0f, 1.0f);
-
-	glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-	//m_camera->LookAt(m_viewMatrix, m_camera->position, m_camera->center, glm::vec3(0, 1, 0));
-
-	glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+	glm::mat4 projMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+	glm::mat4 viewMatrix = glm::mat4(1.0f);
 
 	// Bind shader
 	ShaderProgram& shader = m_modelShader;
 	shader.bind();
 	shader.uniformMatrix4f("projMatrix", projMatrix);
 	shader.uniformMatrix4f("viewMatrix", viewMatrix);
-	shader.uniformMatrix4f("modelMatrix", modelMatrix);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-	// Clear the widget to the background color
-	glClear(GL_COLOR_BUFFER_BIT);
+	glm::mat4 frontView = glm::mat4(1.0f);
+	glm::mat4 sideView = glm::rotate(glm::mat4(1.0f), glm::half_pi<float>(), glm::vec3(0, 1, 0));
+	glm::mat4 topView = glm::rotate(glm::mat4(1.0f), glm::half_pi<float>(), glm::vec3(1, 0, 0));
+	std::vector<glm::mat4> cameraViews = { frontView, sideView, topView };
 
-	// Draw model
-	for (Mesh& mesh : modelCopy.m_meshes)
+	for (int i = 0; i < 3; i++)
 	{
-		glBindVertexArray(mesh.vao);
-		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
+		glm::mat4 modelMatrix = cameraViews[i];
+		shader.uniformMatrix4f("modelMatrix", modelMatrix);
+
+		// Clear the widget to the background color
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Draw model
+		for (Mesh& mesh : modelCopy.m_meshes)
+		{
+			glBindVertexArray(mesh.vao);
+			glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);
+		}
+
+		// Write framebuffer image to file
+		unsigned char* buff = new unsigned char[(size_t)m_imageDim * m_imageDim * 3];
+
+		// Now, get pixels.
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glReadPixels(0, 0, m_imageDim, m_imageDim, GL_RGB, GL_UNSIGNED_BYTE, buff);
+
+		QImage fboImage(buff, m_imageDim, m_imageDim, QImage::Format_RGB888);
+		fboImage.save(QString("beep") + QString::number(i) + QString(".png"));
+		Image image(m_imageDim, m_imageDim, 3);
+		image.setData(buff);
+		_modelDescriptor.m_projections.push_back(image);
 	}
-
+	
 	shader.release();
-
-	// Write framebuffer image to file
-	unsigned char *buff = new unsigned char[(size_t) m_imageDim * m_imageDim * 3];
-
-	// Now, get pixels.
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glReadPixels(0, 0, m_imageDim, m_imageDim, GL_RGB, GL_UNSIGNED_BYTE, buff);
-
-	QImage fboImage(buff, m_imageDim, m_imageDim, QImage::Format_RGB888);
-	fboImage.save("beep.png");
-	Image image(m_imageDim, m_imageDim, 3);
-	image.setData(buff);
-	_modelDescriptor.m_projections.push_back(image);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_context->defaultFramebufferObject());
 
