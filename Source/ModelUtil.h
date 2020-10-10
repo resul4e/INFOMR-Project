@@ -15,7 +15,6 @@ namespace util
 	void RotateMajorEigenVectorToXAxis(Model& model);
 
 	void GetSortedEigenValues(const Model& model, glm::vec3& eigenValues);
-	
 	void GetSortedEigenVectors(const Model& model, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector, glm::vec3& minorEigenVector);
-	void GetSortedEigenVectors(glm::vec3* eigenVectors, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector, glm::vec3& minorEigenVector, const glm::vec3& eValues);
+	void GetSortedEigenVectors(const Model& model, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector, glm::vec3& minorEigenVector, glm::vec3& eigenValues);
 }

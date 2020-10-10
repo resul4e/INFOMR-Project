@@ -3,8 +3,11 @@
 #include "Model.h"
 #include "Graphics/Image.h"
 
+#include <glm/glm.hpp>
+
 #include <filesystem>
 #include <memory>
+#include <vector>
 
 static constexpr size_t HISTOGRAM_BIN_SIZE = 10;
 struct HistogramFeature
@@ -52,6 +55,8 @@ struct ModelDescriptor
 	size_t m_vertexCount;
 	size_t m_faceCount;
 	Bounds m_bounds;
+	std::vector<glm::vec3> m_eigenVectors;
+	glm::vec3 m_eigenValues;
 
 	Features3D m_3DFeatures;
 };
