@@ -143,8 +143,6 @@ void Projector::render(ModelDescriptor& _modelDescriptor)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_context->defaultFramebufferObject());
 
-	releaseContext();
-
 	cleanup();
 }
 
@@ -153,6 +151,5 @@ void Projector::cleanup()
 	glDeleteTextures(1, &m_fboImage);
 	glDeleteFramebuffers(1, &m_fbo);
 	m_modelShader.destroy();
-	delete m_context;
-	m_context = nullptr;
+	releaseContext();
 }
