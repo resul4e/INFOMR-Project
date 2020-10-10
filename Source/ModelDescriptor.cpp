@@ -7,7 +7,9 @@
 
 ModelDescriptor::ModelDescriptor() :
 	m_vertexCount(0),
-	m_faceCount(0)
+	m_faceCount(0),
+	m_eigenVectors(3, glm::vec3(0, 0, 0)),
+	m_eigenValues(0, 0, 0)
 {
 
 }
