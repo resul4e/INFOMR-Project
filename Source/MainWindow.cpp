@@ -20,18 +20,18 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
+	QMainWindow(parent),
 	m_selectedModelIndex(0)
 {
-    setupUi(this);
+	setupUi(this);
 	
 
 	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
-    QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+	QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-    _modelViewer = new ModelViewer();
-    setCentralWidget(_modelViewer);
+	_modelViewer = new ModelViewer();
+	setCentralWidget(_modelViewer);
 
 	_featureWidget = new FeatureView();
 	_featureWidget->setAllowedAreas(Qt::RightDockWidgetArea);
@@ -51,9 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
 		_databaseWidget->Update();
 	};
 
-    QAction* importModelAction = new QAction("3D Model");
-    connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
-    importDataFileMenu->addAction(importModelAction);
+	QAction* importModelAction = new QAction("3D Model");
+	connect(importModelAction, &QAction::triggered, this, &MainWindow::importModelFromFile);
+	importDataFileMenu->addAction(importModelAction);
 
 	QAction* exportModelAction = new QAction("3D Model");
 	connect(exportModelAction, &QAction::triggered, this, &MainWindow::exportModelToFile);
@@ -63,24 +63,24 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(processModelAction, &QAction::triggered, this, processModelFunc);
 	menuFile->insertAction(exitAction, processModelAction);
 	
-    QAction* normalizeModelAction = new QAction("Normalize Model");
-    connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
-    menuFile->insertAction(exitAction, normalizeModelAction);
+	QAction* normalizeModelAction = new QAction("Normalize Model");
+	connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
+	menuFile->insertAction(exitAction, normalizeModelAction);
 
 	QAction* remeshModelAction = new QAction("Remesh Model");
 	connect(remeshModelAction, &QAction::triggered, this, &MainWindow::remeshCurrentModel);
 	menuFile->insertAction(exitAction, remeshModelAction);
 
-    addDatabaseMenuActions();
+	addDatabaseMenuActions();
 }
 
 void MainWindow::addDatabaseMenuActions()
 {
 	auto processModelsFunc = [=]()
-    {
-        m_queryManager->GetDatabase()->ProcessAllModels();
+	{
+		m_queryManager->GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
-    };
+	};
 
 	auto remeshModelsFunc = [=]()
 	{
@@ -118,18 +118,18 @@ void MainWindow::addDatabaseMenuActions()
 	};
 	
 	//Importing databases
-    QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
-    connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
-    menuDatabase->addAction(loadLabelledPSBAction);
+	QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
+	connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
+	menuDatabase->addAction(loadLabelledPSBAction);
 
-    QAction* loadPSBAction = new QAction("Load PSB");
-    connect(loadPSBAction, &QAction::triggered, this, &MainWindow::loadPSB);
-    menuDatabase->addAction(loadPSBAction);
+	QAction* loadPSBAction = new QAction("Load PSB");
+	connect(loadPSBAction, &QAction::triggered, this, &MainWindow::loadPSB);
+	menuDatabase->addAction(loadPSBAction);
 
 	//Model selector
-    m_menuModelSelect = new QMenu("Select Model");
-    connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
-    menuDatabase->addMenu(m_menuModelSelect);
+	m_menuModelSelect = new QMenu("Select Model");
+	connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
+	menuDatabase->addMenu(m_menuModelSelect);
 
 	//Sorting menu
 	QMenu* menuSortDatabase = new QMenu("Sort database by...");
@@ -148,9 +148,9 @@ void MainWindow::addDatabaseMenuActions()
 	menuSortDatabase->addAction(sortByBounds);
 	
 	//Processing menu
-    QAction* menuProcessDatabase = new QAction("Process database");
-    connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
-    menuDatabase->addAction(menuProcessDatabase);
+	QAction* menuProcessDatabase = new QAction("Process database");
+	connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
+	menuDatabase->addAction(menuProcessDatabase);
 
 	QAction* menuRemeshDatabase = new QAction("Remesh database");
 	connect(menuRemeshDatabase, &QAction::triggered, this, remeshModelsFunc);
@@ -171,12 +171,12 @@ MainWindow::~MainWindow()
 
 QAction* MainWindow::addImportOption(QString menuName)
 {
-    return importDataFileMenu->addAction(menuName);
+	return importDataFileMenu->addAction(menuName);
 }
 
 QAction* MainWindow::addExportOption(QString menuName)
 {
-    return exportDataFileMenu->addAction(menuName);
+	return exportDataFileMenu->addAction(menuName);
 }
 
 void MainWindow::importModelFromFile()
@@ -217,27 +217,27 @@ void MainWindow::exportModelToFile()
 
 void MainWindow::loadLabelledPSB()
 {
-    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
+	QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
 
-    // Don't try to load a file if the dialog was cancelled or the file name is empty
-    if (fileName.isNull() || fileName.isEmpty())
-        return;
+	// Don't try to load a file if the dialog was cancelled or the file name is empty
+	if (fileName.isNull() || fileName.isEmpty())
+		return;
 
-    m_queryManager->GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
-    m_menuModelSelect->clear();
+	m_queryManager->GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }
 
 void MainWindow::loadPSB()
 {
-    QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select PSB directory", "");
+	QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select PSB directory", "");
 
-    // Don't try to load a file if the dialog was cancelled or the file name is empty
-    if (fileName.isNull() || fileName.isEmpty())
-        return;
+	// Don't try to load a file if the dialog was cancelled or the file name is empty
+	if (fileName.isNull() || fileName.isEmpty())
+		return;
 
-    m_queryManager->GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
-    m_menuModelSelect->clear();
+	m_queryManager->GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
+	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }
 
@@ -245,20 +245,20 @@ void MainWindow::populateDatabaseModelSelector()
 {
 	if(!m_menuModelSelect->actions().empty())
 	{
-        return;
+		return;
 	}
 	
 	for(ModelDescriptor m : m_queryManager->GetDatabase()->GetModelDatabase())
 	{
-        auto selectModelLamda = [=]()
-        {
-            selectModel(m);
-        };
+		auto selectModelLamda = [=]()
+		{
+			selectModel(m);
+		};
 		
-        QAction* modelAction = new QAction(m.m_name.c_str());
-        connect(modelAction, &QAction::triggered, this, selectModelLamda);
-        m_menuModelSelect->addAction(modelAction);
-        m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
+		QAction* modelAction = new QAction(m.m_name.c_str());
+		connect(modelAction, &QAction::triggered, this, selectModelLamda);
+		m_menuModelSelect->addAction(modelAction);
+		m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
 
 	}
 }
@@ -268,7 +268,7 @@ void MainWindow::selectModel(ModelDescriptor _modelDescriptor)
 	_modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(_modelDescriptor.m_path));
 	_modelDescriptor.UpdateFeatures();
 
-    _modelViewer->setModel(_modelDescriptor);
+	_modelViewer->setModel(_modelDescriptor);
 	_featureWidget->SetModel(_modelDescriptor);
 }
 
@@ -303,48 +303,48 @@ void MainWindow::remeshCurrentModel()
 }
 
 void MainWindow::centerAndResize(float coverage) {
-    // Retrieve the dimensions available on the current screen
-    QSize availableSize = qApp->desktop()->availableGeometry().size();
-    QSize newSize(availableSize.width() * coverage, availableSize.height() * coverage);
+	// Retrieve the dimensions available on the current screen
+	QSize availableSize = qApp->desktop()->availableGeometry().size();
+	QSize newSize(availableSize.width() * coverage, availableSize.height() * coverage);
 
-    qDebug() << "Available screen size " << availableSize.width() << "x" << availableSize.height();
-    qDebug() << "Initial application size " << newSize.width() << "x" << newSize.height();
+	qDebug() << "Available screen size " << availableSize.width() << "x" << availableSize.height();
+	qDebug() << "Initial application size " << newSize.width() << "x" << newSize.height();
 
-    setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, newSize, qApp->desktop()->availableGeometry()));
+	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, newSize, qApp->desktop()->availableGeometry()));
 }
 
 void MainWindow::storeLayout()
 {
-    _windowConfiguration = saveState();
+	_windowConfiguration = saveState();
 }
 
 void MainWindow::restoreLayout()
 {
-    restoreState(_windowConfiguration);
+	restoreState(_windowConfiguration);
 }
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    storeLayout();
+	storeLayout();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    storeLayout();
+	storeLayout();
 }
 
 void MainWindow::hideEvent(QHideEvent *event)
 {
-    storeLayout();
+	storeLayout();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
 {
-    restoreLayout();
+	restoreLayout();
 
-    QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
-    for (auto child : dockWidgets)
-        child->setVisible(true);
+	QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
+	for (auto child : dockWidgets)
+		child->setVisible(true);
 }
 
 
