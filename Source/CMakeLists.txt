@@ -37,6 +37,10 @@ set(GRAPHICS_SOURCES
     ${DIR}/Graphics/Camera.cpp
     ${DIR}/Graphics/Shader.h
     ${DIR}/Graphics/Shader.cpp
+    ${DIR}/Graphics/Projector.h
+    ${DIR}/Graphics/Projector.cpp
+    ${DIR}/Graphics/Image.h
+    ${DIR}/Graphics/Image.cpp
     PARENT_SCOPE
 )
 
