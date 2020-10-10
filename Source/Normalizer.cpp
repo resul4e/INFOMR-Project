@@ -21,7 +21,7 @@ void Normalizer::Normalize(ModelDescriptor& _modelDescriptor)
 	ScaleModel(*_modelDescriptor.m_model);
 
 	_modelDescriptor.UpdateFeatures();
-	_modelDescriptor.m_model->m_isUploaded = false;
+	_modelDescriptor.m_model->markForReupload();
 }
 
 void Normalizer::CenterModel(Model& _model)

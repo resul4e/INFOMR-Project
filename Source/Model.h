@@ -61,20 +61,16 @@ public:
 	void Upload();
 
 	bool isUploaded();
+	void markForReupload();
 
 	std::vector<Mesh> m_meshes;
 
-	bool m_isUploaded;
-
-
-	///FILTER DATA
-	/**
-	 * @brief The shape class of the model.
-	*/
 	std::vector<glm::vec3> m_orientedPoints;
 	
 private:
 	void CalculateOBB();
+
+	bool m_isUploaded;
 
 	friend struct ModelDescriptor;
 };

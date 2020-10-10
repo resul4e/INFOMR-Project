@@ -84,6 +84,11 @@ bool Model::isUploaded()
 	return m_isUploaded;
 }
 
+void Model::markForReupload()
+{
+	m_isUploaded = false;
+}
+
 void Model::CalculateOBB()
 {
 	

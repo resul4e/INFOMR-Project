@@ -38,6 +38,10 @@ struct ModelDescriptor
 
 	std::shared_ptr<Model> m_model;
 
+	///FILTER DATA
+	/**
+	 * @brief The shape class of the model.
+	*/
 	std::string m_class;
 	size_t m_vertexCount;
 	size_t m_faceCount;

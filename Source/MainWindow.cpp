@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	{
 		m_queryManager->GetDatabase()->SubdivideModel(_modelViewer->getModel());
 		m_queryManager->GetDatabase()->CrunchModel(_modelViewer->getModel());
-		_modelViewer->getModel().m_model->m_isUploaded = false;
+		_modelViewer->getModel().m_model->markForReupload();
 		_databaseWidget->Update();
 	};
 
