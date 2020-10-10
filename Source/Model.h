@@ -62,9 +62,6 @@ public:
 
 	bool isUploaded();
 
-	void ToPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
-	void FromPmpModel(std::vector<pmp::SurfaceMesh>& pmpMeshes);
-
 	std::vector<Mesh> m_meshes;
 
 	bool m_isUploaded;
