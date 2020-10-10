@@ -1,5 +1,8 @@
 **/build/
 **/ModifiedMeshes/
-Binary
+**/FeatureDatabase
+**/SavedMeshes
 **/.vs
 **/.vscode
+
+Binary

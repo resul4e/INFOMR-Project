@@ -38,10 +38,10 @@ void ModelDescriptor::UpdateFeatures()
 	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
 
 	m_3DFeatures.a1 = ExtractA1(*this);
-	ExtractD1(*this);
-	ExtractD2(*this);
-	ExtractD3(*this);
-	ExtractD4(*this);
+	m_3DFeatures.d1 = ExtractD1(*this);
+	m_3DFeatures.d2 = ExtractD2(*this);
+	m_3DFeatures.d3 = ExtractD3(*this);
+	m_3DFeatures.d4 = ExtractD4(*this);
 }
 
 void ModelDescriptor::UpdateBounds()

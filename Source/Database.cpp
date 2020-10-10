@@ -130,11 +130,17 @@ void Database::ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path 
 
 void Database::ProcessAllModels()
 {
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	fs::create_directory(modifiedMeshesPath);
-	for(ModelDescriptor& modelDescriptor : m_modelDatabase)
+	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
+	fs::create_directory(savedMeshesPath);
+
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		
+		modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
+		Normalizer::Remesh(modelDescriptor);
+		Normalizer::Normalize(modelDescriptor);
+		modelDescriptor.UpdateBounds();
+		modelDescriptor.UpdateFeatures();
+		ModelSaver::SavePly(modelDescriptor, savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
 	}
 }
 
@@ -148,11 +154,11 @@ void Database::RemeshAllModels()
 
 void Database::SaveAllModels()
 {
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	fs::create_directory(modifiedMeshesPath);
+	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
+	fs::create_directory(savedMeshesPath);
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		ModelSaver::SavePly(modelDescriptor, modifiedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
+		ModelSaver::SavePly(modelDescriptor, savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
 	}
 }
 

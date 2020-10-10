@@ -22,6 +22,14 @@ namespace
 
 		return ExtractTriangleArea(v0, v1, v2);
 	}
+
+	void ProcessBins(HistogramFeature& feature)
+	{
+		for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+		{
+			feature.binCount[i] /= static_cast<double>(HISTOGRAM_ITERATIONS);
+		}
+	}
 }
 
 float ExtractSurfaceArea(ModelDescriptor& _modelDescriptor)
@@ -172,6 +180,8 @@ HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor)
 		const int bin = static_cast<int>(angle / binSize);
 		a1Feature.binCount[bin]++;
 	}
+
+	ProcessBins(a1Feature);
 	
 	return a1Feature;
 }
@@ -222,7 +232,9 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 			d1Feature.binCount[bin]++;
 		}
 
-	}	
+	}
+
+	ProcessBins(d1Feature);
 	return d1Feature;
 }
 
@@ -258,7 +270,8 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 		assert(bin < HISTOGRAM_BIN_SIZE);
 		d2Feature.binCount[bin]++;
 	}
-	
+
+	ProcessBins(d2Feature);
 	return d2Feature;
 }
 
@@ -305,6 +318,7 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 	}
 
 	delete[] triangleAreas;
+	ProcessBins(d3Feature);
 	return d3Feature;
 }
 
@@ -350,5 +364,6 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 	}
 
 	delete[] tetVolumes;
+	ProcessBins(d4Feature);
 	return d4Feature;
 }

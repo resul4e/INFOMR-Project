@@ -10,8 +10,12 @@
 
 #include <limits>
 #include <iostream>
+#include <fstream>
+#include <glm/gtx/string_cast.hpp>
 
-void ModelSaver::SavePly(ModelDescriptor& _modelDescriptor, std::filesystem::path _filePath)
+namespace fs = std::filesystem;
+
+void ModelSaver::SavePly(ModelDescriptor& _modelDescriptor, fs::path _filePath)
 {
 	const Model& model = *_modelDescriptor.m_model;
 
@@ -66,4 +70,57 @@ void ModelSaver::SavePly(ModelDescriptor& _modelDescriptor, std::filesystem::pat
 
 	//Change the filepath to be the new path.
 	_modelDescriptor.m_path = _filePath;
+
+	SaveFeatures(_modelDescriptor);
+}
+
+void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
+{
+	const fs::path featuresDatabasePath("../FeatureDatabase");
+	fs::create_directory(featuresDatabasePath);
+
+	fs::path featuresPath = featuresDatabasePath / _modelDescriptor.m_path.filename().replace_extension(".csv");
+
+	std::ofstream featuresStream(featuresPath.string());
+	if(!featuresStream.is_open())
+	{
+		std::cerr << "Could not save " << featuresPath;
+		return;
+	}
+
+	Features3D features = _modelDescriptor.m_3DFeatures;
+	
+	featuresStream << "volume, " << features.volume << "\n";
+	featuresStream << "surfaceArea, " << features.surfaceArea << "\n";
+	featuresStream << "compactness, " << features.compactness << "\n";
+	featuresStream << "boundsArea, " << features.boundsArea << "\n";
+	featuresStream << "boundsVolume, " << features.boundsVolume << "\n";
+	featuresStream << "eccentricity, " << features.eccentricity << "\n";
+
+	featuresStream << "a1, ";
+	SaveHistogramFeatures(features.a1, featuresStream);
+
+	featuresStream << "d1, ";
+	SaveHistogramFeatures(features.d1, featuresStream);
+
+	featuresStream << "d2, ";
+	SaveHistogramFeatures(features.d2, featuresStream);
+
+	featuresStream << "d3, ";
+	SaveHistogramFeatures(features.d3, featuresStream);
+
+	featuresStream << "d4, ";
+	SaveHistogramFeatures(features.d4, featuresStream);
+	
+	featuresStream.close();
+}
+
+void ModelSaver::SaveHistogramFeatures(HistogramFeature _feature, std::ofstream& _stream)
+{
+	for(int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+	{
+		_stream << _feature.binCount[i] << ", ";
+	}
+	_stream << _feature.min << ", " << _feature.max;
+	_stream << "\n";
 }

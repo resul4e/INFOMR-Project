@@ -5,6 +5,7 @@
 #include <map>
 
 struct ModelDescriptor;
+struct HistogramFeature;
 
 /**
  * \brief Class that saves a model
@@ -19,4 +20,9 @@ public:
 	 * \param _filePath The filepath to save the model to. The m_path property will be changed to this path in _model 
 	 */
 	static void SavePly(ModelDescriptor& _modelDescriptor, std::filesystem::path _filePath);
+
+private:
+
+	static void SaveFeatures(ModelDescriptor& _modelDescriptor);
+	static void SaveHistogramFeatures(HistogramFeature _feature, std::ofstream& _stream);
 };

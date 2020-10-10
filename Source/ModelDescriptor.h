@@ -8,7 +8,7 @@
 static constexpr size_t HISTOGRAM_BIN_SIZE = 10;
 struct HistogramFeature
 {
-	int binCount[HISTOGRAM_BIN_SIZE];
+	double binCount[HISTOGRAM_BIN_SIZE];
 	float max;
 	float min;
 };
@@ -24,6 +24,10 @@ struct Features3D
 	float eccentricity;
 
 	HistogramFeature a1;
+	HistogramFeature d1;
+	HistogramFeature d2;
+	HistogramFeature d3;
+	HistogramFeature d4;
 };
 
 struct ModelDescriptor
