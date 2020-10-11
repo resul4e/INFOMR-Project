@@ -139,10 +139,12 @@ void Projector::render(ModelDescriptor& _modelDescriptor)
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
 		glReadPixels(0, 0, m_imageDim, m_imageDim, GL_RGB, GL_UNSIGNED_BYTE, buff);
 
-		QImage fboImage(buff, m_imageDim, m_imageDim, QImage::Format_RGB888);
-		fboImage.save(QString("beep") + QString::number(i) + QString(".png"));
 		Image image(m_imageDim, m_imageDim, 3);
-		image.setData(buff);
+		image.SetData(buff);
+
+		//QImage fboImage(buff, m_imageDim, m_imageDim, QImage::Format_RGB888);
+		//fboImage.save(QString("beep") + QString::number(i) + QString(".png"));
+
 		_modelDescriptor.m_projections.push_back(image);
 	}
 	
