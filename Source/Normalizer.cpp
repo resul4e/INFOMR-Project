@@ -122,7 +122,21 @@ void Normalizer::Remesh(ModelDescriptor& model)
 
 	auto newPath = modifiedMeshesPath;
 	newPath /= model.m_path.filename();
-	system(("meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + model.m_path.string() + " -o " + newPath.string()).c_str());
+	int error = system(("meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + model.m_path.string() + " -o " + newPath.string()).c_str());
+	if(error != 0)
+	{
+		std::cerr << "Failed to remesh" << "\n";
+		return;
+	}
 
-	model.m_model = ModelLoader::LoadModel(newPath);
+	std::shared_ptr<Model> mdl = ModelLoader::LoadModel(newPath);
+	if(mdl != nullptr)
+	{
+		model.m_model = mdl;
+	}
+	else
+	{
+		std::cerr << "Failed to remesh" << "\n";
+	}
+
 }
