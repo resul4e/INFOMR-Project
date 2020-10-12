@@ -155,7 +155,7 @@ HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor)
 	memset(a1Feature.binCount, 0, sizeof a1Feature.binCount);
 	
 	//Iterate for a while, each time picking three random vertices and extracting the angle between them.
-	glm::vec3* randomVertices = new glm::vec3[3];
+	glm::vec3 randomVertices[3];
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		//Get three random vertices.
@@ -182,7 +182,8 @@ HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor)
 	}
 
 	ProcessBins(a1Feature);
-	
+
+	delete[] meshPositions;
 	return a1Feature;
 }
 
@@ -235,6 +236,7 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 	}
 
 	ProcessBins(d1Feature);
+	delete[] meshPositions;
 	return d1Feature;
 }
 
@@ -317,8 +319,10 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 		d3Feature.binCount[bin]++;
 	}
 
-	delete[] triangleAreas;
 	ProcessBins(d3Feature);
+
+	delete[] triangleAreas;
+	delete[] meshPositions;
 	return d3Feature;
 }
 
@@ -363,7 +367,10 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 		d4Feature.binCount[bin]++;
 	}
 
-	delete[] tetVolumes;
+
 	ProcessBins(d4Feature);
+
+	delete[] meshPositions;
+	delete[] tetVolumes;
 	return d4Feature;
 }
