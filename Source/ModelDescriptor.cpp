@@ -7,7 +7,9 @@
 
 ModelDescriptor::ModelDescriptor() :
 	m_vertexCount(0),
-	m_faceCount(0)
+	m_faceCount(0),
+	m_eigenVectors(3, glm::vec3(0, 0, 0)),
+	m_eigenValues(0, 0, 0)
 {
 
 }
@@ -25,6 +27,7 @@ void ModelDescriptor::UpdateFeatures()
 		}
 
 		UpdateBounds();
+		util::ComputeEigenVectors(*m_model, m_eigenVectors[0], m_eigenVectors[1], m_eigenVectors[2], m_eigenValues);
 		m_model->CalculateOBB();
 	}
 	
@@ -33,9 +36,7 @@ void ModelDescriptor::UpdateFeatures()
 	m_3DFeatures.boundsArea = ExtractAABBArea(*this);
 	m_3DFeatures.boundsVolume = ExtractAABBVolume(*this);
 	m_3DFeatures.compactness = (std::pow(M_PI, 1.0 / 3.0) * std::pow((6.0 * m_3DFeatures.volume), 2.0 / 3.0)) / m_3DFeatures.surfaceArea;
-	glm::vec3 eigenValues{ 0 };
-	util::GetSortedEigenValues(*m_model, eigenValues);
-	m_3DFeatures.eccentricity = eigenValues.x / eigenValues.z;
+	m_3DFeatures.eccentricity = m_eigenValues.x / m_eigenValues.z;
 
 	m_3DFeatures.a1 = ExtractA1(*this);
 	m_3DFeatures.d1 = ExtractD1(*this);

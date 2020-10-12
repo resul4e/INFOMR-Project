@@ -1,6 +1,8 @@
 #include "ModelUtil.h"
 
 #include "Model.h"
+#include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 
 #include <glm/glm.hpp>
 
@@ -40,7 +42,7 @@ namespace util
 		}
 	}
 
-	void ComputeEigenVectors(const Model& model, glm::vec3& eVec1, glm::vec3& eVec2, glm::vec3& eVec3, glm::vec3& eValues)
+	void ComputeEigenVectors(const Model& model, glm::vec3& _majorEigenVector, glm::vec3& _medianEigenVector, glm::vec3& _minorEigenVector, glm::vec3& _eigenValues)
 	{
 		glm::vec3 barycenter = ComputeBarycenter(model);
 
@@ -61,13 +63,25 @@ namespace util
 
 		// Compute eigenvectors for the covariance matrix
 		Eigen::EigenSolver<Eigen::Matrix3d> solver(covariance);
-		Eigen::Matrix3d eigenVectors = solver.eigenvectors().real();
-		Eigen::Vector3d eigenValues = solver.eigenvalues().real();
+		Eigen::Matrix3d eVectors = solver.eigenvectors().real();
+		Eigen::Vector3d eValues = solver.eigenvalues().real();
 
-		eVec1 = glm::vec3(eigenVectors.col(0).x(), eigenVectors.col(0).y(), eigenVectors.col(0).z());
-		eVec2 = glm::vec3(eigenVectors.col(1).x(), eigenVectors.col(1).y(), eigenVectors.col(1).z());
-		eVec3 = glm::vec3(eigenVectors.col(2).x(), eigenVectors.col(2).y(), eigenVectors.col(2).z());
-		eValues = glm::vec3(eigenValues.x(), eigenValues.y(), eigenValues.z());
+		// Extract to glm vectors
+		std::vector<glm::vec3> eigenVectors(3);
+		eigenVectors[0] = glm::vec3(eVectors.col(0).x(), eVectors.col(0).y(), eVectors.col(0).z());
+		eigenVectors[1] = glm::vec3(eVectors.col(1).x(), eVectors.col(1).y(), eVectors.col(1).z());
+		eigenVectors[2] = glm::vec3(eVectors.col(2).x(), eVectors.col(2).y(), eVectors.col(2).z());
+		glm::vec3 eigenValues = glm::vec3(eValues.x(), eValues.y(), eValues.z());
+
+		// Sort eigenvectors and eigenvalues
+		std::vector<int> sortedIndices = { 0, 1, 2 };
+		std::vector<float> sortedEigenValues = { eigenValues.x, eigenValues.y, eigenValues.z };
+		std::sort(std::begin(sortedIndices), std::end(sortedIndices), [&](int i1, int i2) { return sortedEigenValues[i1] > sortedEigenValues[i2]; });
+
+		_majorEigenVector = eigenVectors[sortedIndices[0]];
+		_medianEigenVector = eigenVectors[sortedIndices[1]];
+		_minorEigenVector = glm::cross(_majorEigenVector, _medianEigenVector);
+		_eigenValues = glm::vec3(sortedEigenValues[0], sortedEigenValues[1], sortedEigenValues[2]);
 	}
 
 	void RotateMajorEigenVectorToXAxis(Model& model)
@@ -84,7 +98,7 @@ namespace util
 		glm::vec3 medianEigenVector;
 		glm::vec3 minorEigenVector;
 
-		GetSortedEigenVectors(eigenVectors, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
+		ComputeEigenVectors(model, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
 		
 		glm::mat3x3 rotMat{ majorEigenVector.x, medianEigenVector.x, minorEigenVector.x,
 							majorEigenVector.y, medianEigenVector.y, minorEigenVector.y,
@@ -93,32 +107,5 @@ namespace util
 		for (Mesh& mesh : model.m_meshes)
 			for (glm::vec3& p : mesh.positions)
 				p = rotMat * p;
-	}
-
-	void GetSortedEigenValues(const Model& model, glm::vec3& eigenValues)
-	{
-		glm::vec3 eigenVectors[3];
-		ComputeEigenVectors(model, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
-		GetSortedEigenVectors(eigenVectors, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
-	}
-
-	void GetSortedEigenVectors(const Model& model, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector,
-	                           glm::vec3& minorEigenVector)
-	{
-		glm::vec3 eigenVectors[3];
-		glm::vec3 eigenValues;
-		ComputeEigenVectors(model, eigenVectors[0], eigenVectors[1], eigenVectors[2], eigenValues);
-		GetSortedEigenVectors(eigenVectors, majorEigenVector, medianEigenVector, minorEigenVector, eigenValues);
-	}
-
-	void GetSortedEigenVectors(glm::vec3* eigenVectors, glm::vec3& majorEigenVector, glm::vec3& medianEigenVector, glm::vec3& minorEigenVector, const glm::vec3& eValues)
-	{
-		std::vector<int> sortedIndices = { 0, 1, 2 };
-		std::vector<float> sortedEigenValues = { eValues.x, eValues.y, eValues.z };
-		std::sort(std::begin(sortedIndices), std::end(sortedIndices), [&](int i1, int i2) { return sortedEigenValues[i1] > sortedEigenValues[i2]; });
-
-		majorEigenVector = eigenVectors[sortedIndices[0]];
-		medianEigenVector = eigenVectors[sortedIndices[1]];
-		minorEigenVector = glm::cross(majorEigenVector, medianEigenVector);
 	}
 }
