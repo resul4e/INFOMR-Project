@@ -18,6 +18,35 @@
 
 using namespace QtCharts;
 
+DatabaseHierarchy::DatabaseHierarchy(Database& database) :
+	m_database(database)
+{
+	setFixedWidth(200);
+
+	m_model = new DatabaseHierarchyModel(database);
+
+	// Create the tree view that shows all shapes
+	setSelectionMode(QAbstractItemView::SingleSelection);
+	setModel(m_model);
+}
+
+void DatabaseHierarchy::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	QModelIndexList indices = selected.indexes();
+	if (!indices.isEmpty())
+	{
+		QModelIndex selectedIndex = indices[0];
+		DatabaseHierarchyItem* item = m_model->getItem(selectedIndex, Qt::DisplayRole);
+		ModelDescriptor modelDescriptor = item->getDataAtColumn(0);
+	}
+}
+
+void DatabaseHierarchy::UpdateDataModel()
+{
+	m_model = new DatabaseHierarchyModel(m_database);
+	setModel(m_model);
+}
+
 DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
 	m_database(_database),
 	m_maxVertexCount(100)
@@ -34,6 +63,8 @@ DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
 	QLabel* databaseCountLabel = new QLabel("Database entries");
 
 	m_databaseCountField = createField("0");
+
+	m_databaseHierarchy = new DatabaseHierarchy(*m_database);
 
 	m_vertexCountHistogram = CreateVertexCountChart();
 	m_vertexCountSlider = new QSlider();
@@ -63,6 +94,7 @@ DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
 	QGridLayout* chartsLayout = new QGridLayout();
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
+	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
 	chartsLayout->addWidget(chartView, 1, 0);
@@ -132,6 +164,8 @@ void DatabaseView::Update()
 	//Update the number of entries in the database.
 	m_databaseCountField->setText(std::to_string(m_database->GetModelDatabase().size()).c_str());
 
+	//Update the hierarchy
+	m_databaseHierarchy->UpdateDataModel();
 
 	//The amount of bars in the chart
 	const int DIVISION_COUNT = 10;
