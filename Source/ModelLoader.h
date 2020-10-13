@@ -5,6 +5,8 @@
 #include <map>
 
 class Model;
+struct Features3D;
+struct HistogramFeature;
 
 /**
  * \brief Class that is responsible for loading a Model using Assimp.
@@ -18,4 +20,8 @@ public:
 	 * \return The model loaded from the given file path
 	 */
 	static std::shared_ptr<Model> LoadModel(std::filesystem::path _filePath);
+	static Features3D LoadFeatures(std::filesystem::path _filePath);
+
+private:
+	static void LoadHistogramFeature(HistogramFeature& _feature, std::ifstream& _stream);
 };

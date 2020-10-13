@@ -1,6 +1,7 @@
 #include "ModelLoader.h"
 
 #include "Model.h"
+#include "ModelDescriptor.h"
 
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -8,6 +9,7 @@
 
 #include <limits>
 #include <iostream>
+#include <fstream>
 
 // Convert an Assimp matrix to a GLM column-major matrix
 glm::mat4 convertMatrix(const aiMatrix4x4& aiMat)
@@ -90,4 +92,75 @@ std::shared_ptr<Model> ModelLoader::LoadModel(std::filesystem::path _filePath)
 	}
 
 	return model;
+}
+
+Features3D ModelLoader::LoadFeatures(std::filesystem::path _filePath)
+{
+	Features3D features;
+	
+	std::ifstream featuresFile(_filePath);
+	assert(featuresFile.is_open());
+	
+	std::string line;
+	
+	std::getline(featuresFile, line);
+	auto nextComma = line.find(',');
+	std::string number = line.substr(nextComma + 2, line.size());
+	features.volume = std::stof(number);
+	
+	std::getline(featuresFile, line);
+	nextComma = line.find(',');
+	number = line.substr(nextComma + 2, line.size());
+	features.surfaceArea = std::stof(number);
+	
+	std::getline(featuresFile, line);
+	nextComma = line.find(',');
+	number = line.substr(nextComma + 2, line.size());
+	features.compactness = std::stof(number);
+	
+	std::getline(featuresFile, line);
+	nextComma = line.find(',');
+	number = line.substr(nextComma + 2, line.size());
+	features.boundsArea = std::stof(number);
+	
+	std::getline(featuresFile, line);
+	nextComma = line.find(',');
+	number = line.substr(nextComma + 2, line.size());
+	features.boundsVolume = std::stof(number);
+	
+	std::getline(featuresFile, line);
+	nextComma = line.find(',');
+	number = line.substr(nextComma + 2, line.size());
+	features.eccentricity = std::stof(number);
+
+	LoadHistogramFeature(features.a1, featuresFile);
+	LoadHistogramFeature(features.d1, featuresFile);
+	LoadHistogramFeature(features.d2, featuresFile);
+	LoadHistogramFeature(features.d3, featuresFile);
+	LoadHistogramFeature(features.d4, featuresFile);
+
+	return features;
+}
+
+void ModelLoader::LoadHistogramFeature(HistogramFeature& _feature, std::ifstream& _stream)
+{
+	std::string line;
+	std::getline(_stream, line);
+	line.erase(0, 4);
+	for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+	{
+		auto nextComma = line.find(',');
+		std::string number = line.substr(0, nextComma);
+		_feature.binCount[i] = std::stof(number);
+		line.erase(0, nextComma + 1);
+	}
+
+	auto nextComma = line.find(',');
+	std::string numberString = line.substr(0, nextComma);
+	_feature.min = std::stof(numberString);
+	line.erase(0, nextComma + 1);
+
+	nextComma = line.find(',');
+	numberString = line.substr(0, nextComma);
+	_feature.max = std::stof(numberString);
 }
