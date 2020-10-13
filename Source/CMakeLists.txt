@@ -51,5 +51,7 @@ set(WIDGETS_SOURCES
     ${DIR}/Widgets/FeatureView.cpp
     ${DIR}/Widgets/DatabaseView.h
     ${DIR}/Widgets/DatabaseView.cpp
+    ${DIR}/Widgets/DatabaseHierarchyModel.h
+    ${DIR}/Widgets/DatabaseHierarchyModel.cpp
     PARENT_SCOPE
 )
