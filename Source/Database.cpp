@@ -130,17 +130,27 @@ void Database::ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path 
 
 void Database::ProcessAllModels()
 {
+	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
 	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
 	fs::create_directory(savedMeshesPath);
 
+	SortDatabase(Database::SortingOptions::BOUNDS);
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
+		if(fs::exists(savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply")))
+		{
+			std::cout << "We already have data for " << modelDescriptor.m_path.filename() << "\n";
+			continue;
+		}
 		modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
+		SubdivideModel(modelDescriptor);
+		CrunchModel(modelDescriptor);
 		Normalizer::Remesh(modelDescriptor);
 		Normalizer::Normalize(modelDescriptor);
 		modelDescriptor.UpdateBounds();
 		modelDescriptor.UpdateFeatures();
 		ModelSaver::SavePly(modelDescriptor, savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
+		modelDescriptor.m_model = nullptr;
 	}
 }
 
@@ -195,7 +205,7 @@ void Database::SubdivideModel(ModelDescriptor& _modelDescriptor)
 	bool subdivide = false;
 	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 	{
-		if (mesh.positions.size() < 10000 || mesh.faces.size() < 10000)
+		if (mesh.positions.size() < 1000 || mesh.faces.size() < 1000)
 		{
 			subdivide = true;
 			std::cerr << "Not enough verts/faces in model with name: " << _modelDescriptor.m_name << std::endl;
@@ -211,7 +221,13 @@ void Database::SubdivideModel(ModelDescriptor& _modelDescriptor)
 
 		newPath /= _modelDescriptor.m_path.filename();
 		newPath.replace_extension(".ply");
-		system(("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string()).c_str());
+		auto command = ("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
+		int error = system(command.c_str());
+		if(error != 0)
+		{
+			std::cerr << "Subdivision failed', using backup subdivision" << "\n";
+			system(("..\\Scripts\\mesh_filter.exe " + _modelDescriptor.m_path.string() + " -subdiv " + newPath.string()).c_str());
+		}
 
 		_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
 		_modelDescriptor.UpdateFeatures();
@@ -268,9 +284,8 @@ std::shared_ptr<Model> Database::LoadModifiedModel(std::filesystem::path _modelF
 {
 	//TODO(Resul): Remove this return
 	//For now just always load the default model
-	return nullptr;
-	
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+
+	fs::path modifiedMeshesPath = fs::path("..\\SavedMeshes");
 
 	fs::path offPath = _modelFileName;
 	fs::path plyPath = _modelFileName.replace_extension(".ply");
