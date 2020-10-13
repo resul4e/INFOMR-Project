@@ -30,6 +30,17 @@ DatabaseHierarchy::DatabaseHierarchy(Database& database) :
 	setModel(m_model);
 }
 
+void DatabaseHierarchy::selectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+	QModelIndexList indices = selected.indexes();
+	if (!indices.isEmpty())
+	{
+		QModelIndex selectedIndex = indices[0];
+		DatabaseHierarchyItem* item = m_model->getItem(selectedIndex, Qt::DisplayRole);
+		ModelDescriptor modelDescriptor = item->getDataAtColumn(0);
+	}
+}
+
 void DatabaseHierarchy::UpdateDataModel()
 {
 	m_model = new DatabaseHierarchyModel(m_database);

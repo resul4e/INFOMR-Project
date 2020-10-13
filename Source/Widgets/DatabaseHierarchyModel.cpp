@@ -4,8 +4,8 @@
 
 #include <QString>
 
-DatabaseHierarchyItem::DatabaseHierarchyItem(QString shapeName, DatabaseHierarchyItem* parent) :
-	m_shapeName(shapeName),
+DatabaseHierarchyItem::DatabaseHierarchyItem(ModelDescriptor modelDescriptor, DatabaseHierarchyItem* parent) :
+	m_modelDescriptor(modelDescriptor),
 	m_parentItem(parent)
 {
 
@@ -34,9 +34,9 @@ DatabaseHierarchyItem* DatabaseHierarchyItem::getChild(int row)
 }
 
 // String that gets displayed in the data hierarchy at the given column
-QString DatabaseHierarchyItem::getDataAtColumn(int column) const
+ModelDescriptor DatabaseHierarchyItem::getDataAtColumn(int column) const
 {
-	return m_shapeName;
+	return m_modelDescriptor;
 }
 
 int DatabaseHierarchyItem::row() const
@@ -63,7 +63,9 @@ DatabaseHierarchyModel::DatabaseHierarchyModel(Database& database, QObject* pare
 	QAbstractItemModel(parent),
 	m_database(database)
 {
-	m_rootItem = new DatabaseHierarchyItem("Database Shape Hierarchy");
+	ModelDescriptor rootDescriptor;
+	rootDescriptor.m_name = std::string("Database Shape Hierarchy");
+	m_rootItem = new DatabaseHierarchyItem(rootDescriptor);
 	setupModelData(database, m_rootItem);
 }
 
@@ -84,7 +86,7 @@ QVariant DatabaseHierarchyModel::data(const QModelIndex& index, int role) const
 	if (role != Qt::DisplayRole)
 		return QVariant();
 
-	return item->getDataAtColumn(index.column());
+	return QString::fromStdString(item->getDataAtColumn(index.column()).m_name);
 }
 
 QModelIndex DatabaseHierarchyModel::index(int row, int column, const QModelIndex& parent) const
@@ -167,7 +169,7 @@ Qt::ItemFlags DatabaseHierarchyModel::flags(const QModelIndex& index) const
 QVariant DatabaseHierarchyModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return m_rootItem->getDataAtColumn(section);
+		return QString::fromStdString(m_rootItem->getDataAtColumn(section).m_name);
 
 	return QVariant();
 }
@@ -176,7 +178,7 @@ void DatabaseHierarchyModel::setupModelData(Database& database, DatabaseHierarch
 {
 	for (const ModelDescriptor& modelDescriptor : database.GetModelDatabase())
 	{
-		DatabaseHierarchyItem* shapeItem = new DatabaseHierarchyItem(QString::fromStdString(modelDescriptor.m_name), m_rootItem);
+		DatabaseHierarchyItem* shapeItem = new DatabaseHierarchyItem(modelDescriptor, m_rootItem);
 
 		m_rootItem->addChild(shapeItem);
 	}

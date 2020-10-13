@@ -21,6 +21,7 @@ class DatabaseHierarchy : public QTreeView
 public:
 	DatabaseHierarchy(Database& database);
 
+	void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void UpdateDataModel();
 
 private:

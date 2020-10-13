@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ModelDescriptor.h"
+
 #include <QAbstractItemModel>
 
 #include <QVector>
@@ -9,7 +11,7 @@ class Database;
 class DatabaseHierarchyItem
 {
 public:
-	DatabaseHierarchyItem(QString shapeName, DatabaseHierarchyItem* parent = nullptr);
+	DatabaseHierarchyItem(ModelDescriptor modelDescriptor, DatabaseHierarchyItem* parent = nullptr);
 
 	~DatabaseHierarchyItem();
 
@@ -18,7 +20,7 @@ public:
 	DatabaseHierarchyItem* getParent();
 	DatabaseHierarchyItem* getChild(int row);
 
-	QString getDataAtColumn(int column) const;
+	ModelDescriptor getDataAtColumn(int column) const;
 	int row() const;
 
 	int childCount() const;
@@ -29,7 +31,7 @@ private:
 
 	QVector<DatabaseHierarchyItem*> m_childItems;
 
-	QString m_shapeName;
+	ModelDescriptor m_modelDescriptor;
 };
 
 class DatabaseHierarchyModel : public QAbstractItemModel
