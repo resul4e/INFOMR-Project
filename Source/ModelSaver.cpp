@@ -97,8 +97,8 @@ void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 	featuresStream << "boundsVolume, " << features.boundsVolume << "\n";
 	featuresStream << "eccentricity, " << features.eccentricity << "\n";
 
-	featuresStream << "a1, ";
-	SaveHistogramFeatures(features.a1, featuresStream);
+	featuresStream << "a3, ";
+	SaveHistogramFeatures(features.a3, featuresStream);
 
 	featuresStream << "d1, ";
 	SaveHistogramFeatures(features.d1, featuresStream);

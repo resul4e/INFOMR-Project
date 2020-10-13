@@ -27,7 +27,7 @@ struct Features3D
 	float boundsVolume;
 	float eccentricity;
 
-	HistogramFeature a1;
+	HistogramFeature a3;
 	HistogramFeature d1;
 	HistogramFeature d2;
 	HistogramFeature d3;

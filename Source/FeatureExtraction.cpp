@@ -139,7 +139,7 @@ void GetMeshPositions(const Model& _model, int* meshPositions)
 	}
 }
 
-HistogramFeature ExtractA1(const ModelDescriptor& _modelDescriptor)
+HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 {
 	//The size of each of the bins.
 	const float binSize = M_PI / HISTOGRAM_BIN_SIZE;

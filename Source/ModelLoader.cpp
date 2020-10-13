@@ -133,7 +133,7 @@ Features3D ModelLoader::LoadFeatures(std::filesystem::path _filePath)
 	number = line.substr(nextComma + 2, line.size());
 	features.eccentricity = std::stof(number);
 
-	LoadHistogramFeature(features.a1, featuresFile);
+	LoadHistogramFeature(features.a3, featuresFile);
 	LoadHistogramFeature(features.d1, featuresFile);
 	LoadHistogramFeature(features.d2, featuresFile);
 	LoadHistogramFeature(features.d3, featuresFile);
