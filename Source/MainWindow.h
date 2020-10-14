@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Context.h"
-#include "Widgets/ModelViewer.h"
+#include "Widgets/ModelView.h"
 
 #include "../Resources/ui_MainWindow.h"
 
@@ -94,9 +94,9 @@ private:
 
 	Context m_context;
 
-	ModelViewer* _modelViewer;
+	ModelView* _modelView;
 	//std::shared_ptr<QueryManager> m_queryManager;
-	FeatureView* _featureWidget;
+	FeatureView* _featureView;
 	DatabaseView* _databaseWidget;
 	size_t m_selectedModelIndex;
 };

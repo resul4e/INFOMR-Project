@@ -15,11 +15,11 @@
 class Model;
 class Camera;
 
-class ModelViewer : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
+class ModelView : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
 {
 	Q_OBJECT
 public:
-	ModelViewer(Context& _context, QWidget* parent = 0);
+	ModelView(Context& _context, QWidget* parent = 0);
 
 public slots:
 	void onModelChanged();

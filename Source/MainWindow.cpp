@@ -30,15 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-	_modelViewer = new ModelViewer(m_context);
-	setCentralWidget(_modelViewer);
+	_modelView = new ModelView(m_context);
+	setCentralWidget(_modelView);
 
-	_featureWidget = new FeatureView(m_context);
-	_featureWidget->setAllowedAreas(Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _featureWidget);
+	_featureView = new FeatureView(m_context);
+	_featureView->setAllowedAreas(Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _featureView);
 
-	//m_queryManager = std::make_shared<QueryManager>();
-	
 	_databaseWidget = new DatabaseView(m_context);
 	_databaseWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
 	addDockWidget(Qt::LeftDockWidgetArea, _databaseWidget);

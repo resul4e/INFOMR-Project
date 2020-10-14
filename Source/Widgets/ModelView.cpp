@@ -1,4 +1,4 @@
-#include "ModelViewer.h"
+#include "ModelView.h"
 
 #include "ModelLoader.h"
 #include "Model.h"
@@ -13,22 +13,22 @@
 #include <iostream>
 #include <cmath>
 
-ModelViewer::ModelViewer(Context& _context, QWidget* parent) :
+ModelView::ModelView(Context& _context, QWidget* parent) :
 	m_context(_context),
 	m_projMatrix(1.0f),
 	m_viewMatrix(1.0f),
 	m_modelMatrix(1.0f)
 {
 	//setStyleSheet("background-color:black;");
-	connect(&m_context, &Context::modelChanged, this, &ModelViewer::onModelChanged);
+	connect(&m_context, &Context::modelChanged, this, &ModelView::onModelChanged);
 }
 
-void ModelViewer::onModelChanged()
+void ModelView::onModelChanged()
 {
 
 }
 
-void ModelViewer::initializeGL()
+void ModelView::initializeGL()
 {
 	initializeOpenGLFunctions();
 	qDebug() << "Initializing model loader with context: " << context();
@@ -45,7 +45,7 @@ void ModelViewer::initializeGL()
 	m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
 	m_wireframeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Color.frag");
 	m_planeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Plane.frag");
-	//connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelViewer::cleanup);
+	//connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelView::cleanup);
 
 	QTimer* timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -59,13 +59,13 @@ void ModelViewer::initializeGL()
 	glPolygonOffset(-1.0, -1.0);
 }
 
-void ModelViewer::resizeGL(int w, int h)
+void ModelView::resizeGL(int w, int h)
 {
 	m_camera->SetAspectRatio((float) w / h);
 	m_camera->loadProjectionMatrix(m_projMatrix);
 }
 
-void ModelViewer::paintGL()
+void ModelView::paintGL()
 {
 	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 
@@ -94,7 +94,7 @@ void ModelViewer::paintGL()
 	drawModel(true);
 }
 
-void ModelViewer::drawGroundPlane()
+void ModelView::drawGroundPlane()
 {
 	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -0.5f, 0));
 	m_modelMatrix = glm::scale(m_modelMatrix, glm::vec3(40, 1, 40));
@@ -113,7 +113,7 @@ void ModelViewer::drawGroundPlane()
 	m_planeShader.release();
 }
 
-void ModelViewer::drawModel(bool wireframe)
+void ModelView::drawModel(bool wireframe)
 {
 	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 
@@ -147,7 +147,7 @@ void ModelViewer::drawModel(bool wireframe)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void ModelViewer::wheelEvent(QWheelEvent* event)
+void ModelView::wheelEvent(QWheelEvent* event)
 {
 	float d = event->delta() < 0 ? 0.2f : -0.2f;
 
@@ -161,17 +161,17 @@ void ModelViewer::wheelEvent(QWheelEvent* event)
 	m_camera->RecomputePosition();
 }
 
-void ModelViewer::mouseMoveEvent(QMouseEvent* event)
+void ModelView::mouseMoveEvent(QMouseEvent* event)
 {
 	m_arcBall.Move(*m_camera, width(), height(), event->x(), event->y());
 }
 
-void ModelViewer::mousePressEvent(QMouseEvent* event)
+void ModelView::mousePressEvent(QMouseEvent* event)
 {
 	m_arcBall.Engage();
 }
 
-void ModelViewer::mouseReleaseEvent(QMouseEvent* event)
+void ModelView::mouseReleaseEvent(QMouseEvent* event)
 {
 	m_arcBall.Release();
 }
