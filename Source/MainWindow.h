@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Context.h"
 #include "Widgets/ModelViewer.h"
 
 #include "../Resources/ui_MainWindow.h"
@@ -91,8 +92,10 @@ private:
 	QMenu* m_menuModelSelect;
 	QByteArray _windowConfiguration;
 
+	Context m_context;
+
 	ModelViewer* _modelViewer;
-	std::shared_ptr<QueryManager> m_queryManager;
+	//std::shared_ptr<QueryManager> m_queryManager;
 	FeatureView* _featureWidget;
 	DatabaseView* _databaseWidget;
 	size_t m_selectedModelIndex;

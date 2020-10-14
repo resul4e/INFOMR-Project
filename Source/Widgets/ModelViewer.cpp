@@ -13,14 +13,19 @@
 #include <iostream>
 #include <cmath>
 
-void ModelViewer::setModel(ModelDescriptor modelDescriptor)
+ModelViewer::ModelViewer(Context& _context, QWidget* parent) :
+	m_context(_context),
+	m_projMatrix(1.0f),
+	m_viewMatrix(1.0f),
+	m_modelMatrix(1.0f)
 {
-	m_modelDescriptor = modelDescriptor;
+	//setStyleSheet("background-color:black;");
+	connect(&m_context, &Context::modelChanged, this, &ModelViewer::onModelChanged);
 }
 
-ModelDescriptor& ModelViewer::getModel()
+void ModelViewer::onModelChanged()
 {
-	return m_modelDescriptor;
+
 }
 
 void ModelViewer::initializeGL()
@@ -62,6 +67,8 @@ void ModelViewer::resizeGL(int w, int h)
 
 void ModelViewer::paintGL()
 {
+	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
+
 	// Bind the framebuffer belonging to the widget
 	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
 
@@ -69,12 +76,12 @@ void ModelViewer::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// If no model is set, don't call any rendering functions
-	if (!m_modelDescriptor.m_model)
+	if (!modelDescriptor.m_model)
 		return;
 
 	// If a model is set, but has not been uploaded yet, do so
-	if (!m_modelDescriptor.m_model->isUploaded())
-		m_modelDescriptor.m_model->Upload();
+	if (!modelDescriptor.m_model->isUploaded())
+		modelDescriptor.m_model->Upload();
 
 	// Reset the blending function
 	glEnable(GL_BLEND);
@@ -108,6 +115,8 @@ void ModelViewer::drawGroundPlane()
 
 void ModelViewer::drawModel(bool wireframe)
 {
+	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
+
 	ShaderProgram& shader = wireframe ? m_wireframeShader : m_modelShader;
 
 	m_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
@@ -126,7 +135,7 @@ void ModelViewer::drawModel(bool wireframe)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
-	for (Mesh& mesh : m_modelDescriptor.m_model->m_meshes)
+	for (Mesh& mesh : modelDescriptor.m_model->m_meshes)
 	{
 		glBindVertexArray(mesh.vao);
 		glDrawArrays(GL_TRIANGLES, 0, mesh.faces.size() * 3);

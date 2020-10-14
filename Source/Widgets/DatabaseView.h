@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Context.h"
+
 #include <QDockWidget>
 #include <QLineEdit>
 #include <QTreeView>
@@ -34,7 +37,7 @@ class DatabaseView : public QDockWidget
 {
 	Q_OBJECT
 public:
-	DatabaseView(std::shared_ptr<Database> _database);
+	DatabaseView(Context& _context);
 
 	void Update();
 	

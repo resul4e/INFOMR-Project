@@ -47,8 +47,8 @@ void DatabaseHierarchy::UpdateDataModel()
 	setModel(m_model);
 }
 
-DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
-	m_database(_database),
+DatabaseView::DatabaseView(Context& _context) :
+	m_database(_context.GetDatabase()),
 	m_maxVertexCount(100)
 {
 	setObjectName("DatabaseView");
