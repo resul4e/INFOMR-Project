@@ -134,24 +134,50 @@ void Database::ProcessAllModels()
 	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
 	fs::create_directory(savedMeshesPath);
 
+	Features3D::globalBoundsA3.s = 0;
+	Features3D::globalBoundsA3.t = 3.14159f;
+	Features3D::globalBoundsD1.s = 0;
+	Features3D::globalBoundsD1.t = std::sqrt(2) + 0.001f;
+	Features3D::globalBoundsD2.s = 0;
+	Features3D::globalBoundsD2.t = std::sqrt(2) + 0.001f;
+	Features3D::globalBoundsD3.s = 0;
+	Features3D::globalBoundsD3.t = 0.86660254038;
+	Features3D::globalBoundsD4.s = 0;
+	Features3D::globalBoundsD4.t = 1.0f/3.0f;
+
 	SortDatabase(Database::SortingOptions::BOUNDS);
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		if(fs::exists(savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply")))
+		if (fs::exists(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")))
 		{
-			std::cout << "We already have data for " << modelDescriptor.m_path.filename() << "\n";
 			continue;
 		}
-		modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
-		SubdivideModel(modelDescriptor);
-		CrunchModel(modelDescriptor);
-		Normalizer::Remesh(modelDescriptor);
-		Normalizer::Normalize(modelDescriptor);
+		
+		if(!fs::exists(savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply")))
+		{
+			modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
+			SubdivideModel(modelDescriptor);
+			CrunchModel(modelDescriptor);
+			Normalizer::Remesh(modelDescriptor);
+			Normalizer::Normalize(modelDescriptor);
+		}
+		else
+		{
+			modelDescriptor.m_model = LoadSavedModel(modelDescriptor.m_path);
+			if(modelDescriptor.m_model == nullptr)
+			{
+				continue;
+			}
+			Normalizer::Normalize(modelDescriptor);
+		}
+
 		modelDescriptor.UpdateBounds();
 		modelDescriptor.UpdateFeatures();
 		ModelSaver::SavePly(modelDescriptor, savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
 		modelDescriptor.m_model = nullptr;
 	}
+
+	CompoundHistogramPerClass();
 }
 
 void Database::RemeshAllModels()
@@ -280,7 +306,114 @@ void Database::SortDatabase(SortingOptions _option)
 	}
 }
 
-std::shared_ptr<Model> Database::LoadModifiedModel(std::filesystem::path _modelFileName)
+void Database::CompoundHistogramPerClass()
+{
+	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
+	fs::create_directory(featureDatabasePath / "Combined");
+	std::map<std::string, std::vector<ModelDescriptor>> classMap;
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
+	{
+		if(!fs::exists(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")))
+		{
+			continue;
+		}
+		
+		modelDescriptor.m_3DFeatures = ModelLoader::LoadFeatures(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv"));
+
+		if(classMap.find(modelDescriptor.m_class) == classMap.end())
+		{
+			classMap.insert({ modelDescriptor.m_class, std::vector<ModelDescriptor>() });
+		}
+		classMap[modelDescriptor.m_class].push_back(modelDescriptor);
+	}
+
+	for(auto classDescPair : classMap)
+	{
+		std::ofstream outFile(featureDatabasePath / "Combined" / ("a3" + classDescPair.first + ".csv"));
+
+		for(const ModelDescriptor& desc : classDescPair.second)
+		{
+			for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+			{
+				outFile << desc.m_3DFeatures.a3.binCount[i] << ", ";
+			}
+			outFile << "\n";
+		}
+		outFile << Features3D::globalBoundsA3.s << ", " << Features3D::globalBoundsA3.t;
+		
+		outFile.close();
+	}
+
+	for (auto classDescPair : classMap)
+	{
+		std::ofstream outFile(featureDatabasePath / "Combined" / ("d1" + classDescPair.first + ".csv"));
+
+		for (const ModelDescriptor& desc : classDescPair.second)
+		{
+			for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+			{
+				outFile << desc.m_3DFeatures.d1.binCount[i] << ", ";
+			}
+			outFile << "\n";
+		}
+		outFile << Features3D::globalBoundsD1.s << ", " << Features3D::globalBoundsD1.t;
+
+		outFile.close();
+	}
+
+	for (auto classDescPair : classMap)
+	{
+		std::ofstream outFile(featureDatabasePath / "Combined" / ("d2" + classDescPair.first + ".csv"));
+
+		for (const ModelDescriptor& desc : classDescPair.second)
+		{
+			for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+			{
+				outFile << desc.m_3DFeatures.d2.binCount[i] << ", ";
+			}
+			outFile << "\n";
+		}
+		outFile << Features3D::globalBoundsD2.s << ", " << Features3D::globalBoundsD2.t;
+
+		outFile.close();
+	}
+
+	for (auto classDescPair : classMap)
+	{
+		std::ofstream outFile(featureDatabasePath / "Combined" / ("d3" + classDescPair.first + ".csv"));
+
+		for (const ModelDescriptor& desc : classDescPair.second)
+		{
+			for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+			{
+				outFile << desc.m_3DFeatures.d3.binCount[i] << ", ";
+			}
+			outFile << "\n";
+		}
+		outFile << Features3D::globalBoundsD3.s << ", " << Features3D::globalBoundsD3.t;
+
+		outFile.close();
+	}
+
+	for (auto classDescPair : classMap)
+	{
+		std::ofstream outFile(featureDatabasePath / "Combined" / ("d4" + classDescPair.first + ".csv"));
+
+		for (const ModelDescriptor& desc : classDescPair.second)
+		{
+			for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+			{
+				outFile << desc.m_3DFeatures.d4.binCount[i] << ", ";
+			}
+			outFile << "\n";
+		}
+		outFile << Features3D::globalBoundsD4.s << ", " << Features3D::globalBoundsD4.t;
+
+		outFile.close();
+	}
+}
+
+std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)
 {
 	//TODO(Resul): Remove this return
 	//For now just always load the default model

@@ -70,9 +70,11 @@ public:
 
 private:
 
+	void CompoundHistogramPerClass();
+	
 	void ReadPSBClassificationFile(std::filesystem::path _modelDirectoryPath, std::filesystem::path _filePath);
 	
-	std::shared_ptr<Model> LoadModifiedModel(std::filesystem::path _modelFileName);
+	std::shared_ptr<Model> LoadSavedModel(std::filesystem::path _modelFileName);
 	
 	std::vector<ModelDescriptor> m_modelDatabase;
 };

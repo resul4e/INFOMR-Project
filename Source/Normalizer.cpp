@@ -20,6 +20,7 @@ void Normalizer::Normalize(ModelDescriptor& _modelDescriptor)
 	FlipModel(*_modelDescriptor.m_model);
 	ScaleModel(*_modelDescriptor.m_model);
 
+	_modelDescriptor.UpdateBounds();
 	_modelDescriptor.UpdateFeatures();
 	_modelDescriptor.m_model->markForReupload();
 }

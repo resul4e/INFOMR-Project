@@ -32,6 +32,12 @@ struct Features3D
 	HistogramFeature d2;
 	HistogramFeature d3;
 	HistogramFeature d4;
+
+	inline static glm::vec2 globalBoundsA3 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
+	inline static glm::vec2 globalBoundsD1 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
+	inline static glm::vec2 globalBoundsD2 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
+	inline static glm::vec2 globalBoundsD3 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
+	inline static glm::vec2 globalBoundsD4 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
 };
 
 struct ModelDescriptor

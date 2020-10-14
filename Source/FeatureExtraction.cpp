@@ -197,27 +197,14 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 	int* meshPositions = new int[_modelDescriptor.m_model->m_meshes.size()];
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
-	//Get the maximum distance two points can be from the barycenter.
-	float maxDistance = 0;
-	for (size_t i = 0; i < _modelDescriptor.m_model->m_meshes.size(); i++)
-	{
-		for (int j = 0; j < _modelDescriptor.m_model->m_meshes[i].positions.size(); j++)
-		{
-			maxDistance = std::max(glm::length(_modelDescriptor.m_model->m_meshes[i].positions[j] - barycenter), maxDistance);
-		}
-	}
-
-	//Add small epsilon so that we include all vertices.
-	maxDistance += 0.001f;
-
 	//Create all bins for the histogram.
 	HistogramFeature d1Feature{};
-	d1Feature.max = maxDistance;
 	d1Feature.min = 0;
+	d1Feature.max = Features3D::globalBoundsD1.t;
 	memset(d1Feature.binCount, 0, sizeof d1Feature.binCount);
 	
 	//Get the bin size
-	const float binSize = maxDistance / HISTOGRAM_BIN_SIZE;
+	const float binSize = Features3D::globalBoundsD1.t / HISTOGRAM_BIN_SIZE;
 
 	//Iterate for a while, each time picking a random vertex and extracting the distance between it and the barycenter.
 	glm::vec3 randomVertex;
@@ -247,7 +234,7 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
-	const float maxDistance = glm::length(_modelDescriptor.m_bounds.max - _modelDescriptor.m_bounds.min) + 0.001;
+	const float maxDistance = Features3D::globalBoundsD2.t;
 	//Calculate the bin size.
 	const float binSize = maxDistance / HISTOGRAM_BIN_SIZE;
 
@@ -269,7 +256,7 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 
 		//Add one to the correct bin
 		int bin = static_cast<int>(distance / binSize);
-		assert(bin < HISTOGRAM_BIN_SIZE);
+		bin = bin < 10 ? bin : 9;
 		d2Feature.binCount[bin]++;
 	}
 
@@ -284,8 +271,8 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
-	float minArea = std::numeric_limits<float>::max();
-	float maxArea = std::numeric_limits<float>::lowest();
+	const float minArea = 0;
+	const float maxArea = Features3D::globalBoundsD3.t;
 
 	//Get all random triangle areas and the max and min areas
 	float* triangleAreas = new float[HISTOGRAM_ITERATIONS];
@@ -298,8 +285,8 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 		float area = std::sqrt(ExtractTriangleArea(randomVertices[0], randomVertices[1], randomVertices[2]));
 		triangleAreas[i] = area;
 
-		maxArea = std::max(maxArea, area);
-		minArea = std::min(minArea, area);
+		//maxArea = std::max(maxArea, area);
+		//minArea = std::min(minArea, area);
 	}
 
 	//Calculate the bin sizes
@@ -333,8 +320,9 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Add small epsilon so that we include all vertices.
-	float maxVolume = std::numeric_limits<float>::lowest();
-	float minVolume = std::numeric_limits<float>::max();
+	const float minVolume = 0;
+	const float maxVolume = Features3D::globalBoundsD4.t;
+
 
 	//Get all random tet volumes so that we know what the min and max are.
 	float* tetVolumes = new float[HISTOGRAM_ITERATIONS];
@@ -346,8 +334,8 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 		float volume = std::cbrt(ExtractVolumeOfTetrahedron(randomVertices[0], randomVertices[1], randomVertices[2], randomVertices[3]));
 		tetVolumes[i] = volume;
 
-		maxVolume = std::max(maxVolume, volume);
-		minVolume = std::min(minVolume, volume);
+		//maxVolume = std::max(maxVolume, volume);
+		//minVolume = std::min(minVolume, volume);
 	}
 
 	//Calculate the bin size.
