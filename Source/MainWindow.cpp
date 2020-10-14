@@ -76,8 +76,7 @@ void MainWindow::addDatabaseMenuActions()
 {
 	auto processModelsFunc = [=]()
 	{
-    {
-        m_context.GetDatabase()->ProcessAllModels();
+		m_context.GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
 	};
 
