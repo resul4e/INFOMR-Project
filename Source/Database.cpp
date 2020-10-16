@@ -137,7 +137,7 @@ void Database::ProcessAllModels()
 	Features3D::globalBoundsA3.s = 0;
 	Features3D::globalBoundsA3.t = 3.14159f;
 	Features3D::globalBoundsD1.s = 0;
-	Features3D::globalBoundsD1.t = std::sqrt(2) + 0.001f;
+	Features3D::globalBoundsD1.t = 1;
 	Features3D::globalBoundsD2.s = 0;
 	Features3D::globalBoundsD2.t = std::sqrt(2) + 0.001f;
 	Features3D::globalBoundsD3.s = 0;
