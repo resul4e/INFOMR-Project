@@ -137,15 +137,14 @@ void Database::ProcessAllModels()
 	Features3D::globalBoundsA3.s = 0;
 	Features3D::globalBoundsA3.t = 3.14159f;
 	Features3D::globalBoundsD1.s = 0;
-	Features3D::globalBoundsD1.t = 1;
+	Features3D::globalBoundsD1.t = std::sqrt(2) / 2.0f + 0.001f;
 	Features3D::globalBoundsD2.s = 0;
 	Features3D::globalBoundsD2.t = std::sqrt(2) + 0.001f;
 	Features3D::globalBoundsD3.s = 0;
-	Features3D::globalBoundsD3.t = 0.86660254038;
+	Features3D::globalBoundsD3.t = std::sqrt(2*std::sqrt(3) / 4.0f);
 	Features3D::globalBoundsD4.s = 0;
-	Features3D::globalBoundsD4.t = 1.0f/3.0f;
+	Features3D::globalBoundsD4.t = std::cbrt(1.0f/3.0f);
 
-	SortDatabase(Database::SortingOptions::BOUNDS);
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
 		if (fs::exists(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")))
