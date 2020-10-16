@@ -185,7 +185,8 @@ void FeatureView::OnModelChanged()
 	m_vsaRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.compactness));
 	m_eccentricityRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.eccentricity));
 	
-	UpdateFaceAreaHistogram(modelDescriptor);
+	if (modelDescriptor.m_model != nullptr)
+		UpdateFaceAreaHistogram(modelDescriptor);
 }
 
 void FeatureView::UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor)

@@ -53,11 +53,6 @@ public:
 	 * @brief GO through all of the models in the database and add them to the menu (only if the list is empty)
 	*/
 	void populateDatabaseModelSelector();
-	/**
-	 * @brief Set the model to the selected model in the Model database selector.
-	 * @param _model The model to display on the screen.
-	*/
-	void selectModel(ModelDescriptor _modelDescriptor);
 
 	void normalizeCurrentModel();
 	void remeshCurrentModel();

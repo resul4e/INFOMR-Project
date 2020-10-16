@@ -3,7 +3,6 @@
 #include "QueryManager.h"
 #include "Widgets/FeatureView.h"
 #include "Widgets/DatabaseView.h"
-#include "ModelLoader.h"
 #include "Normalizer.h"
 
 #include <QApplication> // Used by centerAndResize
@@ -192,7 +191,7 @@ void MainWindow::importModelFromFile()
 	modelDescriptor.m_path = filePath.toStdString();
 	modelDescriptor.m_name = fileName.toStdString();
 
-	selectModel(modelDescriptor);
+	m_context.SetModel(modelDescriptor);
 }
 
 void MainWindow::exportModelToFile()
@@ -250,7 +249,7 @@ void MainWindow::populateDatabaseModelSelector()
 	{
 		auto selectModelLamda = [=]()
 		{
-			selectModel(m);
+			m_context.SetModel(m);
 		};
 		
 		QAction* modelAction = new QAction(m.m_name.c_str());
@@ -259,14 +258,6 @@ void MainWindow::populateDatabaseModelSelector()
 		m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
 
 	}
-}
-
-void MainWindow::selectModel(ModelDescriptor _modelDescriptor)
-{
-	_modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(_modelDescriptor.m_path));
-	_modelDescriptor.UpdateFeatures();
-
-	m_context.SetModel(_modelDescriptor);
 }
 
 void MainWindow::normalizeCurrentModel()
@@ -361,6 +352,6 @@ void MainWindow::keyPressEvent(QKeyEvent* _event)
 	std::vector<ModelDescriptor> db = m_context.GetDatabase()->GetModelDatabase();
 	if(m_selectedModelIndex < db.size())
 	{
-		selectModel(db[m_selectedModelIndex]);
+		m_context.SetModel(db[m_selectedModelIndex]);
 	}
 }

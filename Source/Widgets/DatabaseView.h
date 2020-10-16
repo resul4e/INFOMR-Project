@@ -22,13 +22,13 @@ class DatabaseHierarchy : public QTreeView
 {
 	Q_OBJECT
 public:
-	DatabaseHierarchy(Database& database);
+	DatabaseHierarchy(Context& _context);
 
 	void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void UpdateDataModel();
 
 private:
-	Database& m_database;
+	Context& m_context;
 
 	DatabaseHierarchyModel* m_model;
 };
