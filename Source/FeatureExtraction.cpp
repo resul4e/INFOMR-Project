@@ -149,10 +149,10 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Create all bins for the histogram.
-	HistogramFeature a1Feature{};
-	a1Feature.min = 0;
-	a1Feature.max = M_PI;
-	memset(a1Feature.binCount, 0, sizeof a1Feature.binCount);
+	HistogramFeature a3Feature{};
+	a3Feature.min = 0;
+	a3Feature.max = M_PI;
+	memset(a3Feature.binCount, 0, sizeof a3Feature.binCount);
 	
 	//Iterate for a while, each time picking three random vertices and extracting the angle between them.
 	glm::vec3 randomVertices[3];
@@ -178,13 +178,13 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 
 		//Find the bin it fits in by first dividing by the bin size and then flooring the result by casting it to an int.
 		const int bin = static_cast<int>(angle / binSize);
-		a1Feature.binCount[bin]++;
+		a3Feature.binCount[bin]++;
 	}
 
-	ProcessBins(a1Feature);
+	ProcessBins(a3Feature);
 
 	delete[] meshPositions;
-	return a1Feature;
+	return a3Feature;
 }
 
 HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
