@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Context.h"
+
 #include <QDockWidget>
 #include <QLineEdit>
 #include <QTreeView>
@@ -19,13 +22,13 @@ class DatabaseHierarchy : public QTreeView
 {
 	Q_OBJECT
 public:
-	DatabaseHierarchy(Database& database);
+	DatabaseHierarchy(Context& _context);
 
 	void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void UpdateDataModel();
 
 private:
-	Database& m_database;
+	Context& m_context;
 
 	DatabaseHierarchyModel* m_model;
 };
@@ -34,7 +37,7 @@ class DatabaseView : public QDockWidget
 {
 	Q_OBJECT
 public:
-	DatabaseView(std::shared_ptr<Database> _database);
+	DatabaseView(Context& _context);
 
 	void Update();
 	

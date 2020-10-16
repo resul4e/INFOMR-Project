@@ -15,15 +15,15 @@
 #include "Database.h"
 #include "Model.h"
 
-
+#include <QDebug>
 using namespace QtCharts;
 
-DatabaseHierarchy::DatabaseHierarchy(Database& database) :
-	m_database(database)
+DatabaseHierarchy::DatabaseHierarchy(Context& _context) :
+	m_context(_context)
 {
 	setFixedWidth(200);
 
-	m_model = new DatabaseHierarchyModel(database);
+	m_model = new DatabaseHierarchyModel(*_context.GetDatabase());
 
 	// Create the tree view that shows all shapes
 	setSelectionMode(QAbstractItemView::SingleSelection);
@@ -38,17 +38,19 @@ void DatabaseHierarchy::selectionChanged(const QItemSelection& selected, const Q
 		QModelIndex selectedIndex = indices[0];
 		DatabaseHierarchyItem* item = m_model->getItem(selectedIndex, Qt::DisplayRole);
 		ModelDescriptor modelDescriptor = item->getDataAtColumn(0);
+		m_context.SetModel(modelDescriptor);
+		qDebug() << QString::fromStdString(modelDescriptor.m_path.string());
 	}
 }
 
 void DatabaseHierarchy::UpdateDataModel()
 {
-	m_model = new DatabaseHierarchyModel(m_database);
+	m_model = new DatabaseHierarchyModel(*m_context.GetDatabase());
 	setModel(m_model);
 }
 
-DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
-	m_database(_database),
+DatabaseView::DatabaseView(Context& _context) :
+	m_database(_context.GetDatabase()),
 	m_maxVertexCount(100)
 {
 	setObjectName("DatabaseView");
@@ -64,7 +66,7 @@ DatabaseView::DatabaseView(std::shared_ptr<Database> _database) :
 
 	m_databaseCountField = createField("0");
 
-	m_databaseHierarchy = new DatabaseHierarchy(*m_database);
+	m_databaseHierarchy = new DatabaseHierarchy(_context);
 
 	m_vertexCountHistogram = CreateVertexCountChart();
 	m_vertexCountSlider = new QSlider();

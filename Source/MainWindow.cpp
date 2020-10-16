@@ -3,7 +3,6 @@
 #include "QueryManager.h"
 #include "Widgets/FeatureView.h"
 #include "Widgets/DatabaseView.h"
-#include "ModelLoader.h"
 #include "Normalizer.h"
 
 #include <QApplication> // Used by centerAndResize
@@ -30,24 +29,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	QObject::connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-	_modelViewer = new ModelViewer();
-	setCentralWidget(_modelViewer);
+	_modelView = new ModelView(m_context);
+	setCentralWidget(_modelView);
 
-	_featureWidget = new FeatureView();
-	_featureWidget->setAllowedAreas(Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _featureWidget);
+	_featureView = new FeatureView(m_context);
+	_featureView->setAllowedAreas(Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _featureView);
 
-	m_queryManager = std::make_shared<QueryManager>();
-	
-	_databaseWidget = new DatabaseView(m_queryManager->GetDatabase());
+	_databaseWidget = new DatabaseView(m_context);
 	_databaseWidget->setAllowedAreas(Qt::LeftDockWidgetArea);
 	addDockWidget(Qt::LeftDockWidgetArea, _databaseWidget);
 
 	auto processModelFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->SubdivideModel(_modelViewer->getModel());
-		m_queryManager->GetDatabase()->CrunchModel(_modelViewer->getModel());
-		_modelViewer->getModel().m_model->markForReupload();
+		m_context.GetDatabase()->SubdivideModel(m_context.GetActiveModel());
+		m_context.GetDatabase()->CrunchModel(m_context.GetActiveModel());
+		m_context.GetActiveModel().m_model->markForReupload();
 		_databaseWidget->Update();
 	};
 
@@ -78,42 +75,42 @@ void MainWindow::addDatabaseMenuActions()
 {
 	auto processModelsFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->ProcessAllModels();
+		m_context.GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
 	};
 
 	auto remeshModelsFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->RemeshAllModels();
+		m_context.GetDatabase()->RemeshAllModels();
 		_databaseWidget->Update();
 	};
 
 	auto saveModifiedModelsFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->SaveAllModels();
+		m_context.GetDatabase()->SaveAllModels();
 	};
 	
 	auto normalizeModelsFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->NormalizeAllModels();
+		m_context.GetDatabase()->NormalizeAllModels();
 		_databaseWidget->Update();
 	};
 	
 	auto sortByVertexCountFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::VERTEX_COUNT);
+		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::VERTEX_COUNT);
 		m_menuModelSelect->clear();
 	};
 
 	auto sortByFaceCountFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::FACE_COUNT);
+		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::FACE_COUNT);
 		m_menuModelSelect->clear();
 	};
 
 	auto sortByBoundsFunc = [=]()
 	{
-		m_queryManager->GetDatabase()->SortDatabase(Database::SortingOptions::BOUNDS);
+		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::BOUNDS);
 		m_menuModelSelect->clear();
 	};
 	
@@ -194,7 +191,7 @@ void MainWindow::importModelFromFile()
 	modelDescriptor.m_path = filePath.toStdString();
 	modelDescriptor.m_name = fileName.toStdString();
 
-	selectModel(modelDescriptor);
+	m_context.SetModel(modelDescriptor);
 }
 
 void MainWindow::exportModelToFile()
@@ -207,12 +204,12 @@ void MainWindow::exportModelToFile()
 
 	qDebug() << "Saving Model file: " << fileName;
 
-	ModelDescriptor modelDescriptor = _modelViewer->getModel();
+	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 	if(modelDescriptor.m_model != nullptr)
 	{
 		ModelSaver::SavePly(modelDescriptor, std::filesystem::path(fileName.toStdString()));
 	}
-	_featureWidget->SetModel(modelDescriptor);
+	m_context.SetModel(modelDescriptor);
 }
 
 void MainWindow::loadLabelledPSB()
@@ -223,7 +220,7 @@ void MainWindow::loadLabelledPSB()
 	if (fileName.isNull() || fileName.isEmpty())
 		return;
 
-	m_queryManager->GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+	m_context.GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
 	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }
@@ -236,7 +233,7 @@ void MainWindow::loadPSB()
 	if (fileName.isNull() || fileName.isEmpty())
 		return;
 
-	m_queryManager->GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
+	m_context.GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
 	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }
@@ -248,11 +245,11 @@ void MainWindow::populateDatabaseModelSelector()
 		return;
 	}
 	
-	for(ModelDescriptor m : m_queryManager->GetDatabase()->GetModelDatabase())
+	for(ModelDescriptor m : m_context.GetDatabase()->GetModelDatabase())
 	{
 		auto selectModelLamda = [=]()
 		{
-			selectModel(m);
+			m_context.SetModel(m);
 		};
 		
 		QAction* modelAction = new QAction(m.m_name.c_str());
@@ -263,24 +260,15 @@ void MainWindow::populateDatabaseModelSelector()
 	}
 }
 
-void MainWindow::selectModel(ModelDescriptor _modelDescriptor)
-{
-	_modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(_modelDescriptor.m_path));
-	_modelDescriptor.UpdateFeatures();
-
-	_modelViewer->setModel(_modelDescriptor);
-	_featureWidget->SetModel(_modelDescriptor);
-}
-
 void MainWindow::normalizeCurrentModel()
 {
-	ModelDescriptor& modelDescriptor = _modelViewer->getModel();
+	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 	if(modelDescriptor.m_model != nullptr)
 	{
 		//Normalizer::Remesh(*model);
 		Normalizer::Normalize(modelDescriptor);
 
-		_featureWidget->SetModel(modelDescriptor);
+		m_context.SetModel(modelDescriptor);
 	}
 	else
 	{
@@ -290,11 +278,11 @@ void MainWindow::normalizeCurrentModel()
 
 void MainWindow::remeshCurrentModel()
 {
-	ModelDescriptor& modelDescriptor = _modelViewer->getModel();
+	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 	if (modelDescriptor.m_model != nullptr)
 	{
 		Normalizer::Remesh(modelDescriptor);
-		_featureWidget->SetModel(modelDescriptor);
+		m_context.SetModel(modelDescriptor);
 	}
 	else
 	{
@@ -361,9 +349,9 @@ void MainWindow::keyPressEvent(QKeyEvent* _event)
 		m_selectedModelIndex--;
 	}
 
-	std::vector<ModelDescriptor> db = m_queryManager->GetDatabase()->GetModelDatabase();
+	std::vector<ModelDescriptor> db = m_context.GetDatabase()->GetModelDatabase();
 	if(m_selectedModelIndex < db.size())
 	{
-		selectModel(db[m_selectedModelIndex]);
+		m_context.SetModel(db[m_selectedModelIndex]);
 	}
 }

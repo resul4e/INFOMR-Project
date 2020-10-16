@@ -3,6 +3,8 @@ set(DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(BASE_SOURCES
     ${DIR}/main.cpp
     ${DIR}/Main.cpp
+    ${DIR}/Context.h
+    ${DIR}/Context.cpp
     ${DIR}/MainWindow.cpp
     ${DIR}/MainWindow.h
     ${DIR}/FeatureExtraction.h
@@ -45,8 +47,8 @@ set(GRAPHICS_SOURCES
 )
 
 set(WIDGETS_SOURCES
-    ${DIR}/Widgets/ModelViewer.h
-    ${DIR}/Widgets/ModelViewer.cpp
+    ${DIR}/Widgets/ModelView.h
+    ${DIR}/Widgets/ModelView.cpp
     ${DIR}/Widgets/FeatureView.h
     ${DIR}/Widgets/FeatureView.cpp
     ${DIR}/Widgets/DatabaseView.h

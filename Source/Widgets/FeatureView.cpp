@@ -28,8 +28,11 @@ QLineEdit* createField(std::string text, int maxWidth)
 	return field;
 }
 
-FeatureView::FeatureView()
+FeatureView::FeatureView(Context& _context) :
+	m_context(_context)
 {
+	connect(&m_context, &Context::modelChanged, this, &FeatureView::OnModelChanged);
+
 	setWindowTitle("Feature View");
 	setMinimumWidth(250);
 
@@ -167,25 +170,26 @@ QChart* FeatureView::CreateFaceAreaHistogram()
 }
 
 
-void FeatureView::SetModel(ModelDescriptor _modelDescriptor)
+void FeatureView::OnModelChanged()
 {
-	m_modelDescriptor = _modelDescriptor;
+	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 
-	m_modelNameField->setText(m_modelDescriptor.m_name.c_str());
-	m_verticesField->setText(QString::number(m_modelDescriptor.m_vertexCount));
-	m_facesField->setText(QString::number(m_modelDescriptor.m_faceCount));
+	m_modelNameField->setText(modelDescriptor.m_name.c_str());
+	m_verticesField->setText(QString::number(modelDescriptor.m_vertexCount));
+	m_facesField->setText(QString::number(modelDescriptor.m_faceCount));
 
-	m_surfaceAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.surfaceArea));
-	m_AABBAreaField->setText(QString::number(m_modelDescriptor.m_3DFeatures.boundsArea));
-	m_AABBVolumeField->setText(QString::number(m_modelDescriptor.m_3DFeatures.boundsVolume));
-	m_shapeVolumeField->setText(QString::number(m_modelDescriptor.m_3DFeatures.volume));
-	m_vsaRatioField->setText(QString::number(m_modelDescriptor.m_3DFeatures.compactness));
-	m_eccentricityRatioField->setText(QString::number(m_modelDescriptor.m_3DFeatures.eccentricity));
+	m_surfaceAreaField->setText(QString::number(modelDescriptor.m_3DFeatures.surfaceArea));
+	m_AABBAreaField->setText(QString::number(modelDescriptor.m_3DFeatures.boundsArea));
+	m_AABBVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures.boundsVolume));
+	m_shapeVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures.volume));
+	m_vsaRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.compactness));
+	m_eccentricityRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.eccentricity));
 	
-	UpdateFaceAreaHistogram(_modelDescriptor);
+	if (modelDescriptor.m_model != nullptr)
+		UpdateFaceAreaHistogram(modelDescriptor);
 }
 
-void FeatureView::UpdateFaceAreaHistogram(ModelDescriptor& _modelDescriptor)
+void FeatureView::UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor)
 {
 	//get the areas of each of the triangles in the model
 	std::vector<double> areas = ExtractFaceAreas(_modelDescriptor);

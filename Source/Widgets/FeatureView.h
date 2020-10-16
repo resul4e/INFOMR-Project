@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelDescriptor.h"
+#include "Context.h"
 
 #include <QDockWidget>
 
@@ -15,18 +15,20 @@ class FeatureView : public QDockWidget
 {
 	Q_OBJECT
 public:
-	FeatureView();
+	FeatureView(Context& _context);
 	QtCharts::QChart* CreateFaceAreaHistogram();
 
-	void SetModel(ModelDescriptor _modelDescriptor);
+public slots:
+	void OnModelChanged();
 	
 private:
 	const int FACE_AREA_HISTOGRAM_PRECISION = 10000;
 	
-	void UpdateFaceAreaHistogram(ModelDescriptor& _modelDescriptor);
+	void UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor);
 	
+	Context& m_context;
+
 	bool updated;
-	ModelDescriptor m_modelDescriptor;
 
 	QLineEdit* m_modelNameField;
 	QLineEdit* m_verticesField;

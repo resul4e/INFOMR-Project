@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Widgets/ModelViewer.h"
+#include "Context.h"
+#include "Widgets/ModelView.h"
 
 #include "../Resources/ui_MainWindow.h"
 
@@ -52,11 +53,6 @@ public:
 	 * @brief GO through all of the models in the database and add them to the menu (only if the list is empty)
 	*/
 	void populateDatabaseModelSelector();
-	/**
-	 * @brief Set the model to the selected model in the Model database selector.
-	 * @param _model The model to display on the screen.
-	*/
-	void selectModel(ModelDescriptor _modelDescriptor);
 
 	void normalizeCurrentModel();
 	void remeshCurrentModel();
@@ -91,9 +87,11 @@ private:
 	QMenu* m_menuModelSelect;
 	QByteArray _windowConfiguration;
 
-	ModelViewer* _modelViewer;
-	std::shared_ptr<QueryManager> m_queryManager;
-	FeatureView* _featureWidget;
+	Context m_context;
+
+	ModelView* _modelView;
+	//std::shared_ptr<QueryManager> m_queryManager;
+	FeatureView* _featureView;
 	DatabaseView* _databaseWidget;
 	size_t m_selectedModelIndex;
 };

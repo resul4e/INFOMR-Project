@@ -8,7 +8,7 @@
 float ExtractSurfaceArea(ModelDescriptor& _modelDescriptor);
 float ExtractAABBArea(ModelDescriptor& _modelDescriptor);
 float ExtractAABBVolume(ModelDescriptor& _modelDescriptor);
-std::vector<double> ExtractFaceAreas(ModelDescriptor& _modelDescriptor);
+std::vector<double> ExtractFaceAreas(const ModelDescriptor& _modelDescriptor);
 float ExtractVolume(const ModelDescriptor& _modelDescriptor);
 HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor);
 HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor);

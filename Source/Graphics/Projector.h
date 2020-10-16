@@ -8,7 +8,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLContext>
 
-class ModelDescriptor;
+struct ModelDescriptor;
 class Camera;
 
 class OffscreenBuffer : public QOffscreenSurface, public QOpenGLFunctions_3_3_Core
