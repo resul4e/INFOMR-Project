@@ -5,6 +5,26 @@
 
 # define M_PI           3.14159265358979323846  /* pi */
 
+HistogramFeature::HistogramFeature() :
+	min(0),
+	max(0)
+{
+
+}
+
+Features3D::Features3D() :
+	bounds(),
+	volume(0),
+	surfaceArea(0),
+	compactness(0),
+	boundsArea(0),
+	boundsVolume(0),
+	eccentricity(0),
+	a3(), d1(), d2(), d3(), d4()
+{
+
+}
+
 ModelDescriptor::ModelDescriptor() :
 	m_vertexCount(0),
 	m_faceCount(0),

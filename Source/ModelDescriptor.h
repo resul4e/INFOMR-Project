@@ -12,6 +12,8 @@
 static constexpr size_t HISTOGRAM_BIN_SIZE = 10;
 struct HistogramFeature
 {
+	HistogramFeature();
+
 	double binCount[HISTOGRAM_BIN_SIZE];
 	float max;
 	float min;
@@ -19,6 +21,8 @@ struct HistogramFeature
 
 struct Features3D
 {
+	Features3D();
+
 	Bounds bounds;
 	float volume;
 	float surfaceArea;
