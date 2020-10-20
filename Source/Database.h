@@ -55,7 +55,6 @@ public:
 	void SortDatabase(SortingOptions _option);
 
 	FeatureVector ComputeFeatureVector(const ModelDescriptor& md);
-	void ComputeFeatureVectors();
 
 	void BuildANNIndex();
 	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);
@@ -63,7 +62,7 @@ public:
 
 private:
 	void ComputeFeatureStandardization();
-
+	void ComputeFeatureVectors();
 	void CompoundHistogramPerClass();
 	
 	std::shared_ptr<Model> LoadSavedModel(std::filesystem::path _modelFileName);
