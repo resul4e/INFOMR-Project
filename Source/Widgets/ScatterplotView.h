@@ -15,22 +15,12 @@ class ScatterplotView : public QOpenGLWidget
 {
 	Q_OBJECT
 public:
-	enum RenderMode {
-		SCATTERPLOT, DENSITY, LANDSCAPE
-	};
-
 	ScatterplotView(Context& _context);
 
 	~ScatterplotView();
 
 	/** Returns true when the widget was initialized and is ready to be used. */
 	bool isInitialized();
-
-	/**
-	 * Change the rendering mode displayed in the widget.
-	 * The options are defined by ScatterplotView::RenderMode.
-	 */
-	void setRenderMode(RenderMode renderMode);
 
 	/**
 	 * Feed 2-dimensional data to the scatterplot.
@@ -61,7 +51,6 @@ signals:
 	void initialized();
 
 public slots:
-	void renderModePicked(const int index);
 	void pointSizeChanged(const int size);
 	void pointOpacityChanged(const int opacity);
 	void onEmbeddingChanged();
@@ -74,8 +63,6 @@ private:
 	Context& m_context;
 
 	bool _isInitialized = false;
-
-	RenderMode _renderMode = SCATTERPLOT;
 
 	/* Renderers */
 	PointRenderer _pointRenderer;

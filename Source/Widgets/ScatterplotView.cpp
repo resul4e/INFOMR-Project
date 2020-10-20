@@ -35,24 +35,6 @@ bool ScatterplotView::isInitialized()
     return _isInitialized;
 }
 
-void ScatterplotView::setRenderMode(RenderMode renderMode)
-{
-    _renderMode = renderMode;
-
-    update();
-}
-
-void ScatterplotView::renderModePicked(const int index)
-{
-    switch (index)
-    {
-    case 0: setRenderMode(ScatterplotView::RenderMode::SCATTERPLOT); break;
-    case 1: setRenderMode(ScatterplotView::RenderMode::DENSITY); break;
-    case 2: setRenderMode(ScatterplotView::RenderMode::LANDSCAPE); break;
-    }
-    qDebug() << "Render Mode Picked";
-}
-
 void ScatterplotView::pointSizeChanged(const int size)
 {
     _pointRenderer.setPointSize(size / 1000.0f);
@@ -225,10 +207,7 @@ void ScatterplotView::paintGL()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    switch (_renderMode)
-    {
-    case SCATTERPLOT: _pointRenderer.render(); break;
-    }
+    _pointRenderer.render();
 }
 
 void ScatterplotView::mousePressEvent(QMouseEvent *event)
