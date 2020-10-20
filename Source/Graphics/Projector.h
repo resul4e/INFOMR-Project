@@ -1,36 +1,16 @@
 #pragma once
 
+#include "OffscreenContext.h"
 #include "Graphics/Shader.h"
-
-#include <QWindow>
-#include <QOffscreenSurface>
-#include <QOpenGLFunctions>
-#include <QOpenGLFunctions_3_3_Core>
-#include <QOpenGLContext>
 
 struct ModelDescriptor;
 class Camera;
 
-class OffscreenBuffer : public QOffscreenSurface, public QOpenGLFunctions_3_3_Core
-{
-	Q_OBJECT
-public:
-	OffscreenBuffer();
-
-	virtual void initialize() = 0;
-
-protected:
-	void bindContext();
-	void releaseContext();
-
-	QOpenGLContext* m_context;
-};
-
-class Projector : public OffscreenBuffer
+class Projector : public OffscreenContext
 {
 public:
 	Projector();
-	void initialize() override;
+	void initialize();
 	void render(ModelDescriptor& _modelDescriptor);
 	void cleanup();
 

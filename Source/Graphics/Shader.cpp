@@ -88,7 +88,9 @@ namespace
 	}
 }
 
-ShaderProgram::ShaderProgram() {
+ShaderProgram::ShaderProgram() :
+	_handle(0)
+{
 	
 }
 

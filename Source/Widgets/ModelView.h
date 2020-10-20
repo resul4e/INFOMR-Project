@@ -8,14 +8,13 @@
 #include <glm/glm.hpp>
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
 
 #include <memory>
 
 class Model;
 class Camera;
 
-class ModelView : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
+class ModelView : public QOpenGLWidget
 {
 	Q_OBJECT
 public:

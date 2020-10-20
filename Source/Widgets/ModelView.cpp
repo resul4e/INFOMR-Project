@@ -3,6 +3,7 @@
 #include "ModelLoader.h"
 #include "Model.h"
 #include "Graphics/Camera.h"
+#include <hdi/utils/glad/glad.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -30,7 +31,7 @@ void ModelView::onModelChanged()
 
 void ModelView::initializeGL()
 {
-	initializeOpenGLFunctions();
+	if (gladLoadGL()) qDebug() << "Good initialization of glad";
 	qDebug() << "Initializing model loader with context: " << context();
 	std::string versionString = std::string((const char*)glGetString(GL_VERSION));
 	qDebug() << versionString.c_str();

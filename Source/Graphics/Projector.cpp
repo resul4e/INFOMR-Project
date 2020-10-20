@@ -11,44 +11,8 @@
 #include <QDebug>
 #include <QImage>
 
-OffscreenBuffer::OffscreenBuffer()
-{
-	requestedFormat().setVersion(3, 3);
-	setFormat(requestedFormat());
-	create();
-
-	m_context = new QOpenGLContext(this);
-	m_context->setFormat(format());
-
-	if (m_context->create())
-	{
-		m_context->makeCurrent(this);
-		m_context->functions()->initializeOpenGLFunctions();
-	}
-	else
-	{
-		delete m_context;
-		m_context = Q_NULLPTR;
-		throw("Failed to create OpenGL context for OffscreenBuffer");
-	}
-	if (!m_context->isValid())
-	{
-		throw("OffscreenBuffer OpenGL context is not valid");
-	}
-}
-
-void OffscreenBuffer::bindContext()
-{
-	m_context->makeCurrent(this);
-}
-
-void OffscreenBuffer::releaseContext()
-{
-	m_context->doneCurrent();
-}
-
 Projector::Projector() :
-	OffscreenBuffer(),
+	OffscreenContext(),
 	m_fbo(0),
 	m_fboImage(0),
 	m_imageDim(512)
@@ -59,7 +23,6 @@ Projector::Projector() :
 void Projector::initialize()
 {
 	bindContext();
-	initializeOpenGLFunctions();
 
 	m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
 	bool success = m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Black.frag");
@@ -85,7 +48,6 @@ void Projector::initialize()
 void Projector::render(ModelDescriptor& _modelDescriptor)
 {
 	bindContext();
-	initializeOpenGLFunctions();
 
 	m_camera->RecomputePosition();
 	glViewport(0, 0, m_imageDim, m_imageDim);
