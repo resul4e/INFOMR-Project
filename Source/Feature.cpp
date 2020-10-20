@@ -30,8 +30,16 @@ void FeatureVector::AddFeature(float feature, float weight)
 	f[0] = feature;
 	AddFeature(f, weight);
 }
-
-float FeatureVectorSimilarity(const FeatureVector& fv1, const FeatureVector& fv2)
+#include <QDebug>
+float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2)
 {
-	return 0;
+	EuclideanDistance euclidean;
+	
+	float dist1 = euclidean.distance(fv1.m_features[0], fv2.m_features[0]);
+	float dist2 = euclidean.distance(fv1.m_features[1], fv2.m_features[1]);
+	float dist3 = euclidean.distance(fv1.m_features[2], fv2.m_features[2]); qDebug() << "Dist3: " << fv1.m_features[2][0] << fv2.m_features[2][0];
+	float dist4 = euclidean.distance(fv1.m_features[3], fv2.m_features[3]);
+	float dist5 = euclidean.distance(fv1.m_features[4], fv2.m_features[4]);
+
+	return dist1 + dist2 + dist3 + dist4 + dist5;
 }

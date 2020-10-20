@@ -56,6 +56,8 @@ public:
 private:
 	std::vector<Feature> m_features;
 	std::vector<float> m_weights;
+
+	friend float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2);
 };
 
-float FeatureVectorSimilarity(const FeatureVector& fv1, const FeatureVector& fv2);
+float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2);

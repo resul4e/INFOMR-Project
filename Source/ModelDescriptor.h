@@ -39,7 +39,6 @@ struct ModelDescriptor
 {
 	ModelDescriptor();
 
-	FeatureVector ComputeFeatureVector();
 	void UpdateFeatures();
 	void UpdateBounds();
 

@@ -27,24 +27,6 @@ ModelDescriptor::ModelDescriptor() :
 
 }
 
-FeatureVector ModelDescriptor::ComputeFeatureVector()
-{
-	FeatureVector featureVector;
-
-	featureVector.AddFeature(m_3DFeatures.volume);
-	featureVector.AddFeature(m_3DFeatures.surfaceArea);
-	featureVector.AddFeature(m_3DFeatures.compactness);
-	featureVector.AddFeature(m_3DFeatures.boundsArea);
-	featureVector.AddFeature(m_3DFeatures.boundsVolume);
-	featureVector.AddFeature(m_3DFeatures.eccentricity);
-	featureVector.AddFeature(m_3DFeatures.d1);
-	featureVector.AddFeature(m_3DFeatures.d2);
-	featureVector.AddFeature(m_3DFeatures.d3);
-	featureVector.AddFeature(m_3DFeatures.d4);
-
-	return featureVector;
-}
-
 void ModelDescriptor::UpdateFeatures()
 {
 	if (m_model != nullptr)
