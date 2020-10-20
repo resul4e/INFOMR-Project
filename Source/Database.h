@@ -72,7 +72,8 @@ public:
 	FeatureVector ComputeFeatureVector(const ModelDescriptor& md);
 
 	void BuildANNIndex();
-	void FindClosestANNShapes(ModelDescriptor& md);
+	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);
+	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
 
 private:
 	void ComputeFeatureStandardization();

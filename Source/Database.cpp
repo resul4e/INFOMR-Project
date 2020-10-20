@@ -31,6 +31,21 @@ bool hasEnding(std::string const& fullString, std::string const& ending) {
 	}
 }
 
+namespace
+{
+	template <typename T>
+	std::vector<size_t> sortIndices(const std::vector<T>& v)
+	{
+		std::vector<size_t> idx(v.size());
+		std::iota(idx.begin(), idx.end(), 0);
+
+		std::stable_sort(idx.begin(), idx.end(),
+			[&v](size_t i1, size_t i2) {return v[i1] < v[i2]; });
+
+		return idx;
+	}
+}
+
 Database::Database() :
 	m_index(flann::KDTreeIndexParams(4))
 {
@@ -184,6 +199,8 @@ void Database::ProcessAllModels()
 	}
 
 	CompoundHistogramPerClass();
+
+	BuildANNIndex();
 }
 
 void Database::RemeshAllModels()
@@ -355,23 +372,47 @@ void Database::BuildANNIndex()
 	m_index.buildIndex();
 }
 
-void Database::FindClosestANNShapes(ModelDescriptor& md)
+std::vector<int> Database::FindClosestKNNShapes(ModelDescriptor& md, int k)
+{
+	auto& modelDatabase = GetModelDatabase();
+	FeatureVector fv1 = ComputeFeatureVector(md);
+
+	std::vector<float> distances(modelDatabase.size());
+	for (int i = 0; i < modelDatabase.size(); i++)
+	{
+		ModelDescriptor& md = modelDatabase[i];
+		FeatureVector fv2 = ComputeFeatureVector(md);
+
+		distances[i] = FeatureVectorDistance(fv1, fv2);
+	}
+
+	std::vector<size_t> indices = sortIndices(distances);
+
+	std::vector<int> closestKIndices;
+	for (int i = 0; i < k; i++)
+		closestKIndices.push_back(indices[i + 1]);
+
+	return closestKIndices;
+}
+
+std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 {
 	FeatureVector fv = ComputeFeatureVector(md);
 	std::vector<float> floatVector = fv.AsFloatVector();
-	int nn = 5;
-
-	BuildANNIndex();
 
 	int numDims = floatVector.size();
 	flann::Matrix<float> query(floatVector.data(), 1, numDims);
 
 	std::vector<std::vector<int>> indices;
 	std::vector<std::vector<float>> dists;
-	// do a knn search, using 128 checks
-	m_index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
+	// Do a knn search, using 128 checks
+	m_index.knnSearch(query, indices, dists, k, flann::SearchParams(128));
 
-	qDebug() << "Result: " << indices[0][0] << indices[0][1] << indices[0][2] << indices[0][3] << indices[0][4];
+	std::vector<int> closestKIndices;
+	for (int i = 0; i < k; i++)
+		closestKIndices.push_back(indices[0][i]);
+
+	return closestKIndices;
 }
 
 void Database::ComputeFeatureStandardization()

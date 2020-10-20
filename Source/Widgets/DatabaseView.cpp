@@ -16,23 +16,9 @@
 #include "Database.h"
 #include "Model.h"
 
+#include <chrono>
 #include <QDebug>
 using namespace QtCharts;
-
-namespace
-{
-	template <typename T>
-	std::vector<size_t> sortIndices(const std::vector<T>& v)
-	{
-		std::vector<size_t> idx(v.size());
-		std::iota(idx.begin(), idx.end(), 0);
-
-		std::stable_sort(idx.begin(), idx.end(),
-			[&v](size_t i1, size_t i2) {return v[i1] < v[i2]; });
-
-		return idx;
-	}
-}
 
 DatabaseHierarchy::DatabaseHierarchy(Context& _context) :
 	m_context(_context)
@@ -67,27 +53,28 @@ void DatabaseHierarchy::UpdateDataModel()
 
 void DatabaseView::FindClosestShapes()
 {
-	FeatureVector fv1 = m_context.GetDatabase()->ComputeFeatureVector(m_context.GetActiveModel());
-	
+	int k = 5;
+
 	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
 
-	std::vector<float> distances(modelDatabase.size());
-	for (int i = 0; i < modelDatabase.size(); i++)
-	{
-		ModelDescriptor& md = modelDatabase[i];
-		FeatureVector fv2 = m_context.GetDatabase()->ComputeFeatureVector(md);
+	std::vector<int> closestIndices;
 
-		distances[i] = FeatureVectorDistance(fv1, fv2);
-		//qDebug() << distances[i];
-	}
-	
-	std::vector<size_t> indices = sortIndices(distances);
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	closestIndices = m_context.GetDatabase()->FindClosestKNNShapes(m_context.GetActiveModel(), k);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
+	closestIndices = m_context.GetDatabase()->FindClosestANNShapes(m_context.GetActiveModel(), k);
+	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+
+	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+	std::cout << "ANN Time difference = " << std::chrono::duration_cast<std::chrono::microseconds> (end2 - begin2).count() << "[µs]" << std::endl;
 
 	m_matchList->clear();
-	int k = 5;
-	for (int i = 1; i <= k; i++)
+
+	for (int i = 0; i < k; i++)
 	{
-		ModelDescriptor& closest = modelDatabase[indices[i]];
+		ModelDescriptor& closest = modelDatabase[closestIndices[i]];
 		QString s = QString::fromStdString(closest.m_name);
 		m_matchList->addItem(s);
 	}
