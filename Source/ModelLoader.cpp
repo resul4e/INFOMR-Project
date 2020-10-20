@@ -152,7 +152,7 @@ void ModelLoader::LoadHistogramFeature(HistogramFeature& _feature, std::ifstream
 	auto nextSpace = line.find(' ');
 	std::string number = line.substr(0, nextSpace);
 	_feature.m_numBins = std::stoi(number);
-	_feature.m_values.resize(_feature.m_numBins, 0);
+	_feature.resize(_feature.m_numBins, 0);
 	line.erase(0, nextSpace);
 
 	// Load the values of the histogram
@@ -160,7 +160,7 @@ void ModelLoader::LoadHistogramFeature(HistogramFeature& _feature, std::ifstream
 	{
 		auto nextComma = line.find(',');
 		std::string number = line.substr(0, nextComma);
-		_feature.m_values[i] = std::stof(number);
+		_feature[i] = std::stof(number);
 		line.erase(0, nextComma + 1);
 	}
 

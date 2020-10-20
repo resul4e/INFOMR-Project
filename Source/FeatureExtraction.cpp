@@ -30,7 +30,7 @@ namespace
 	{
 		for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
 		{
-			feature.m_values[i] /= static_cast<double>(HISTOGRAM_ITERATIONS);
+			feature[i] /= static_cast<double>(HISTOGRAM_ITERATIONS);
 		}
 	}
 }
@@ -180,7 +180,7 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 
 		//Find the bin it fits in by first dividing by the bin size and then flooring the result by casting it to an int.
 		const int bin = static_cast<int>(angle / binSize);
-		a3Feature.m_values[bin] += 1;
+		a3Feature[bin] += 1;
 	}
 
 	ProcessBins(a3Feature);
@@ -218,7 +218,7 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 			glm::vec3 diff = randomVertex - barycenter;
 			const float distance = glm::length(diff);
 			const int bin = static_cast<int>(distance / binSize);
-			d1Feature.m_values[bin]++;
+			d1Feature[bin]++;
 		}
 	}
 
@@ -256,7 +256,7 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 		//Add one to the correct bin
 		int bin = static_cast<int>(distance / binSize);
 		bin = bin < 10 ? bin : 9;
-		d2Feature.m_values[bin]++;
+		d2Feature[bin]++;
 	}
 
 	ProcessBins(d2Feature);
@@ -301,7 +301,7 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		const int bin = static_cast<int>(triangleAreas[i] / binSize);
-		d3Feature.m_values[bin]++;
+		d3Feature[bin]++;
 	}
 
 	ProcessBins(d3Feature);
@@ -349,7 +349,7 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		const int bin = static_cast<int>(tetVolumes[i] / binSize);
-		d4Feature.m_values[bin]++;
+		d4Feature[bin]++;
 	}
 
 	ProcessBins(d4Feature);

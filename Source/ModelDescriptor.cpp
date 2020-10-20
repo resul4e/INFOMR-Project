@@ -31,20 +31,16 @@ FeatureVector ModelDescriptor::ComputeFeatureVector()
 {
 	FeatureVector featureVector;
 
-	//featureVector.AddFeature(m_3DFeatures.volume);
-	//featureVector.push_back(m_3DFeatures.surfaceArea);
-	//featureVector.push_back(m_3DFeatures.compactness);
-	//featureVector.push_back(m_3DFeatures.boundsArea);
-	//featureVector.push_back(m_3DFeatures.boundsVolume);
-	//featureVector.push_back(m_3DFeatures.eccentricity);
-	//for (int i = 0; i < 10; i++)
-	//	featureVector.push_back(m_3DFeatures.d1.m_values[i]);
-	//for (int i = 0; i < 10; i++)
-	//	featureVector.push_back(m_3DFeatures.d2.m_values[i]);
-	//for (int i = 0; i < 10; i++)
-	//	featureVector.push_back(m_3DFeatures.d3.m_values[i]);
-	//for (int i = 0; i < 10; i++)
-	//	featureVector.push_back(m_3DFeatures.d4.m_values[i]);
+	featureVector.AddFeature(m_3DFeatures.volume);
+	featureVector.AddFeature(m_3DFeatures.surfaceArea);
+	featureVector.AddFeature(m_3DFeatures.compactness);
+	featureVector.AddFeature(m_3DFeatures.boundsArea);
+	featureVector.AddFeature(m_3DFeatures.boundsVolume);
+	featureVector.AddFeature(m_3DFeatures.eccentricity);
+	featureVector.AddFeature(m_3DFeatures.d1);
+	featureVector.AddFeature(m_3DFeatures.d2);
+	featureVector.AddFeature(m_3DFeatures.d3);
+	featureVector.AddFeature(m_3DFeatures.d4);
 
 	return featureVector;
 }

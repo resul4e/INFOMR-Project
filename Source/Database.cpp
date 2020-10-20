@@ -318,7 +318,7 @@ void Database::CompoundHistogramPerClass()
 		}
 		
 		modelDescriptor.m_3DFeatures = ModelLoader::LoadFeatures(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv"));
-
+		
 		if(classMap.find(modelDescriptor.m_class) == classMap.end())
 		{
 			classMap.insert({ modelDescriptor.m_class, std::vector<ModelDescriptor>() });
@@ -335,7 +335,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& a3 = desc.m_3DFeatures.a3;
 			for (int i = 0; i < a3.m_numBins; i++)
 			{
-				outFile << a3.m_values[i] << ", ";
+				outFile << a3[i] << ", ";
 			}
 			outFile << "\n";
 		}
@@ -353,7 +353,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& d1 = desc.m_3DFeatures.d1;
 			for (int i = 0; i < d1.m_numBins; i++)
 			{
-				outFile << desc.m_3DFeatures.d1.m_values[i] << ", ";
+				outFile << desc.m_3DFeatures.d1[i] << ", ";
 			}
 			outFile << "\n";
 		}
@@ -371,7 +371,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& d2 = desc.m_3DFeatures.d2;
 			for (int i = 0; i < d2.m_numBins; i++)
 			{
-				outFile << d2.m_values[i] << ", ";
+				outFile << d2[i] << ", ";
 			}
 			outFile << "\n";
 		}
@@ -389,7 +389,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& d3 = desc.m_3DFeatures.d3;
 			for (int i = 0; i < d3.m_numBins; i++)
 			{
-				outFile << d3.m_values[i] << ", ";
+				outFile << d3[i] << ", ";
 			}
 			outFile << "\n";
 		}
@@ -407,7 +407,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& d4 = desc.m_3DFeatures.d4;
 			for (int i = 0; i < d4.m_numBins; i++)
 			{
-				outFile << d4.m_values[i] << ", ";
+				outFile << d4[i] << ", ";
 			}
 			outFile << "\n";
 		}

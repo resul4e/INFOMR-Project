@@ -120,7 +120,7 @@ void ModelSaver::SaveHistogramFeatures(HistogramFeature _feature, std::ofstream&
 	_stream << _feature.m_numBins << " ";
 	for(int i = 0; i < _feature.m_numBins; i++)
 	{
-		_stream << _feature.m_values[i] << ", ";
+		_stream << _feature[i] << ", ";
 	}
 	_stream << _feature.m_min << ", " << _feature.m_max;
 	_stream << "\n";
