@@ -319,8 +319,6 @@ void Database::ComputeFeatureStandardization()
 		averageVolume += modelDescriptor.m_3DFeatures.volume;
 		averageSurfaceArea += modelDescriptor.m_3DFeatures.surfaceArea;
 		averageCompactness += modelDescriptor.m_3DFeatures.compactness;
-		if (modelDescriptor.m_3DFeatures.surfaceArea < 0.000001)
-			qDebug() << QString::fromStdString(modelDescriptor.m_path.string()) << "Surface Area: " << modelDescriptor.m_3DFeatures.surfaceArea;
 		averageBoundsArea += modelDescriptor.m_3DFeatures.boundsArea;
 		averageBoundsVolume += modelDescriptor.m_3DFeatures.boundsVolume;
 		averageEccentricity += modelDescriptor.m_3DFeatures.eccentricity;
@@ -356,7 +354,7 @@ void Database::ComputeFeatureStandardization()
 	stddevBoundsArea = sqrt(stddevBoundsArea / (m_modelDatabase.size() - 1));
 	stddevBoundsVolume = sqrt(stddevBoundsVolume / (m_modelDatabase.size() - 1));
 	stddevEccentricity = sqrt(stddevEccentricity / (m_modelDatabase.size() - 1));
-	qDebug() << "Standardization: " << averageCompactness << stddevCompactness;
+
 	m_averageFeatures.volume = averageVolume;
 	m_averageFeatures.surfaceArea = averageSurfaceArea;
 	m_averageFeatures.compactness = averageCompactness;
