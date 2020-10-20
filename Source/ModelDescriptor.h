@@ -2,22 +2,13 @@
 
 #include "Model.h"
 #include "Graphics/Image.h"
+#include "Feature.h"
 
 #include <glm/glm.hpp>
 
 #include <filesystem>
 #include <memory>
 #include <vector>
-
-static constexpr size_t HISTOGRAM_BIN_SIZE = 10;
-struct HistogramFeature
-{
-	HistogramFeature();
-
-	double binCount[HISTOGRAM_BIN_SIZE];
-	float max;
-	float min;
-};
 
 struct Features3D
 {
@@ -48,7 +39,7 @@ struct ModelDescriptor
 {
 	ModelDescriptor();
 
-	std::vector<float> ComputeFeatureVector();
+	FeatureVector ComputeFeatureVector();
 	void UpdateFeatures();
 	void UpdateBounds();
 

@@ -147,20 +147,30 @@ void ModelLoader::LoadHistogramFeature(HistogramFeature& _feature, std::ifstream
 	std::string line;
 	std::getline(_stream, line);
 	line.erase(0, 4);
-	for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
+
+	// Set number of bins
+	auto nextSpace = line.find(' ');
+	std::string number = line.substr(0, nextSpace);
+	_feature.m_numBins = std::stoi(number);
+	_feature.m_values.resize(_feature.m_numBins, 0);
+	line.erase(0, nextSpace);
+
+	// Load the values of the histogram
+	for (int i = 0; i < _feature.m_numBins; i++)
 	{
 		auto nextComma = line.find(',');
 		std::string number = line.substr(0, nextComma);
-		_feature.binCount[i] = std::stof(number);
+		_feature.m_values[i] = std::stof(number);
 		line.erase(0, nextComma + 1);
 	}
 
+	// Load the min and max
 	auto nextComma = line.find(',');
 	std::string numberString = line.substr(0, nextComma);
-	_feature.min = std::stof(numberString);
+	_feature.m_min = std::stof(numberString);
 	line.erase(0, nextComma + 1);
 
 	nextComma = line.find(',');
 	numberString = line.substr(0, nextComma);
-	_feature.max = std::stof(numberString);
+	_feature.m_max = std::stof(numberString);
 }

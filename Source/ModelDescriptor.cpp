@@ -5,13 +5,6 @@
 
 # define M_PI           3.14159265358979323846  /* pi */
 
-HistogramFeature::HistogramFeature() :
-	min(0),
-	max(0)
-{
-
-}
-
 Features3D::Features3D() :
 	bounds(),
 	volume(0),
@@ -20,7 +13,7 @@ Features3D::Features3D() :
 	boundsArea(0),
 	boundsVolume(0),
 	eccentricity(0),
-	a3(), d1(), d2(), d3(), d4()
+	a3(0), d1(0), d2(0), d3(0), d4(0)
 {
 
 }
@@ -34,15 +27,25 @@ ModelDescriptor::ModelDescriptor() :
 
 }
 
-std::vector<float> ModelDescriptor::ComputeFeatureVector()
+FeatureVector ModelDescriptor::ComputeFeatureVector()
 {
-	std::vector<float> featureVector;
-	featureVector.push_back(m_3DFeatures.volume);
-	featureVector.push_back(m_3DFeatures.surfaceArea);
-	featureVector.push_back(m_3DFeatures.compactness);
-	featureVector.push_back(m_3DFeatures.boundsArea);
-	featureVector.push_back(m_3DFeatures.boundsVolume);
-	featureVector.push_back(m_3DFeatures.eccentricity);
+	FeatureVector featureVector;
+
+	//featureVector.AddFeature(m_3DFeatures.volume);
+	//featureVector.push_back(m_3DFeatures.surfaceArea);
+	//featureVector.push_back(m_3DFeatures.compactness);
+	//featureVector.push_back(m_3DFeatures.boundsArea);
+	//featureVector.push_back(m_3DFeatures.boundsVolume);
+	//featureVector.push_back(m_3DFeatures.eccentricity);
+	//for (int i = 0; i < 10; i++)
+	//	featureVector.push_back(m_3DFeatures.d1.m_values[i]);
+	//for (int i = 0; i < 10; i++)
+	//	featureVector.push_back(m_3DFeatures.d2.m_values[i]);
+	//for (int i = 0; i < 10; i++)
+	//	featureVector.push_back(m_3DFeatures.d3.m_values[i]);
+	//for (int i = 0; i < 10; i++)
+	//	featureVector.push_back(m_3DFeatures.d4.m_values[i]);
+
 	return featureVector;
 }
 
