@@ -29,6 +29,9 @@ set(BASE_SOURCES
     ${DIR}/ModelUtil.cpp
     ${DIR}/QueryManager.h
     ${DIR}/QueryManager.cpp
+    ${DIR}/TsneAnalysis.h
+    ${DIR}/TsneAnalysis.cpp
+    ${DIR}/TsneData.h
     ${DIR}/OffscreenContext.h
     ${DIR}/OffscreenContext.cpp
     ${DIR}/../Resources/MainWindow.ui

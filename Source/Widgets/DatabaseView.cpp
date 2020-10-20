@@ -13,6 +13,7 @@
 #include <QSlider>
 #include <QPushButton>
 
+#include "TsneAnalysis.h"
 #include "Database.h"
 #include "Model.h"
 
