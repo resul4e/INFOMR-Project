@@ -8,20 +8,20 @@
 
 namespace
 {
-    Bounds2D getDataBounds(const std::vector<glm::vec2>& points)
-    {
-        Bounds2D bounds = Bounds2D::Max;
+	Bounds2D getDataBounds(const std::vector<glm::vec2>& points)
+	{
+		Bounds2D bounds = Bounds2D::Max;
 
-        for (const glm::vec2& point : points)
-        {
-            bounds.setLeft(std::min(point.x, bounds.getLeft()));
-            bounds.setRight(std::max(point.x, bounds.getRight()));
-            bounds.setBottom(std::min(point.y, bounds.getBottom()));
-            bounds.setTop(std::max(point.y, bounds.getTop()));
-        }
+		for (const glm::vec2& point : points)
+		{
+			bounds.setLeft(std::min(point.x, bounds.getLeft()));
+			bounds.setRight(std::max(point.x, bounds.getRight()));
+			bounds.setBottom(std::min(point.y, bounds.getBottom()));
+			bounds.setTop(std::max(point.y, bounds.getTop()));
+		}
 
-        return bounds;
-    }
+		return bounds;
+	}
 }
 
 ScatterplotView::ScatterplotView(Context& _context) :
@@ -32,19 +32,19 @@ ScatterplotView::ScatterplotView(Context& _context) :
 
 bool ScatterplotView::isInitialized()
 {
-    return _isInitialized;
+	return _isInitialized;
 }
 
 void ScatterplotView::pointSizeChanged(const int size)
 {
-    _pointRenderer.setPointSize(size / 1000.0f);
-    update();
+	_pointRenderer.setPointSize(size / 1000.0f);
+	update();
 }
 
 void ScatterplotView::pointOpacityChanged(const int opacity)
 {
-    _pointRenderer.setAlpha(opacity / 100.0f);
-    update();
+	_pointRenderer.setAlpha(opacity / 100.0f);
+	update();
 }
 
 void ScatterplotView::onEmbeddingChanged()
@@ -57,11 +57,11 @@ void ScatterplotView::onEmbeddingChanged()
 // by reference then we can upload the data to the GPU, but not store it in the widget.
 void ScatterplotView::setData(const std::vector<glm::vec2>* points)
 {
-    Bounds2D bounds = getDataBounds(*points);
-    bounds.ensureMinimumSize(1e-07f, 1e-07f);
-    bounds.makeSquare();
-    bounds.expand(0.1f);
-    _dataBounds = bounds;
+	Bounds2D bounds = getDataBounds(*points);
+	bounds.ensureMinimumSize(1e-07f, 1e-07f);
+	bounds.makeSquare();
+	bounds.expand(0.1f);
+	_dataBounds = bounds;
 
 	// Compute colors
 	std::default_random_engine generator;
@@ -104,110 +104,110 @@ void ScatterplotView::setData(const std::vector<glm::vec2>* points)
 	}
 	setColors(colors);
 
-    // Pass bounds and data to renderer
-    _pointRenderer.setBounds(_dataBounds);
-    _pointRenderer.setData(*points);
+	// Pass bounds and data to renderer
+	_pointRenderer.setBounds(_dataBounds);
+	_pointRenderer.setData(*points);
 	pointSizeChanged(15);
-    update();
+	update();
 }
 
 void ScatterplotView::setHighlights(const std::vector<char>& highlights)
 {
-    _pointRenderer.setHighlights(highlights);
+	_pointRenderer.setHighlights(highlights);
 
-    update();
+	update();
 }
 
 void ScatterplotView::setScalars(const std::vector<float>& scalars)
 {
-    _pointRenderer.setScalars(scalars);
-    
-    update();
+	_pointRenderer.setScalars(scalars);
+	
+	update();
 }
 
 void ScatterplotView::setColors(const std::vector<glm::vec3>& colors)
 {
-    _pointRenderer.setColors(colors);
-    _pointRenderer.setScalarEffect(None);
+	_pointRenderer.setColors(colors);
+	_pointRenderer.setScalarEffect(None);
 
-    update();
+	update();
 }
 
 void ScatterplotView::setPointSize(const float size)
 {
-    _pointRenderer.setPointSize(size);
+	_pointRenderer.setPointSize(size);
 
-    update();
+	update();
 }
 
 void ScatterplotView::setAlpha(const float alpha)
 {
-    _pointRenderer.setAlpha(alpha);
+	_pointRenderer.setAlpha(alpha);
 }
 
 void ScatterplotView::setPointScaling(PointScaling scalingMode)
 {
-    _pointRenderer.setPointScaling(scalingMode);
+	_pointRenderer.setPointScaling(scalingMode);
 }
 
 void ScatterplotView::setScalarEffect(PointEffect effect)
 {
-    _pointRenderer.setScalarEffect(effect);
+	_pointRenderer.setScalarEffect(effect);
 }
 
 void ScatterplotView::initializeGL()
 {
 	if (gladLoadGL()) qDebug() << "Good initialization of glad";
-    qDebug() << "Initializing scatterplot widget with context: " << context();
-    std::string versionString = std::string((const char*) glGetString(GL_VERSION));
-    qDebug() << versionString.c_str();
+	qDebug() << "Initializing scatterplot widget with context: " << context();
+	std::string versionString = std::string((const char*) glGetString(GL_VERSION));
+	qDebug() << versionString.c_str();
 
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ScatterplotView::cleanup);
+	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ScatterplotView::cleanup);
 
-    _pointRenderer.init();
+	_pointRenderer.init();
 
-    // Set a default color map for both renderers
-    _pointRenderer.setScalarEffect(PointEffect::None);
+	// Set a default color map for both renderers
+	_pointRenderer.setScalarEffect(PointEffect::None);
 
-    _isInitialized = true;
-    emit initialized();
+	_isInitialized = true;
+	emit initialized();
 }
 
 void ScatterplotView::resizeGL(int w, int h)
 {
-    _windowSize.setWidth(w);
-    _windowSize.setHeight(h);
+	_windowSize.setWidth(w);
+	_windowSize.setHeight(h);
 
-    _pointRenderer.resize(QSize(w, h));
+	_pointRenderer.resize(QSize(w, h));
 
-    // Set matrix for normalizing from pixel coordinates to [0, 1]
-    toNormalisedCoordinates = glm::mat3(1.0f / w, 0.0f, 0.0f, 0.0f, 1.0f / h, 0.0f, 0.0f, 0.0f, 1.0f);
+	// Set matrix for normalizing from pixel coordinates to [0, 1]
+	toNormalisedCoordinates = glm::mat3(1.0f / w, 0.0f, 0.0f, 0.0f, 1.0f / h, 0.0f, 0.0f, 0.0f, 1.0f);
 
-    // Take the smallest dimensions in order to calculate the aspect ratio
-    int size = w < h ? w : h;
+	// Take the smallest dimensions in order to calculate the aspect ratio
+	int size = w < h ? w : h;
 
-    float wAspect = (float)w / size;
-    float hAspect = (float)h / size;
-    float wDiff = ((wAspect - 1) / 2.0);
-    float hDiff = ((hAspect - 1) / 2.0);
+	float wAspect = (float)w / size;
+	float hAspect = (float)h / size;
+	float wDiff = ((wAspect - 1) / 2.0);
+	float hDiff = ((hAspect - 1) / 2.0);
 
-    toIsotropicCoordinates = glm::mat3(wAspect, 0.0f, 0.0f, 0.0f, hAspect, 0.0f, -wDiff, -hDiff, 1.0f);
+	toIsotropicCoordinates = glm::mat3(wAspect, 0.0f, 0.0f, 0.0f, hAspect, 0.0f, -wDiff, -hDiff, 1.0f);
 }
 
 void ScatterplotView::paintGL()
 {
-    // Bind the framebuffer belonging to the widget
-    glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
+	// Bind the framebuffer belonging to the widget
+	glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
 
-    // Clear the widget to the background color
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Clear the widget to the background color
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Reset the blending function
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// Reset the blending function
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    _pointRenderer.render();
+	_pointRenderer.render();
 }
 
 void ScatterplotView::mousePressEvent(QMouseEvent *event)
@@ -227,7 +227,7 @@ void ScatterplotView::mouseMoveEvent(QMouseEvent *event)
 
  //   onSelecting(_selection);
 
-    update();
+	update();
 }
 
 void ScatterplotView::mouseReleaseEvent(QMouseEvent *event)
@@ -239,20 +239,20 @@ void ScatterplotView::mouseReleaseEvent(QMouseEvent *event)
 
  //   onSelection(_selection);
 
-    update();
+	update();
 }
 
 void ScatterplotView::cleanup()
 {
-    qDebug() << "Deleting scatterplot widget, performing clean up...";
-    _isInitialized = false;
+	qDebug() << "Deleting scatterplot widget, performing clean up...";
+	_isInitialized = false;
 
-    makeCurrent();
-    _pointRenderer.destroy();
+	makeCurrent();
+	_pointRenderer.destroy();
 }
 
 ScatterplotView::~ScatterplotView()
 {
-    disconnect(QOpenGLWidget::context(), &QOpenGLContext::aboutToBeDestroyed, this, &ScatterplotView::cleanup);
-    cleanup();
+	disconnect(QOpenGLWidget::context(), &QOpenGLContext::aboutToBeDestroyed, this, &ScatterplotView::cleanup);
+	cleanup();
 }
