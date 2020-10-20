@@ -305,6 +305,73 @@ void Database::SortDatabase(SortingOptions _option)
 	}
 }
 
+void Database::ComputeFeatureStandardization()
+{
+	float averageVolume = 0;
+	float averageSurfaceArea = 0;
+	float averageCompactness = 0;
+	float averageBoundsArea = 0;
+	float averageBoundsVolume = 0;
+	float averageEccentricity = 0;
+
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
+	{
+		averageVolume += modelDescriptor.m_3DFeatures.volume;
+		averageSurfaceArea += modelDescriptor.m_3DFeatures.surfaceArea;
+		averageCompactness += modelDescriptor.m_3DFeatures.compactness;
+		if (modelDescriptor.m_3DFeatures.surfaceArea < 0.000001)
+			qDebug() << QString::fromStdString(modelDescriptor.m_path.string()) << "Surface Area: " << modelDescriptor.m_3DFeatures.surfaceArea;
+		averageBoundsArea += modelDescriptor.m_3DFeatures.boundsArea;
+		averageBoundsVolume += modelDescriptor.m_3DFeatures.boundsVolume;
+		averageEccentricity += modelDescriptor.m_3DFeatures.eccentricity;
+	}
+
+	averageVolume /= m_modelDatabase.size();
+	averageSurfaceArea /= m_modelDatabase.size();
+	averageCompactness /= m_modelDatabase.size();
+	averageBoundsArea /= m_modelDatabase.size();
+	averageBoundsVolume /= m_modelDatabase.size();
+	averageEccentricity /= m_modelDatabase.size();
+
+	float stddevVolume = 0;
+	float stddevSurfaceArea = 0;
+	float stddevCompactness = 0;
+	float stddevBoundsArea = 0;
+	float stddevBoundsVolume = 0;
+	float stddevEccentricity = 0;
+
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
+	{
+		stddevVolume += pow(modelDescriptor.m_3DFeatures.volume - averageVolume, 2);
+		stddevSurfaceArea += pow(modelDescriptor.m_3DFeatures.surfaceArea - averageSurfaceArea, 2);
+		stddevCompactness += pow(modelDescriptor.m_3DFeatures.compactness - averageCompactness, 2);
+		stddevBoundsArea += pow(modelDescriptor.m_3DFeatures.boundsArea - averageBoundsArea, 2);
+		stddevBoundsVolume += pow(modelDescriptor.m_3DFeatures.boundsVolume - averageBoundsVolume, 2);
+		stddevEccentricity += pow(modelDescriptor.m_3DFeatures.eccentricity - averageEccentricity, 2);
+	}
+
+	stddevVolume = sqrt(stddevVolume / (m_modelDatabase.size() - 1));
+	stddevSurfaceArea = sqrt(stddevSurfaceArea / (m_modelDatabase.size() - 1));
+	stddevCompactness = sqrt(stddevCompactness / (m_modelDatabase.size() - 1));
+	stddevBoundsArea = sqrt(stddevBoundsArea / (m_modelDatabase.size() - 1));
+	stddevBoundsVolume = sqrt(stddevBoundsVolume / (m_modelDatabase.size() - 1));
+	stddevEccentricity = sqrt(stddevEccentricity / (m_modelDatabase.size() - 1));
+	qDebug() << "Standardization: " << averageCompactness << stddevCompactness;
+	m_averageFeatures.volume = averageVolume;
+	m_averageFeatures.surfaceArea = averageSurfaceArea;
+	m_averageFeatures.compactness = averageCompactness;
+	m_averageFeatures.boundsArea = averageBoundsArea;
+	m_averageFeatures.boundsVolume = averageBoundsVolume;
+	m_averageFeatures.eccentricity = averageEccentricity;
+
+	m_stddevFeatures.volume = stddevVolume;
+	m_stddevFeatures.surfaceArea = stddevSurfaceArea;
+	m_stddevFeatures.compactness = stddevCompactness;
+	m_stddevFeatures.boundsArea = stddevBoundsArea;
+	m_stddevFeatures.boundsVolume = stddevBoundsVolume;
+	m_stddevFeatures.eccentricity = stddevEccentricity;
+}
+
 void Database::CompoundHistogramPerClass()
 {
 	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
@@ -415,6 +482,8 @@ void Database::CompoundHistogramPerClass()
 
 		outFile.close();
 	}
+
+	ComputeFeatureStandardization();
 }
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)

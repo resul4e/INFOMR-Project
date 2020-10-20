@@ -69,6 +69,7 @@ public:
 	void SortDatabase(SortingOptions _option);
 
 private:
+	void ComputeFeatureStandardization();
 
 	void CompoundHistogramPerClass();
 	
@@ -77,4 +78,7 @@ private:
 	std::shared_ptr<Model> LoadSavedModel(std::filesystem::path _modelFileName);
 	
 	std::vector<ModelDescriptor> m_modelDatabase;
+
+	Features3D m_averageFeatures;
+	Features3D m_stddevFeatures;
 };
