@@ -34,6 +34,18 @@ ModelDescriptor::ModelDescriptor() :
 
 }
 
+std::vector<float> ModelDescriptor::ComputeFeatureVector()
+{
+	std::vector<float> featureVector;
+	featureVector.push_back(m_3DFeatures.volume);
+	featureVector.push_back(m_3DFeatures.surfaceArea);
+	featureVector.push_back(m_3DFeatures.compactness);
+	featureVector.push_back(m_3DFeatures.boundsArea);
+	featureVector.push_back(m_3DFeatures.boundsVolume);
+	featureVector.push_back(m_3DFeatures.eccentricity);
+	return featureVector;
+}
+
 void ModelDescriptor::UpdateFeatures()
 {
 	if (m_model != nullptr)

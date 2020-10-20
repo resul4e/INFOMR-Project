@@ -48,6 +48,7 @@ struct ModelDescriptor
 {
 	ModelDescriptor();
 
+	std::vector<float> ComputeFeatureVector();
 	void UpdateFeatures();
 	void UpdateBounds();
 
