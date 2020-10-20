@@ -6,7 +6,7 @@
 
 class Model;
 struct Features3D;
-struct HistogramFeature;
+class HistogramFeature;
 
 /**
  * \brief Class that is responsible for loading a Model using Assimp.

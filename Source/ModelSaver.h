@@ -5,7 +5,7 @@
 #include <map>
 
 struct ModelDescriptor;
-struct HistogramFeature;
+class HistogramFeature;
 
 /**
  * \brief Class that saves a model
