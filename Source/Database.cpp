@@ -12,6 +12,8 @@
 
 #include <flann/algorithms/kdtree_index.h>
 
+#include <QDebug>
+
 namespace fs = std::filesystem;
 
 /**
