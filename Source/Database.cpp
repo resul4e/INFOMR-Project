@@ -170,8 +170,8 @@ void Database::ProcessAllModels()
 			Normalizer::Normalize(modelDescriptor);
 		}
 
-		modelDescriptor.UpdateBounds();
-		modelDescriptor.UpdateFeatures();
+		//modelDescriptor.UpdateBounds();
+		//modelDescriptor.UpdateFeatures();
 		ModelSaver::SavePly(modelDescriptor, savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply"));
 		modelDescriptor.m_model = nullptr;
 	}
