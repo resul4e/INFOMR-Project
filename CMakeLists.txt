@@ -19,6 +19,7 @@ find_package(Qt5 COMPONENTS Widgets Charts REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/assimp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/glm/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/Eigen/include/)
+include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/hdi/include/)
 include_directories(${CMAKE_SOURCE_DIR}/Source)
 
 # Add source subdirectory which contains the source files
@@ -37,6 +38,9 @@ source_group(Widgets FILES ${WIDGETS_SOURCES})
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 target_link_libraries(${PROJECT_NAME} Qt5::Charts)
 target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/ThirdParty/assimp/lib/assimp.lib)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/ThirdParty/hdi/lib//$<CONFIG>/hdidata.lib)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/ThirdParty/hdi/lib//$<CONFIG>/hdidimensionalityreduction.lib)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/ThirdParty/hdi/lib//$<CONFIG>/hdiutils.lib)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BINARY_DIR}/$<CONFIG>/)
 
