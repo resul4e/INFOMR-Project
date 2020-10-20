@@ -72,8 +72,6 @@ FeatureView::FeatureView(Context& _context) :
 	QChartView* chartView = new QChartView(m_faceAreaHistogram);
 	chartView->setRenderHint(QPainter::Antialiasing);
 
-	QSpacerItem* spacer = new QSpacerItem(0, 1000);
-
 	attributeLayout->addWidget(modelNameLabel, 0, 0);
 	attributeLayout->addWidget(m_modelNameField, 0, 1);
 	attributeLayout->addWidget(verticesLabel, 1, 0);
@@ -97,7 +95,6 @@ FeatureView::FeatureView(Context& _context) :
 	featureLayout->addWidget(m_AABBVolumeField, 5, 1);
 	featureLayout->addWidget(eccentricityRatioLabel, 6, 0);
 	featureLayout->addWidget(m_eccentricityRatioField, 6, 1);
-	featureLayout->addItem(spacer, 7, 0);
 
 	QGroupBox* attributeBox = new QGroupBox("Model attributes");
 	attributeBox->setLayout(attributeLayout);

@@ -89,8 +89,6 @@ DatabaseView::DatabaseView(Context& _context) :
 
 	QChartView* chartView = new QChartView(m_vertexCountHistogram);
 	chartView->setRenderHint(QPainter::Antialiasing);
-	
-	QSpacerItem* spacer = new QSpacerItem(0, 1000);
 
 	QGridLayout* informationLayout = new QGridLayout();
 	QGridLayout* chartsLayout = new QGridLayout();
@@ -100,7 +98,6 @@ DatabaseView::DatabaseView(Context& _context) :
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
 	chartsLayout->addWidget(chartView, 1, 0);
-	chartsLayout->addItem(spacer, 2, 0);
 
 	
 	QGroupBox* informationBox = new QGroupBox("Database information");
