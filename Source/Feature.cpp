@@ -57,6 +57,12 @@ void FeatureVector::AddFeature(float feature, float weight)
 	f[0] = feature;
 	AddFeature(f, weight);
 }
+
+void FeatureVector::AddFeature(HistogramFeature feature, float weight)
+{
+	m_histogramFeatures.push_back(feature);
+}
+
 #include <QDebug>
 float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2)
 {

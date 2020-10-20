@@ -58,10 +58,12 @@ class FeatureVector
 public:
 	void AddFeature(Feature feature, float weight = 1);
 	void AddFeature(float feature, float weight = 1);
+	void AddFeature(HistogramFeature feature, float weight = 1);
 
 private:
 	std::vector<Feature> m_features;
 	std::vector<float> m_weights;
+	std::vector<HistogramFeature> m_histogramFeatures;
 
 	friend float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2);
 };
