@@ -1,6 +1,9 @@
 #include "FeatureExtraction.h"
 
+#include "Feature.h"
+
 constexpr int HISTOGRAM_ITERATIONS = 100000;
+constexpr size_t HISTOGRAM_BIN_SIZE = 10;
 constexpr double M_PI = 3.14159265358979323846;  /* pi */
 
 namespace
@@ -23,11 +26,11 @@ namespace
 		return ExtractTriangleArea(v0, v1, v2);
 	}
 
-	void ProcessBins(HistogramFeature& feature)
+	void ProcessBins(Feature& feature)
 	{
 		for (int i = 0; i < HISTOGRAM_BIN_SIZE; i++)
 		{
-			feature.binCount[i] /= static_cast<double>(HISTOGRAM_ITERATIONS);
+			feature[i] /= static_cast<double>(HISTOGRAM_ITERATIONS);
 		}
 	}
 }
@@ -177,11 +180,10 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Create all bins for the histogram.
-	HistogramFeature a3Feature{};
-	a3Feature.min = 0;
-	a3Feature.max = M_PI;
-	memset(a3Feature.binCount, 0, sizeof a3Feature.binCount);
-	
+	HistogramFeature a3Feature(HISTOGRAM_BIN_SIZE);
+	a3Feature.m_min = 0;
+	a3Feature.m_max = M_PI;
+
 	//Iterate for a while, each time picking three random vertices and extracting the angle between them.
 	glm::vec3 randomVertices[3];
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
@@ -206,7 +208,7 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 
 		//Find the bin it fits in by first dividing by the bin size and then flooring the result by casting it to an int.
 		const int bin = static_cast<int>(angle / binSize);
-		a3Feature.binCount[bin]++;
+		a3Feature[bin] += 1;
 	}
 
 	ProcessBins(a3Feature);
@@ -226,10 +228,9 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 	GetMeshPositions(*_modelDescriptor.m_model, meshPositions);
 
 	//Create all bins for the histogram.
-	HistogramFeature d1Feature{};
-	d1Feature.min = 0;
-	d1Feature.max = Features3D::globalBoundsD1.t;
-	memset(d1Feature.binCount, 0, sizeof d1Feature.binCount);
+	HistogramFeature d1Feature(HISTOGRAM_BIN_SIZE);
+	d1Feature.m_min = 0;
+	d1Feature.m_max = Features3D::globalBoundsD1.t;
 	
 	//Get the bin size
 	const float binSize = Features3D::globalBoundsD1.t / HISTOGRAM_BIN_SIZE;
@@ -245,9 +246,8 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 			glm::vec3 diff = randomVertex - barycenter;
 			const float distance = glm::length(diff);
 			const int bin = static_cast<int>(distance / binSize);
-			d1Feature.binCount[bin]++;
+			d1Feature[bin]++;
 		}
-
 	}
 
 	ProcessBins(d1Feature);
@@ -267,10 +267,9 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 	const float binSize = maxDistance / HISTOGRAM_BIN_SIZE;
 
 	//Create all bins for the histogram.
-	HistogramFeature d2Feature{};
-	d2Feature.min = 0;
-	d2Feature.max = maxDistance;
-	memset(d2Feature.binCount, 0, sizeof d2Feature.binCount);
+	HistogramFeature d2Feature(HISTOGRAM_BIN_SIZE);
+	d2Feature.m_min = 0;
+	d2Feature.m_max = maxDistance;
 	
 	//Iterate for a while, each time picking two random vertices and extracting the distance between them.
 	glm::vec3 randomVertices[2];
@@ -285,7 +284,7 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 		//Add one to the correct bin
 		int bin = static_cast<int>(distance / binSize);
 		bin = bin < 10 ? bin : 9;
-		d2Feature.binCount[bin]++;
+		d2Feature[bin]++;
 	}
 
 	ProcessBins(d2Feature);
@@ -322,16 +321,15 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 	const float binSize = (distance) / HISTOGRAM_BIN_SIZE;
 
 	//Create all bins for the histogram.
-	HistogramFeature d3Feature{};
-	d3Feature.min = minArea;
-	d3Feature.max = maxArea;
-	memset(d3Feature.binCount, 0, sizeof d3Feature.binCount);
+	HistogramFeature d3Feature(HISTOGRAM_BIN_SIZE);
+	d3Feature.m_min = minArea;
+	d3Feature.m_max = maxArea;
 
 	//Add to the correct bins
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		const int bin = static_cast<int>(triangleAreas[i] / binSize);
-		d3Feature.binCount[bin]++;
+		d3Feature[bin]++;
 	}
 
 	ProcessBins(d3Feature);
@@ -371,18 +369,16 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 	const float binSize = (distance) / HISTOGRAM_BIN_SIZE;
 
 	//Create all bins for the histogram.
-	HistogramFeature d4Feature{};
-	d4Feature.min = minVolume;
-	d4Feature.max = maxVolume;
-	memset(d4Feature.binCount, 0, sizeof d4Feature.binCount);
+	HistogramFeature d4Feature(HISTOGRAM_BIN_SIZE);
+	d4Feature.m_min = minVolume;
+	d4Feature.m_max = maxVolume;
 
 	//Go over all volumes and add them to their correct bins.
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		const int bin = static_cast<int>(tetVolumes[i] / binSize);
-		d4Feature.binCount[bin]++;
+		d4Feature[bin]++;
 	}
-
 
 	ProcessBins(d4Feature);
 

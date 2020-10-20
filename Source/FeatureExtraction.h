@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+class Feature;
+class HistogramFeature;
+
 float ExtractSurfaceArea(ModelDescriptor& _modelDescriptor);
 float ExtractAABBArea(ModelDescriptor& _modelDescriptor);
 float ExtractAABBVolume(ModelDescriptor& _modelDescriptor);

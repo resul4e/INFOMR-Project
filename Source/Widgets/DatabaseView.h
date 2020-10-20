@@ -44,12 +44,13 @@ public:
 private:
 	QtCharts::QChart* CreateVertexCountChart();
 	
+	Context& m_context;
+
 	QLineEdit* m_databaseCountField;
 	DatabaseHierarchy* m_databaseHierarchy;
 
 	QtCharts::QChart* m_vertexCountHistogram;
 	QSlider* m_vertexCountSlider;
 	
-	std::shared_ptr<Database> m_database;
 	int m_maxVertexCount;
 };
