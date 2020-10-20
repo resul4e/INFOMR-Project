@@ -10,7 +10,7 @@ namespace
 		* Builds an orthographic projection matrix that transforms the given bounds
 		* to the range [-1, 1] in both directions.
 		*/
-	glm::mat3 createProjectionMatrix(Bounds bounds)
+	glm::mat3 createProjectionMatrix(Bounds2D bounds)
 	{
 		glm::mat3 m(1.0);
 		m[0][0] = 2 / bounds.getWidth();
@@ -196,7 +196,7 @@ void PointRenderer::setScalarEffect(const PointEffect effect)
 	_pointEffect = effect;
 }
 
-void PointRenderer::setBounds(const Bounds& bounds)
+void PointRenderer::setBounds(const Bounds2D& bounds)
 {
 	_bounds = bounds;
 }

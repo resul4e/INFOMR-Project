@@ -90,7 +90,7 @@ public:
 
 	void setScalarEffect(const PointEffect effect);
 	void setColormap(const QString colormap);
-	void setBounds(const Bounds& bounds);
+	void setBounds(const Bounds2D& bounds);
 	void setPointSize(const float size);
 	void setAlpha(const float alpha);
 	void setPointScaling(PointScaling scalingMode);
@@ -116,5 +116,5 @@ private:
 	PointArrayObject _gpuPoints;
 
 	glm::mat3 _orthoM;
-	Bounds _bounds = Bounds(-1, 1, -1, 1);
+	Bounds2D _bounds = Bounds2D(-1, 1, -1, 1);
 };

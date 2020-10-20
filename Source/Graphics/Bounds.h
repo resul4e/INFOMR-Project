@@ -11,13 +11,13 @@
 
 #include <glm/glm.hpp>
 
-class Bounds
+class Bounds2D
 {
 public:
-	const static Bounds Max;
+	const static Bounds2D Max;
 
-	Bounds();
-	Bounds(float left, float right, float bottom, float top);
+	Bounds2D();
+	Bounds2D(float left, float right, float bottom, float top);
 
 	void setBounds(float left, float right, float bottom, float top);
 	void ensureMinimumSize(float width, float height);

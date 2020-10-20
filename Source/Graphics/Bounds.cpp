@@ -2,25 +2,25 @@
 
 #include <limits>
 
-const Bounds Bounds::Max = Bounds (
+const Bounds2D Bounds2D::Max = Bounds2D (
 	std::numeric_limits<float>::infinity(),
 	-std::numeric_limits<float>::infinity(),
 	std::numeric_limits<float>::infinity(),
 	-std::numeric_limits<float>::infinity()
 );
 
-Bounds::Bounds() :
-	Bounds(-1, 1, -1, 1)
+Bounds2D::Bounds2D() :
+	Bounds2D(-1, 1, -1, 1)
 { }
 
-Bounds::Bounds(float left, float right, float bottom, float top) :
+Bounds2D::Bounds2D(float left, float right, float bottom, float top) :
 	_left(left),
 	_right(right),
 	_bottom(bottom),
 	_top(top)
 { }
 
-void Bounds::setBounds(float left, float right, float bottom, float top)
+void Bounds2D::setBounds(float left, float right, float bottom, float top)
 {
 	_left = left;
 	_right = right;
@@ -28,7 +28,7 @@ void Bounds::setBounds(float left, float right, float bottom, float top)
 	_top = top;
 }
 
-void Bounds::ensureMinimumSize(float width, float height)
+void Bounds2D::ensureMinimumSize(float width, float height)
 {
 	glm::vec2 center = getCenter();
 
@@ -44,7 +44,7 @@ void Bounds::ensureMinimumSize(float width, float height)
 	}
 }
 
-void Bounds::moveToOrigin()
+void Bounds2D::moveToOrigin()
 {
 	glm::vec2 center = getCenter();
 	_left -= center.x;
@@ -53,7 +53,7 @@ void Bounds::moveToOrigin()
 	_top -= center.y;
 }
 
-void Bounds::makeSquare()
+void Bounds2D::makeSquare()
 {
 	glm::vec2 center = getCenter();
 	float halfSize = getWidth() > getHeight() ? getWidth() / 2 : getHeight() / 2;
@@ -64,7 +64,7 @@ void Bounds::makeSquare()
 	_top = center.y + halfSize;
 }
 
-void Bounds::expand(float fraction)
+void Bounds2D::expand(float fraction)
 {
 	float widthOffset = (getWidth() * fraction) / 2;
 	float heightOffset = (getHeight() * fraction) / 2;

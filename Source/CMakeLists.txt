@@ -63,5 +63,7 @@ set(WIDGETS_SOURCES
     ${DIR}/Widgets/DatabaseView.cpp
     ${DIR}/Widgets/DatabaseHierarchyModel.h
     ${DIR}/Widgets/DatabaseHierarchyModel.cpp
+    ${DIR}/Widgets/ScatterplotView.h
+    ${DIR}/Widgets/ScatterplotView.cpp
     PARENT_SCOPE
 )
