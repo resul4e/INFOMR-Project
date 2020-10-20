@@ -3,7 +3,11 @@
 #include "QueryManager.h"
 #include "Widgets/FeatureView.h"
 #include "Widgets/DatabaseView.h"
-#include "Normalizer.h"
+#include "ModelAnalytics.h"
+#include "ModelUtil.h"
+#include "ModelSaver.h"
+#include "PSBLoader.h"
+#include "ModelProcessing.h"
 
 #include <QApplication> // Used by centerAndResize
 #include <QDesktopWidget> // Used by centerAndResize
@@ -15,8 +19,6 @@
 
 #include <filesystem>
 #include <iostream>
-#include "ModelSaver.h"
-#include "PSBLoader.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -43,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	auto processModelFunc = [=]()
 	{
-		m_context.GetDatabase()->SubdivideModel(m_context.GetActiveModel());
-		m_context.GetDatabase()->CrunchModel(m_context.GetActiveModel());
+		proc::SubdivideModel(m_context.GetActiveModel());
+		proc::CrunchModel(m_context.GetActiveModel());
 		m_context.GetActiveModel().m_model->markForReupload();
 		_databaseWidget->Update();
 	};
@@ -266,8 +268,7 @@ void MainWindow::normalizeCurrentModel()
 	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 	if(modelDescriptor.m_model != nullptr)
 	{
-		//Normalizer::Remesh(*model);
-		Normalizer::Normalize(modelDescriptor);
+		proc::Normalize(modelDescriptor);
 
 		m_context.SetModel(modelDescriptor);
 	}
@@ -282,7 +283,7 @@ void MainWindow::remeshCurrentModel()
 	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
 	if (modelDescriptor.m_model != nullptr)
 	{
-		Normalizer::Remesh(modelDescriptor);
+		proc::Remesh(modelDescriptor);
 		m_context.SetModel(modelDescriptor);
 	}
 	else

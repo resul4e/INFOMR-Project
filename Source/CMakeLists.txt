@@ -9,6 +9,8 @@ set(BASE_SOURCES
     ${DIR}/MainWindow.h
     ${DIR}/PSBLoader.h
     ${DIR}/PSBLoader.cpp
+    ${DIR}/ModelProcessing.h
+    ${DIR}/ModelProcessing.cpp
     ${DIR}/FeatureExtraction.h
     ${DIR}/FeatureExtraction.cpp
     ${DIR}/Feature.h
@@ -23,8 +25,6 @@ set(BASE_SOURCES
     ${DIR}/ModelSaver.cpp
     ${DIR}/Database.h
     ${DIR}/Database.cpp
-    ${DIR}/Normalizer.h
-    ${DIR}/Normalizer.cpp
     ${DIR}/ModelAnalytics.h
     ${DIR}/ModelAnalytics.cpp
     ${DIR}/ModelUtil.h

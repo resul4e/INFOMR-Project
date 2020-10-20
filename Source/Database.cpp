@@ -6,9 +6,9 @@
 
 #include "ModelLoader.h"
 #include "Model.h"
-#include "Normalizer.h"
 #include "ModelSaver.h"
 #include "ModelAnalytics.h"
+#include "ModelProcessing.h"
 
 #include <flann/algorithms/kdtree_index.h>
 
@@ -74,10 +74,10 @@ void Database::ProcessAllModels()
 		if(!fs::exists(savedMeshesPath / modelDescriptor.m_path.filename().replace_extension(".ply")))
 		{
 			modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
-			SubdivideModel(modelDescriptor);
-			CrunchModel(modelDescriptor);
-			Normalizer::Remesh(modelDescriptor);
-			Normalizer::Normalize(modelDescriptor);
+			//proc::SubdivideModel(modelDescriptor);
+			proc::CrunchModel(modelDescriptor);
+			proc::Remesh(modelDescriptor);
+			proc::Normalize(modelDescriptor);
 		}
 		else
 		{
@@ -86,7 +86,7 @@ void Database::ProcessAllModels()
 			{
 				continue;
 			}
-			Normalizer::Normalize(modelDescriptor);
+			proc::Normalize(modelDescriptor);
 		}
 
 		//modelDescriptor.UpdateBounds();
@@ -104,7 +104,7 @@ void Database::RemeshAllModels()
 {
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		Normalizer::Remesh(modelDescriptor);
+		proc::Remesh(modelDescriptor);
 	}
 }
 
@@ -130,7 +130,7 @@ void Database::NormalizeAllModels()
 		alignmentRecorder.preRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*modelDescriptor.m_model));
 		scaleRecorder.preRecord(analytics::ComputeLongestAABBAxis(*modelDescriptor.m_model));
 
-		Normalizer::Normalize(modelDescriptor);
+		proc::Normalize(modelDescriptor);
 
 		barycenterRecorder.postRecord(analytics::ComputeBarycenterDistance(*modelDescriptor.m_model));
 		alignmentRecorder.postRecord(analytics::ComputeAbsCosineMajorEigenToXAxis(*modelDescriptor.m_model));
@@ -140,63 +140,6 @@ void Database::NormalizeAllModels()
 	barycenterRecorder.saveData("barycenters.csv");
 	alignmentRecorder.saveData("alignment.csv");
 	scaleRecorder.saveData("scale.csv");
-}
-
-void Database::SubdivideModel(ModelDescriptor& _modelDescriptor)
-{
-	//The folder where we will save the subdivided mesh
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-
-	//check if we need to subdivide.
-	bool subdivide = false;
-	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
-	{
-		if (mesh.positions.size() < 1000 || mesh.faces.size() < 1000)
-		{
-			subdivide = true;
-			std::cerr << "Not enough verts/faces in model with name: " << _modelDescriptor.m_name << std::endl;
-		}
-	}
-
-	//If we do need to subidivde: call the script and load the model, then recall this method to see if the
-	//new model has enough verts/faces. If not do this again. Once this recursive call is returned swap the
-	//new model with the old one so that we immediately have access to the higher fidelity model.
-	if (subdivide)
-	{
-		auto newPath = modifiedMeshesPath;
-
-		newPath /= _modelDescriptor.m_path.filename();
-		newPath.replace_extension(".ply");
-		auto command = ("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
-		int error = system(command.c_str());
-		if(error != 0)
-		{
-			std::cerr << "Subdivision failed', using backup subdivision" << "\n";
-			system(("..\\Scripts\\mesh_filter.exe " + _modelDescriptor.m_path.string() + " -subdiv " + newPath.string()).c_str());
-		}
-
-		_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
-		_modelDescriptor.UpdateFeatures();
-	}
-}
-
-void Database::CrunchModel(ModelDescriptor& _modelDescriptor)
-{
-	//The folder where we will save the crunched mesh
-	fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	
-	for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
-	{
-		if (mesh.positions.size() > 40000 || mesh.faces.size() > 40000)
-		{
-			auto newPath = modifiedMeshesPath;
-			newPath /= _modelDescriptor.m_path.filename();
-			system(("..\\Scripts\\mesh_crunch.exe " + _modelDescriptor.m_path.string() + " " + newPath.string()).c_str());
-
-			_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
-			_modelDescriptor.UpdateFeatures();
-		}
-	}
 }
 
 void Database::SortDatabase(SortingOptions _option)

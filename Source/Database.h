@@ -47,9 +47,6 @@ public:
 	void RemeshAllModels();
 	void SaveAllModels();
 	void NormalizeAllModels();
-
-	void SubdivideModel(ModelDescriptor& _model);
-	void CrunchModel(ModelDescriptor& _model);
 	
 	/**
 	 * @brief Sorts the model database on the given SortingOptions.
@@ -68,8 +65,6 @@ private:
 	void ComputeFeatureStandardization();
 
 	void CompoundHistogramPerClass();
-	
-	void ReadPSBClassificationFile(std::filesystem::path _modelDirectoryPath, std::filesystem::path _filePath);
 	
 	std::shared_ptr<Model> LoadSavedModel(std::filesystem::path _modelFileName);
 	
