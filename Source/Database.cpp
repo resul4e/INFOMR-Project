@@ -10,8 +10,6 @@
 #include "ModelSaver.h"
 #include "ModelAnalytics.h"
 
-#include "pmp/algorithms/SurfaceSubdivision.h"
-#include "pmp/algorithms/SurfaceNormals.h"
 
 namespace fs = std::filesystem;
 
