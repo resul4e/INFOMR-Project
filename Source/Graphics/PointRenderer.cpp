@@ -155,9 +155,6 @@ void PointArrayObject::draw()
 		_dirtyColors = false;
 	}
 
-	// Before calling glDrawArraysInstanced, check if _positions is non-empty, to
-	// prevent a crash on some (older) computers, see HDPS core pull request #42,
-	// "Fix issue #34: Crash when opening scatterplot plugin", March 2020.
 	if (!_positions.empty())
 	{
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, _positions.size());
@@ -230,7 +227,7 @@ void PointRenderer::init()
 	_gpuPoints.init();
 
 	bool loaded = true;
-	loaded &= _shader.loadShaderFromFile(":shaders/PointPlot.vert", ":shaders/PointPlot.frag");
+	loaded &= _shader.loadShaderFromFile("../Resources/PointPlot.vert", "../Resources/PointPlot.frag");
 
 	if (!loaded) {
 		qCritical() << "Failed to load one of the Scatterplot shaders";
@@ -257,7 +254,7 @@ void PointRenderer::render()
 	_orthoM = createProjectionMatrix(_bounds);
 
 	_shader.bind();
-
+	
 	switch (_pointSettings._scalingMode) {
 	case Relative: _shader.uniform1f("pointSize", _pointSettings._pointSize); break;
 	case Absolute: _shader.uniform1f("pointSize", _pointSettings._pointSize / size); break;

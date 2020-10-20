@@ -89,7 +89,6 @@ public:
 	void setColors(const std::vector<glm::vec3>& colors);
 
 	void setScalarEffect(const PointEffect effect);
-	void setColormap(const QString colormap);
 	void setBounds(const Bounds2D& bounds);
 	void setPointSize(const float size);
 	void setAlpha(const float alpha);
