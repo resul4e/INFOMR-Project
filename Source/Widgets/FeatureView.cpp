@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "FeatureExtraction.h"
+#include "Widgets/ScatterplotView.h"
 
 #include <QVBoxLayout>
 #include <QGroupBox>
@@ -79,7 +80,10 @@ FeatureView::FeatureView(Context& _context) :
 	attributeLayout->addWidget(facesLabel, 2, 0);
 	attributeLayout->addWidget(m_facesField, 2, 1);
 
-	chartLayout->addWidget(chartView, 0, 0);
+	ScatterplotView* scatterplot = new ScatterplotView(m_context);
+
+	//chartLayout->addWidget(chartView, 0, 0);
+	chartLayout->addWidget(scatterplot, 0, 0);
 
 	featureLayout->addWidget(volumeLabel, 0, 0);
 	featureLayout->addWidget(m_shapeVolumeField, 0, 1);

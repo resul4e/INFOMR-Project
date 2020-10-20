@@ -1,16 +1,17 @@
 #pragma once
 
+#include "Context.h"
+
 #include "Graphics/PointRenderer.h"
 
 #include <glm/glm.hpp>
 #include "Graphics/Bounds.h"
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
 
 #include <QMouseEvent>
 
-class ScatterplotWidget : public QOpenGLWidget, QOpenGLFunctions_3_3_Core
+class ScatterplotView : public QOpenGLWidget
 {
 	Q_OBJECT
 public:
@@ -18,16 +19,16 @@ public:
 		SCATTERPLOT, DENSITY, LANDSCAPE
 	};
 
-	ScatterplotWidget();
+	ScatterplotView(Context& _context);
 
-	~ScatterplotWidget();
+	~ScatterplotView();
 
 	/** Returns true when the widget was initialized and is ready to be used. */
 	bool isInitialized();
 
 	/**
 	 * Change the rendering mode displayed in the widget.
-	 * The options are defined by ScatterplotWidget::RenderMode.
+	 * The options are defined by ScatterplotView::RenderMode.
 	 */
 	void setRenderMode(RenderMode renderMode);
 
@@ -63,11 +64,14 @@ public slots:
 	void renderModePicked(const int index);
 	void pointSizeChanged(const int size);
 	void pointOpacityChanged(const int opacity);
+	void onEmbeddingChanged();
 
 private:
 	const glm::mat3 toClipCoordinates = glm::mat3(2.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, -1.0f, -1.0f, 1.0f);
 	glm::mat3 toNormalisedCoordinates;
 	glm::mat3 toIsotropicCoordinates;
+
+	Context& m_context;
 
 	bool _isInitialized = false;
 

@@ -29,6 +29,18 @@ ModelDescriptor& Context::GetActiveModel()
 	return m_modelDescriptor;
 }
 
+void Context::SetEmbedding(std::vector<glm::vec2>& _embedding)
+{
+	m_embedding = _embedding;
+
+	emit embeddingChanged();
+}
+
+const std::vector<glm::vec2>& Context::GetEmbedding()
+{
+	return m_embedding;
+}
+
 std::shared_ptr<Database> Context::GetDatabase()
 {
 	return m_database;
