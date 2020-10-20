@@ -45,6 +45,12 @@ set(GRAPHICS_SOURCES
     ${DIR}/Graphics/Projector.cpp
     ${DIR}/Graphics/Image.h
     ${DIR}/Graphics/Image.cpp
+    ${DIR}/Graphics/PointRenderer.h
+    ${DIR}/Graphics/PointRenderer.cpp
+    ${DIR}/Graphics/BufferObject.h
+    ${DIR}/Graphics/BufferObject.cpp
+    ${DIR}/Graphics/Bounds.h
+    ${DIR}/Graphics/Bounds.cpp
     PARENT_SCOPE
 )
 
