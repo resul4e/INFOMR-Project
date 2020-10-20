@@ -11,12 +11,28 @@
 #include <qbarcategoryaxis.h>
 #include <qvalueaxis.h>
 #include <QSlider>
+#include <QPushButton>
 
 #include "Database.h"
 #include "Model.h"
 
 #include <QDebug>
 using namespace QtCharts;
+
+namespace
+{
+	template <typename T>
+	std::vector<size_t> sortIndices(const std::vector<T>& v)
+	{
+		std::vector<size_t> idx(v.size());
+		std::iota(idx.begin(), idx.end(), 0);
+
+		std::stable_sort(idx.begin(), idx.end(),
+			[&v](size_t i1, size_t i2) {return v[i1] < v[i2]; });
+
+		return idx;
+	}
+}
 
 DatabaseHierarchy::DatabaseHierarchy(Context& _context) :
 	m_context(_context)
@@ -49,6 +65,37 @@ void DatabaseHierarchy::UpdateDataModel()
 	setModel(m_model);
 }
 
+void DatabaseView::FindClosestShapes()
+{
+	FeatureVector fv1 = m_context.GetDatabase()->ComputeFeatureVector(m_context.GetActiveModel());
+	
+	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
+
+	std::vector<float> distances(modelDatabase.size());
+	for (int i = 0; i < modelDatabase.size(); i++)
+	{
+		ModelDescriptor& md = modelDatabase[i];
+		FeatureVector fv2 = m_context.GetDatabase()->ComputeFeatureVector(md);
+
+		distances[i] = FeatureVectorDistance(fv1, fv2);
+		//qDebug() << distances[i];
+	}
+	
+	std::vector<size_t> indices = sortIndices(distances);
+
+	m_matchList->clear();
+	int k = 5;
+	for (int i = 1; i <= k; i++)
+	{
+		ModelDescriptor& closest = modelDatabase[indices[i]];
+		QString s = QString::fromStdString(closest.m_name);
+		m_matchList->addItem(s);
+	}
+	//ModelDescriptor& closest = modelDatabase[indices[1]];
+	//qDebug() << QString::fromStdString(modelDatabase[indices[1]].m_name);
+	//m_context.SetModel(closest);
+}
+
 DatabaseView::DatabaseView(Context& _context) :
 	m_context(_context),
 	m_maxVertexCount(100)
@@ -67,6 +114,11 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_databaseCountField = createField("0");
 
 	m_databaseHierarchy = new DatabaseHierarchy(_context);
+
+	m_computeSimilar = new QPushButton("Search similar");
+	connect(m_computeSimilar, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
+
+	m_matchList = new QListWidget();
 
 	m_vertexCountHistogram = CreateVertexCountChart();
 	m_vertexCountSlider = new QSlider();
@@ -95,10 +147,11 @@ DatabaseView::DatabaseView(Context& _context) :
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
 	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
+	informationLayout->addWidget(m_computeSimilar, 2, 0);
+	informationLayout->addWidget(m_matchList, 3, 0);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
 	chartsLayout->addWidget(chartView, 1, 0);
-
 	
 	QGroupBox* informationBox = new QGroupBox("Database information");
 	informationBox->setLayout(informationLayout);

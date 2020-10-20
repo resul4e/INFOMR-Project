@@ -5,6 +5,7 @@
 #include <QDockWidget>
 #include <QLineEdit>
 #include <QTreeView>
+#include <QListWidget>
 
 #include "DatabaseHierarchyModel.h"
 
@@ -17,6 +18,7 @@ namespace QtCharts
 	class QValueAxis;
 }
 class QSlider;
+class QPushButton;
 
 class DatabaseHierarchy : public QTreeView
 {
@@ -39,6 +41,7 @@ class DatabaseView : public QDockWidget
 public:
 	DatabaseView(Context& _context);
 
+	void FindClosestShapes();
 	void Update();
 	
 private:
@@ -48,6 +51,8 @@ private:
 
 	QLineEdit* m_databaseCountField;
 	DatabaseHierarchy* m_databaseHierarchy;
+	QPushButton* m_computeSimilar;
+	QListWidget* m_matchList;
 
 	QtCharts::QChart* m_vertexCountHistogram;
 	QSlider* m_vertexCountSlider;

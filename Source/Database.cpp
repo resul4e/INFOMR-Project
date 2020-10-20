@@ -434,7 +434,7 @@ void Database::CompoundHistogramPerClass()
 			const HistogramFeature& d1 = desc.m_3DFeatures.d1;
 			for (int i = 0; i < d1.m_numBins; i++)
 			{
-				outFile << desc.m_3DFeatures.d1[i] << ", ";
+				outFile << d1[i] << ", ";
 			}
 			outFile << "\n";
 		}
