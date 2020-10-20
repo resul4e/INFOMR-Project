@@ -96,7 +96,7 @@ void Database::ProcessAllModels()
 	}
 
 	CompoundHistogramPerClass();
-
+	ComputeFeatureVectors();
 	BuildANNIndex();
 }
 
@@ -226,6 +226,14 @@ void Database::SortDatabase(SortingOptions _option)
 	}
 }
 
+void Database::ComputeFeatureVectors()
+{
+	for (ModelDescriptor& md : GetModelDatabase())
+	{
+		md.m_featureVector = std::make_shared<FeatureVector>(ComputeFeatureVector(md));
+	}
+}
+
 FeatureVector Database::ComputeFeatureVector(const ModelDescriptor& md)
 {
 	FeatureVector featureVector;
@@ -255,8 +263,8 @@ void Database::BuildANNIndex()
 	for (int i = 0; i < modelDatabase.size(); i++)
 	{
 		ModelDescriptor& md = modelDatabase[i];
-		FeatureVector fv = ComputeFeatureVector(md);
-		std::vector<float> floatVector = fv.AsFloatVector();
+
+		std::vector<float> floatVector = md.m_featureVector->AsFloatVector();
 
 		for (int d = 0; d < numDims; d++)
 		{

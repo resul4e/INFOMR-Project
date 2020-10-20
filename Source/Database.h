@@ -58,6 +58,7 @@ public:
 	void SortDatabase(SortingOptions _option);
 
 	FeatureVector ComputeFeatureVector(const ModelDescriptor& md);
+	void ComputeFeatureVectors();
 
 	void BuildANNIndex();
 	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);

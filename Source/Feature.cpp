@@ -63,7 +63,7 @@ void FeatureVector::AddFeature(HistogramFeature feature, float weight)
 	m_histogramFeatures.push_back(feature);
 }
 
-std::vector<float> FeatureVector::AsFloatVector()
+std::vector<float> FeatureVector::AsFloatVector() const
 {
 	std::vector<float> floatVector;
 	for (const Feature& f : m_features)

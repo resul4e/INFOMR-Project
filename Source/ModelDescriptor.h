@@ -60,4 +60,5 @@ struct ModelDescriptor
 	glm::vec3 m_eigenValues;
 
 	Features3D m_3DFeatures;
+	std::shared_ptr<FeatureVector> m_featureVector;
 };
