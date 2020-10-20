@@ -107,22 +107,50 @@ float ExtractVolume(const ModelDescriptor& _modelDescriptor)
 	return vol;
 }
 
+int GetRandomIndex(const ModelDescriptor& _modelDescriptor)
+{
+	return rand() % _modelDescriptor.m_vertexCount;
+}
+
 void GetRandomVertices(const ModelDescriptor& _modelDescriptor, int _count, int* _meshPositions, glm::vec3* o_randomVertices)
 {
-	for (int j = 0; j < _count; j++)
+	int* indices = new int[_count];
+	for (int i = 0; i < _count; i++)
 	{
-		int randomIndex = rand() % _modelDescriptor.m_vertexCount;
+		int randomIndex = -1;
+		while(true)
+		{
+			randomIndex = GetRandomIndex(_modelDescriptor);
+			bool unique = true;
+			for (int j = 0; j < i; j++)
+			{
+				if (randomIndex == indices[j])
+				{
+					unique = false;
+					break;
+				}
+			}
+
+			if(unique)
+			{
+				break;
+			}
+		}
+
 		int subIndex = randomIndex;
+		indices[i] = subIndex;
 		for (int k = 0; k < _modelDescriptor.m_model->m_meshes.size(); k++)
 		{
 			if (subIndex - (_meshPositions[k]) < _modelDescriptor.m_model->m_meshes[k].positions.size())
 			{
-				o_randomVertices[j] = _modelDescriptor.m_model->m_meshes[k].positions[subIndex];
+				o_randomVertices[i] = _modelDescriptor.m_model->m_meshes[k].positions[subIndex];
 				break;
 			}
 			subIndex -= _meshPositions[k];
 		}
 	}
+	delete[] indices;
+	indices = nullptr;
 }
 
 void GetMeshPositions(const Model& _model, int* meshPositions)
@@ -249,7 +277,7 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
 		GetRandomVertices(_modelDescriptor, 2, meshPositions, randomVertices);
-
+		
 		//Calculate distance between the two vertices
 		glm::vec3 diff = randomVertices[0] - randomVertices[1];
 		const float distance = glm::length(diff);
