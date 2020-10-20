@@ -2,8 +2,6 @@
 
 #include "ModelUtil.h"
 
-#include <pmp/algorithms/SurfaceRemeshing.h>
-
 #include <iostream>
 #include "ModelLoader.h"
 #include "ModelSaver.h"

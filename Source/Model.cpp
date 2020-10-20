@@ -1,7 +1,5 @@
 #include "Model.h"
 
-#include <pmp/algorithms/SurfaceNormals.h>
-
 #include <iostream>
 #include "FeatureExtraction.h"
 #include "ModelUtil.h"
