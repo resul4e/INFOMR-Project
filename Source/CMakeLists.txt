@@ -29,6 +29,8 @@ set(BASE_SOURCES
     ${DIR}/ModelUtil.cpp
     ${DIR}/QueryManager.h
     ${DIR}/QueryManager.cpp
+    ${DIR}/OffscreenContext.h
+    ${DIR}/OffscreenContext.cpp
     ${DIR}/../Resources/MainWindow.ui
     ${DIR}/../Resources/resources.qrc
     PARENT_SCOPE
