@@ -20,6 +20,7 @@ include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/assimp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/glm/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/Eigen/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/hdi/include/)
+include_directories(${CMAKE_SOURCE_DIR}/ThirdParty/metrics/include/)
 include_directories(${CMAKE_SOURCE_DIR}/Source)
 
 # Add source subdirectory which contains the source files

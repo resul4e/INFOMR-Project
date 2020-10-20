@@ -1,5 +1,7 @@
 #include "Feature.h"
 
+#include <metrics/wasserstein.h>
+
 #include <cassert>
 
 float EuclideanDistance::distance(const Feature& f1, const Feature& f2)
@@ -16,6 +18,31 @@ float EuclideanDistance::distance(const Feature& f1, const Feature& f2)
 		sum += f * f;
 	}
 	return sqrt(sum);
+}
+
+float WassersteinDistance::distance(const Feature& f1, const Feature& f2)
+{
+	const HistogramFeature& hf1 = (const HistogramFeature&) f1;
+	const HistogramFeature& hf2 = (const HistogramFeature&) f2;
+
+	std::vector<float> av(hf1.m_numBins);
+	std::vector<float> aw(hf1.m_numBins);
+	std::vector<float> bv(hf2.m_numBins);
+	std::vector<float> bw(hf2.m_numBins);
+
+	for (int i = 0; i < hf1.m_numBins; i++)
+	{
+		av[i] = i;
+		aw[i] = hf1[i];
+	}
+	for (int i = 0; i < hf2.m_numBins; i++)
+	{
+		bv[i] = i;
+		bw[i] = hf2[i];
+	}
+
+	double dist = wasserstein(av, aw, bv, bw);
+	return dist;
 }
 
 void FeatureVector::AddFeature(Feature feature, float weight)

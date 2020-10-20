@@ -47,6 +47,12 @@ public:
 	float distance(const Feature& f1, const Feature& f2) override;
 };
 
+class WassersteinDistance : public DistanceFunction
+{
+public:
+	float distance(const Feature& f1, const Feature& f2) override;
+};
+
 class FeatureVector
 {
 public:
