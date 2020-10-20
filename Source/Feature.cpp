@@ -67,12 +67,18 @@ void FeatureVector::AddFeature(HistogramFeature feature, float weight)
 float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2)
 {
 	EuclideanDistance euclidean;
+	WassersteinDistance wasserstein;
 	
 	float dist1 = euclidean.distance(fv1.m_features[0], fv2.m_features[0]);
 	float dist2 = euclidean.distance(fv1.m_features[1], fv2.m_features[1]);
-	float dist3 = euclidean.distance(fv1.m_features[2], fv2.m_features[2]); qDebug() << "Dist3: " << fv1.m_features[2][0] << fv2.m_features[2][0];
+	float dist3 = euclidean.distance(fv1.m_features[2], fv2.m_features[2]);
 	float dist4 = euclidean.distance(fv1.m_features[3], fv2.m_features[3]);
 	float dist5 = euclidean.distance(fv1.m_features[4], fv2.m_features[4]);
-
-	return dist1 + dist2 + dist3 + dist4 + dist5;
+	float dist6 = euclidean.distance(fv1.m_features[5], fv2.m_features[5]);
+	float dist7 = wasserstein.distance(fv1.m_histogramFeatures[0], fv2.m_histogramFeatures[0]);
+	float dist8 = wasserstein.distance(fv1.m_histogramFeatures[1], fv2.m_histogramFeatures[1]);
+	float dist9 = wasserstein.distance(fv1.m_histogramFeatures[2], fv2.m_histogramFeatures[2]);
+	float dist10 = wasserstein.distance(fv1.m_histogramFeatures[3], fv2.m_histogramFeatures[3]);
+	
+	return dist1 + dist2 + dist3 + dist4 + dist5 + dist6 + dist7 + dist8 + dist9 + dist10;
 }
