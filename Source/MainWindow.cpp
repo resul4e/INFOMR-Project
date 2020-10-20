@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <iostream>
 #include "ModelSaver.h"
+#include "PSBLoader.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -220,7 +221,7 @@ void MainWindow::loadLabelledPSB()
 	if (fileName.isNull() || fileName.isEmpty())
 		return;
 
-	m_context.GetDatabase()->LoadLabelledPSB(std::filesystem::path(fileName.toStdString()));
+	io::LoadLabelledPSB(std::filesystem::path(fileName.toStdString()), *m_context.GetDatabase());
 	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }
@@ -233,7 +234,7 @@ void MainWindow::loadPSB()
 	if (fileName.isNull() || fileName.isEmpty())
 		return;
 
-	m_context.GetDatabase()->LoadPSB(std::filesystem::path(fileName.toStdString()));
+	io::LoadPSB(std::filesystem::path(fileName.toStdString()), *m_context.GetDatabase());
 	m_menuModelSelect->clear();
 	_databaseWidget->Update();
 }

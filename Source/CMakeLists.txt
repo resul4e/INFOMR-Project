@@ -7,6 +7,8 @@ set(BASE_SOURCES
     ${DIR}/Context.cpp
     ${DIR}/MainWindow.cpp
     ${DIR}/MainWindow.h
+    ${DIR}/PSBLoader.h
+    ${DIR}/PSBLoader.cpp
     ${DIR}/FeatureExtraction.h
     ${DIR}/FeatureExtraction.cpp
     ${DIR}/Feature.h
