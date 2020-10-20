@@ -50,7 +50,7 @@ void DatabaseHierarchy::UpdateDataModel()
 }
 
 DatabaseView::DatabaseView(Context& _context) :
-	m_database(_context.GetDatabase()),
+	m_context(_context),
 	m_maxVertexCount(100)
 {
 	setObjectName("DatabaseView");
@@ -155,16 +155,16 @@ QChart* DatabaseView::CreateVertexCountChart()
 
 void DatabaseView::Update()
 {
+	std::vector<ModelDescriptor> modelDatabase = m_context.GetDatabase()->GetModelDatabase();
+
 	//If we call update without any items in the database, we can't do much.
-	if(m_database->GetModelDatabase().empty())
+	if(modelDatabase.empty())
 	{
 		return;
 	}
 
-	std::vector<ModelDescriptor> modelDatabase = m_database->GetModelDatabase();
-
 	//Update the number of entries in the database.
-	m_databaseCountField->setText(std::to_string(m_database->GetModelDatabase().size()).c_str());
+	m_databaseCountField->setText(std::to_string(modelDatabase.size()).c_str());
 
 	//Update the hierarchy
 	m_databaseHierarchy->UpdateDataModel();
