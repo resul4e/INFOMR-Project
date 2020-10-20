@@ -59,6 +59,7 @@ public:
 	void AddFeature(Feature feature, float weight = 1);
 	void AddFeature(float feature, float weight = 1);
 	void AddFeature(HistogramFeature feature, float weight = 1);
+	std::vector<float> AsFloatVector();
 
 private:
 	std::vector<Feature> m_features;

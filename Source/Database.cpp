@@ -10,6 +10,7 @@
 #include "ModelSaver.h"
 #include "ModelAnalytics.h"
 
+#include <flann/algorithms/kdtree_index.h>
 
 namespace fs = std::filesystem;
 
@@ -26,6 +27,12 @@ bool hasEnding(std::string const& fullString, std::string const& ending) {
 	else {
 		return false;
 	}
+}
+
+Database::Database() :
+	m_index(flann::KDTreeIndexParams(4))
+{
+
 }
 
 void Database::AddModel(ModelDescriptor _model)
@@ -319,6 +326,50 @@ FeatureVector Database::ComputeFeatureVector(const ModelDescriptor& md)
 	featureVector.AddFeature(md.m_3DFeatures.d4);
 
 	return featureVector;
+}
+
+void Database::BuildANNIndex()
+{
+	auto& modelDatabase = GetModelDatabase();
+
+	int numShapes = modelDatabase.size();
+	int numDims = 46;
+	flann::Matrix<float> dataset = flann::Matrix<float>(new float[numShapes * numDims], numShapes, numDims);
+
+	for (int i = 0; i < modelDatabase.size(); i++)
+	{
+		ModelDescriptor& md = modelDatabase[i];
+		FeatureVector fv = ComputeFeatureVector(md);
+		std::vector<float> floatVector = fv.AsFloatVector();
+
+		for (int d = 0; d < numDims; d++)
+		{
+			dataset[i][d] = floatVector[d];
+		}
+	}
+
+	// Construct an randomized kd-tree index using 4 kd-trees
+	m_index = flann::Index<flann::L2<float>>(dataset, flann::KDTreeIndexParams(4));
+	m_index.buildIndex();
+}
+
+void Database::FindClosestANNShapes(ModelDescriptor& md)
+{
+	FeatureVector fv = ComputeFeatureVector(md);
+	std::vector<float> floatVector = fv.AsFloatVector();
+	int nn = 5;
+
+	BuildANNIndex();
+
+	int numDims = floatVector.size();
+	flann::Matrix<float> query(floatVector.data(), 1, numDims);
+
+	std::vector<std::vector<int>> indices;
+	std::vector<std::vector<float>> dists;
+	// do a knn search, using 128 checks
+	m_index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
+
+	qDebug() << "Result: " << indices[0][0] << indices[0][1] << indices[0][2] << indices[0][3] << indices[0][4];
 }
 
 void Database::ComputeFeatureStandardization()

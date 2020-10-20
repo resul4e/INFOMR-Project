@@ -63,6 +63,21 @@ void FeatureVector::AddFeature(HistogramFeature feature, float weight)
 	m_histogramFeatures.push_back(feature);
 }
 
+std::vector<float> FeatureVector::AsFloatVector()
+{
+	std::vector<float> floatVector;
+	for (const Feature& f : m_features)
+	{
+		floatVector.push_back(f[0]);
+	}
+	for (const HistogramFeature& f : m_histogramFeatures)
+	{
+		for (int i = 0; i < f.m_numBins; i++)
+			floatVector.push_back(f[i]);
+	}
+	return floatVector;
+}
+
 #include <QDebug>
 float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2)
 {

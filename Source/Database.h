@@ -2,6 +2,7 @@
 
 #include "ModelDescriptor.h"
 
+#include <flann/flann.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -17,7 +18,7 @@ class Model;
 class Database
 {
 public:
-	Database() = default;
+	Database();
 	~Database() = default;
 
 	enum class SortingOptions
@@ -70,6 +71,9 @@ public:
 
 	FeatureVector ComputeFeatureVector(const ModelDescriptor& md);
 
+	void BuildANNIndex();
+	void FindClosestANNShapes(ModelDescriptor& md);
+
 private:
 	void ComputeFeatureStandardization();
 
@@ -83,4 +87,5 @@ private:
 
 	Features3D m_averageFeatures;
 	Features3D m_stddevFeatures;
+	flann::Index<flann::L2<float>> m_index;
 };
