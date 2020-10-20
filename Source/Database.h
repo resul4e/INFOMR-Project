@@ -50,7 +50,7 @@ public:
 	 * @brief Returns the list of all models.
 	 * @return All of the models in this database.
 	*/
-	std::vector<ModelDescriptor> GetModelDatabase();
+	std::vector<ModelDescriptor>& GetModelDatabase();
 
 	/**
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.

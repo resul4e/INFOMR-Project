@@ -42,7 +42,7 @@ void Database::AddModel(ModelDescriptor _model)
 	m_modelDatabase.push_back(_model);
 }
 
-std::vector<ModelDescriptor> Database::GetModelDatabase()
+std::vector<ModelDescriptor>& Database::GetModelDatabase()
 {
 	return m_modelDatabase;
 }
