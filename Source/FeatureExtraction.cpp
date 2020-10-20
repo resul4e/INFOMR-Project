@@ -207,7 +207,12 @@ HistogramFeature ExtractA3(const ModelDescriptor& _modelDescriptor)
 		}
 
 		//Find the bin it fits in by first dividing by the bin size and then flooring the result by casting it to an int.
-		const int bin = static_cast<int>(angle / binSize);
+		int bin = static_cast<int>(angle / binSize);
+		if (bin >= HISTOGRAM_BIN_SIZE)
+		{
+			// TODO Report violation in log
+			bin = HISTOGRAM_BIN_SIZE - 1;
+		}
 		a3Feature[bin] += 1;
 	}
 
@@ -245,7 +250,12 @@ HistogramFeature ExtractD1(const ModelDescriptor& _modelDescriptor)
 		{
 			glm::vec3 diff = randomVertex - barycenter;
 			const float distance = glm::length(diff);
-			const int bin = static_cast<int>(distance / binSize);
+			int bin = static_cast<int>(distance / binSize);
+			if (bin >= HISTOGRAM_BIN_SIZE)
+			{
+				// TODO Report violation in log
+				bin = HISTOGRAM_BIN_SIZE - 1;
+			}
 			d1Feature[bin]++;
 		}
 	}
@@ -283,7 +293,11 @@ HistogramFeature ExtractD2(const ModelDescriptor& _modelDescriptor)
 
 		//Add one to the correct bin
 		int bin = static_cast<int>(distance / binSize);
-		bin = bin < 10 ? bin : 9;
+		if (bin >= HISTOGRAM_BIN_SIZE)
+		{
+			// TODO Report violation in log
+			bin = HISTOGRAM_BIN_SIZE - 1;
+		}
 		d2Feature[bin]++;
 	}
 
@@ -328,7 +342,12 @@ HistogramFeature ExtractD3(const ModelDescriptor& _modelDescriptor)
 	//Add to the correct bins
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		const int bin = static_cast<int>(triangleAreas[i] / binSize);
+		int bin = static_cast<int>(triangleAreas[i] / binSize);
+		if (bin >= HISTOGRAM_BIN_SIZE)
+		{
+			// TODO Report violation in log
+			bin = HISTOGRAM_BIN_SIZE - 1;
+		}
 		d3Feature[bin]++;
 	}
 
@@ -376,7 +395,12 @@ HistogramFeature ExtractD4(const ModelDescriptor& _modelDescriptor)
 	//Go over all volumes and add them to their correct bins.
 	for (int i = 0; i < HISTOGRAM_ITERATIONS; i++)
 	{
-		const int bin = static_cast<int>(tetVolumes[i] / binSize);
+		int bin = static_cast<int>(tetVolumes[i] / binSize);
+		if (bin >= HISTOGRAM_BIN_SIZE)
+		{
+			// TODO Report violation in log
+			bin = HISTOGRAM_BIN_SIZE - 1;
+		}
 		d4Feature[bin]++;
 	}
 
