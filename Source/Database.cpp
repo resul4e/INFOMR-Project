@@ -303,6 +303,24 @@ void Database::SortDatabase(SortingOptions _option)
 	}
 }
 
+FeatureVector Database::ComputeFeatureVector(const ModelDescriptor& md)
+{
+	FeatureVector featureVector;
+	
+	featureVector.AddFeature((md.m_3DFeatures.volume - m_averageFeatures.volume) / m_stddevFeatures.volume);
+	featureVector.AddFeature((md.m_3DFeatures.surfaceArea - m_averageFeatures.surfaceArea) / m_stddevFeatures.surfaceArea);
+	featureVector.AddFeature((md.m_3DFeatures.compactness - m_averageFeatures.compactness) / m_stddevFeatures.compactness);
+	featureVector.AddFeature((md.m_3DFeatures.boundsArea - m_averageFeatures.boundsArea) / m_stddevFeatures.boundsArea);
+	featureVector.AddFeature((md.m_3DFeatures.boundsVolume - m_averageFeatures.boundsVolume) / m_stddevFeatures.boundsVolume);
+	featureVector.AddFeature((md.m_3DFeatures.eccentricity - m_averageFeatures.eccentricity) / m_stddevFeatures.eccentricity);
+	featureVector.AddFeature(md.m_3DFeatures.d1);
+	featureVector.AddFeature(md.m_3DFeatures.d2);
+	featureVector.AddFeature(md.m_3DFeatures.d3);
+	featureVector.AddFeature(md.m_3DFeatures.d4);
+
+	return featureVector;
+}
+
 void Database::ComputeFeatureStandardization()
 {
 	float averageVolume = 0;

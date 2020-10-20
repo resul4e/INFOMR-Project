@@ -68,6 +68,8 @@ public:
 	*/
 	void SortDatabase(SortingOptions _option);
 
+	FeatureVector ComputeFeatureVector(const ModelDescriptor& md);
+
 private:
 	void ComputeFeatureStandardization();
 
