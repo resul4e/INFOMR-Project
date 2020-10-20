@@ -246,7 +246,7 @@ void Database::SubdivideModel(ModelDescriptor& _modelDescriptor)
 
 		newPath /= _modelDescriptor.m_path.filename();
 		newPath.replace_extension(".ply");
-		auto command = ("meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
+		auto command = ("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
 		int error = system(command.c_str());
 		if(error != 0)
 		{

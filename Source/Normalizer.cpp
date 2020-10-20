@@ -123,7 +123,7 @@ void Normalizer::Remesh(ModelDescriptor& model)
 
 	auto newPath = modifiedMeshesPath;
 	newPath /= model.m_path.filename();
-	int error = system(("meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + model.m_path.string() + " -o " + newPath.string()).c_str());
+	int error = system(("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + model.m_path.string() + " -o " + newPath.string()).c_str());
 	if(error != 0)
 	{
 		std::cerr << "Failed to remesh" << "\n";
