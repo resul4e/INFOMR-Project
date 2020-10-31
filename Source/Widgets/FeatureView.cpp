@@ -35,7 +35,7 @@ FeatureView::FeatureView(Context& _context) :
 	connect(&m_context, &Context::modelChanged, this, &FeatureView::OnModelChanged);
 
 	setWindowTitle("Feature View");
-	setMinimumWidth(250);
+	setMinimumWidth(512);
 
 	QWidget* mainWidget = new QWidget(this);
 	QLayout* mainlayout = new QGridLayout(mainWidget);

@@ -27,6 +27,8 @@ namespace
 ScatterplotView::ScatterplotView(Context& _context) :
 	m_context(_context)
 {
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 	connect(&m_context, &Context::embeddingChanged, this, &ScatterplotView::onEmbeddingChanged);
 }
 
