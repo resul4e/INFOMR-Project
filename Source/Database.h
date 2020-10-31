@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 namespace std {
 	namespace filesystem {
@@ -63,7 +64,7 @@ public:
 	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
 
 private:
-	void ComputeFeatureStandardization();
+	void ComputeFeatureStandardization(DescriptorName _descriptorName);
 	void ComputeFeatureVectors();
 	void CompoundHistogramPerClass();
 	
@@ -71,7 +72,7 @@ private:
 	
 	std::vector<ModelDescriptor> m_modelDatabase;
 
-	Features3D m_averageFeatures;
-	Features3D m_stddevFeatures;
+	Features3D m_singleFeatureAverage;
+	Features3D m_singleFeatureStddev;
 	flann::Index<flann::L2<float>> m_index;
 };
