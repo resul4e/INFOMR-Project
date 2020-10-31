@@ -47,11 +47,26 @@ std::vector<ModelDescriptor>& Database::GetModelDatabase()
 	return m_modelDatabase;
 }
 
+ModelDescriptor Database::FindModelByName(const std::string& _name)
+{
+	for(auto md : m_modelDatabase)
+	{
+		if(md.m_name == _name)
+		{
+			return md;
+		}
+	}
+	std::cerr << "Could not find Model with name " << _name << "!";
+	return {};
+}
+
 void Database::ProcessAllModels()
 {
+	const fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
 	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
 	fs::create_directory(savedMeshesPath);
+	fs::create_directory(modifiedMeshesPath);
 
 	Features3D::globalBoundsA3.s = 0;
 	Features3D::globalBoundsA3.t = 3.14159f;

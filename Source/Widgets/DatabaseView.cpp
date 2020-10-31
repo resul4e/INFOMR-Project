@@ -79,6 +79,7 @@ void DatabaseView::FindClosestShapes()
 		QString s = QString::fromStdString(closest.m_name);
 		m_matchList->addItem(s);
 	}
+	
 	//ModelDescriptor& closest = modelDatabase[indices[1]];
 	//qDebug() << QString::fromStdString(modelDatabase[indices[1]].m_name);
 	//m_context.SetModel(closest);
@@ -130,6 +131,8 @@ DatabaseView::DatabaseView(Context& _context) :
 	connect(m_computeEmbedding, &QPushButton::pressed, this, &DatabaseView::ComputeEmbedding);
 
 	m_matchList = new QListWidget();
+	m_matchList->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+	connect(m_matchList, &QListWidget::itemSelectionChanged, this, &DatabaseView::SimilarModelSelectionChanged);
 
 	m_vertexCountHistogram = CreateVertexCountChart();
 	m_vertexCountSlider = new QSlider();
@@ -286,4 +289,16 @@ void DatabaseView::Update()
 	QBarCategoryAxis* xAxis = static_cast<QBarCategoryAxis*>(m_vertexCountHistogram->axes(Qt::Orientation::Horizontal)[0]);
 	xAxis->clear();
 	xAxis->append(categories);
+}
+
+void DatabaseView::SimilarModelSelectionChanged()
+{
+	if(m_matchList->selectedItems().size() < 0)
+	{
+		return;
+	}
+	QListWidgetItem* item = m_matchList->selectedItems()[0];
+	
+	ModelDescriptor desc = m_context.GetDatabase()->FindModelByName(item->text().toStdString());
+	m_context.SetModel(desc);
 }
