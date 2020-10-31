@@ -13,7 +13,6 @@
 #include <QSlider>
 #include <QPushButton>
 
-#include "TsneAnalysis.h"
 #include "Database.h"
 #include "Model.h"
 
@@ -85,26 +84,6 @@ void DatabaseView::FindClosestShapes()
 	//m_context.SetModel(closest);
 }
 
-void DatabaseView::ComputeEmbedding()
-{
-	TsneAnalysis tsne(m_context);
-
-	std::vector<float> features;
-
-	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
-	int numDimensions = 1;
-	for (ModelDescriptor& md : modelDatabase)
-	{
-		FeatureVector& fv = m_context.GetDatabase()->ComputeFeatureVector(md);
-		std::vector<float> floatVector = fv.AsFloatVector();
-		numDimensions = floatVector.size();
-		features.insert(features.end(), floatVector.begin(), floatVector.end());
-	}
-	tsne.initTSNE(features, numDimensions);
-
-	tsne.run();
-}
-
 DatabaseView::DatabaseView(Context& _context) :
 	m_context(_context),
 	m_maxVertexCount(100)
@@ -126,9 +105,6 @@ DatabaseView::DatabaseView(Context& _context) :
 
 	m_computeSimilar = new QPushButton("Search similar");
 	connect(m_computeSimilar, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
-
-	m_computeEmbedding = new QPushButton("Compute Embedding");
-	connect(m_computeEmbedding, &QPushButton::pressed, this, &DatabaseView::ComputeEmbedding);
 
 	m_matchList = new QListWidget();
 	m_matchList->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
@@ -162,7 +138,6 @@ DatabaseView::DatabaseView(Context& _context) :
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
 	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
 	informationLayout->addWidget(m_computeSimilar, 2, 0);
-	informationLayout->addWidget(m_computeEmbedding, 3, 0);
 	informationLayout->addWidget(m_matchList, 4, 0);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);

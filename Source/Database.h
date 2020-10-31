@@ -2,6 +2,7 @@
 
 #include "ModelDescriptor.h"
 
+#include <QObject>
 #include <flann/flann.hpp>
 #include <memory>
 #include <vector>
@@ -16,8 +17,9 @@ namespace std {
 
 class Model;
 
-class Database
+class Database : public QObject
 {
+	Q_OBJECT
 public:
 	Database();
 	~Database() = default;
@@ -63,6 +65,9 @@ public:
 	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);
 	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
 
+signals:
+	void featuresLoaded();
+
 private:
 	void ComputeFeatureStandardization(DescriptorName _descriptorName);
 	void ComputeFeatureVectors();
@@ -74,5 +79,7 @@ private:
 
 	Features3D m_singleFeatureAverage;
 	Features3D m_singleFeatureStddev;
+
+	/** ANN search index*/
 	flann::Index<flann::L2<float>> m_index;
 };

@@ -112,6 +112,7 @@ void Database::ProcessAllModels()
 
 	CompoundHistogramPerClass();
 	ComputeFeatureVectors();
+	emit featuresLoaded();
 	BuildANNIndex();
 }
 

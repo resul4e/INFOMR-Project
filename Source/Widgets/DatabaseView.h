@@ -42,7 +42,6 @@ public:
 	DatabaseView(Context& _context);
 
 	void FindClosestShapes();
-	void ComputeEmbedding();
 	void Update();
 	void SimilarModelSelectionChanged();
 
@@ -54,7 +53,6 @@ private:
 	QLineEdit* m_databaseCountField;
 	DatabaseHierarchy* m_databaseHierarchy;
 	QPushButton* m_computeSimilar;
-	QPushButton* m_computeEmbedding;
 	QListWidget* m_matchList;
 
 	QtCharts::QChart* m_vertexCountHistogram;

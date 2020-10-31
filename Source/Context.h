@@ -33,7 +33,12 @@ signals:
 	void modelChanged();
 	void embeddingChanged();
 
+private slots:
+	void onDatabaseLoaded();
+
 private:
+	void ComputeEmbedding();
+
 	ModelDescriptor m_modelDescriptor;
 
 	std::shared_ptr<Database> m_database;
