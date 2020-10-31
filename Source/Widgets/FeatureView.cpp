@@ -179,12 +179,12 @@ void FeatureView::OnModelChanged()
 	m_verticesField->setText(QString::number(modelDescriptor.m_vertexCount));
 	m_facesField->setText(QString::number(modelDescriptor.m_faceCount));
 
-	m_surfaceAreaField->setText(QString::number(modelDescriptor.m_3DFeatures.surfaceArea));
-	m_AABBAreaField->setText(QString::number(modelDescriptor.m_3DFeatures.boundsArea));
-	m_AABBVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures.boundsVolume));
-	m_shapeVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures.volume));
-	m_vsaRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.compactness));
-	m_eccentricityRatioField->setText(QString::number(modelDescriptor.m_3DFeatures.eccentricity));
+	m_shapeVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures[VOLUME_3D]));
+	m_surfaceAreaField->setText(QString::number(modelDescriptor.m_3DFeatures[SURFACE_AREA_3D]));
+	m_vsaRatioField->setText(QString::number(modelDescriptor.m_3DFeatures[COMPACTNESS_3D]));
+	m_AABBAreaField->setText(QString::number(modelDescriptor.m_3DFeatures[BOUNDS_AREA_3D]));
+	m_AABBVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures[BOUNDS_VOLUME_3D]));
+	m_eccentricityRatioField->setText(QString::number(modelDescriptor.m_3DFeatures[ECCENTRICITY_3D]));
 	
 	if (modelDescriptor.m_model != nullptr)
 		UpdateFaceAreaHistogram(modelDescriptor);

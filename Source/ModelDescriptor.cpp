@@ -7,15 +7,14 @@
 
 Features3D::Features3D() :
 	bounds(),
-	volume(0),
-	surfaceArea(0),
-	compactness(0),
-	boundsArea(0),
-	boundsVolume(0),
-	eccentricity(0),
 	a3(0), d1(0), d2(0), d3(0), d4(0)
 {
-
+	m_singleFeatures[DescriptorName::VOLUME_3D] = 0;
+	m_singleFeatures[DescriptorName::SURFACE_AREA_3D] = 0;
+	m_singleFeatures[DescriptorName::BOUNDS_AREA_3D] = 0;
+	m_singleFeatures[DescriptorName::BOUNDS_VOLUME_3D] = 0;
+	m_singleFeatures[DescriptorName::COMPACTNESS_3D] = 0;
+	m_singleFeatures[DescriptorName::ECCENTRICITY_3D] = 0;
 }
 
 ModelDescriptor::ModelDescriptor() :
@@ -43,12 +42,12 @@ void ModelDescriptor::UpdateFeatures()
 		util::ComputeEigenVectors(*m_model, m_eigenVectors[0], m_eigenVectors[1], m_eigenVectors[2], m_eigenValues);
 		m_model->CalculateOBB();
 
-		m_3DFeatures.surfaceArea = ExtractSurfaceArea(*this);
-		m_3DFeatures.volume = ExtractVolume(*this);
-		m_3DFeatures.boundsArea = ExtractAABBArea(*this);
-		m_3DFeatures.boundsVolume = ExtractAABBVolume(*this);
-		m_3DFeatures.compactness = (std::pow(M_PI, 1.0 / 3.0) * std::pow((6.0 * m_3DFeatures.volume), 2.0 / 3.0)) / m_3DFeatures.surfaceArea;
-		m_3DFeatures.eccentricity = m_eigenValues.x / m_eigenValues.z;
+		m_3DFeatures[SURFACE_AREA_3D] = ExtractSurfaceArea(*this);
+		m_3DFeatures[VOLUME_3D] = ExtractVolume(*this);
+		m_3DFeatures[BOUNDS_AREA_3D] = ExtractAABBArea(*this);
+		m_3DFeatures[BOUNDS_VOLUME_3D] = ExtractAABBVolume(*this);
+		m_3DFeatures[COMPACTNESS_3D] = (std::pow(M_PI, 1.0 / 3.0) * std::pow((6.0 * m_3DFeatures[VOLUME_3D]), 2.0 / 3.0)) / m_3DFeatures[SURFACE_AREA_3D];
+		m_3DFeatures[ECCENTRICITY_3D] = m_eigenValues.x / m_eigenValues.z;
 
 		m_3DFeatures.a3 = ExtractA3(*this);
 		m_3DFeatures.d1 = ExtractD1(*this);

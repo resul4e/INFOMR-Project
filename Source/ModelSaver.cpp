@@ -90,12 +90,12 @@ void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 
 	Features3D features = _modelDescriptor.m_3DFeatures;
 	
-	featuresStream << "volume, " << features.volume << "\n";
-	featuresStream << "surfaceArea, " << features.surfaceArea << "\n";
-	featuresStream << "compactness, " << features.compactness << "\n";
-	featuresStream << "boundsArea, " << features.boundsArea << "\n";
-	featuresStream << "boundsVolume, " << features.boundsVolume << "\n";
-	featuresStream << "eccentricity, " << features.eccentricity << "\n";
+	featuresStream << "volume, " << features[VOLUME_3D] << "\n";
+	featuresStream << "surfaceArea, " << features[SURFACE_AREA_3D] << "\n";
+	featuresStream << "compactness, " << features[COMPACTNESS_3D] << "\n";
+	featuresStream << "boundsArea, " << features[BOUNDS_AREA_3D] << "\n";
+	featuresStream << "boundsVolume, " << features[BOUNDS_VOLUME_3D] << "\n";
+	featuresStream << "eccentricity, " << features[ECCENTRICITY_3D] << "\n";
 
 	featuresStream << "a3, ";
 	SaveHistogramFeatures(features.a3, featuresStream);

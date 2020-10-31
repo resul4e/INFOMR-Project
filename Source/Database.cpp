@@ -181,12 +181,12 @@ FeatureVector Database::ComputeFeatureVector(const ModelDescriptor& md)
 {
 	FeatureVector featureVector;
 	
-	featureVector.AddFeature((md.m_3DFeatures.volume - m_averageFeatures.volume) / m_stddevFeatures.volume);
-	featureVector.AddFeature((md.m_3DFeatures.surfaceArea - m_averageFeatures.surfaceArea) / m_stddevFeatures.surfaceArea);
-	featureVector.AddFeature((md.m_3DFeatures.compactness - m_averageFeatures.compactness) / m_stddevFeatures.compactness);
-	featureVector.AddFeature((md.m_3DFeatures.boundsArea - m_averageFeatures.boundsArea) / m_stddevFeatures.boundsArea);
-	featureVector.AddFeature((md.m_3DFeatures.boundsVolume - m_averageFeatures.boundsVolume) / m_stddevFeatures.boundsVolume);
-	featureVector.AddFeature((md.m_3DFeatures.eccentricity - m_averageFeatures.eccentricity) / m_stddevFeatures.eccentricity);
+	featureVector.AddFeature((md.m_3DFeatures[VOLUME_3D] - m_singleFeatureAverage[VOLUME_3D]) / m_singleFeatureStddev[VOLUME_3D]);
+	featureVector.AddFeature((md.m_3DFeatures[SURFACE_AREA_3D] - m_singleFeatureAverage[SURFACE_AREA_3D]) / m_singleFeatureStddev[SURFACE_AREA_3D]);
+	featureVector.AddFeature((md.m_3DFeatures[COMPACTNESS_3D] - m_singleFeatureAverage[COMPACTNESS_3D]) / m_singleFeatureStddev[COMPACTNESS_3D]);
+	featureVector.AddFeature((md.m_3DFeatures[BOUNDS_AREA_3D] - m_singleFeatureAverage[BOUNDS_AREA_3D]) / m_singleFeatureStddev[BOUNDS_AREA_3D]);
+	featureVector.AddFeature((md.m_3DFeatures[BOUNDS_VOLUME_3D] - m_singleFeatureAverage[BOUNDS_VOLUME_3D]) / m_singleFeatureStddev[BOUNDS_VOLUME_3D]);
+	featureVector.AddFeature((md.m_3DFeatures[ECCENTRICITY_3D] - m_singleFeatureAverage[ECCENTRICITY_3D]) / m_singleFeatureStddev[ECCENTRICITY_3D]);
 	featureVector.AddFeature(md.m_3DFeatures.d1);
 	featureVector.AddFeature(md.m_3DFeatures.d2);
 	featureVector.AddFeature(md.m_3DFeatures.d3);
@@ -263,69 +263,24 @@ std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 	return closestKIndices;
 }
 
-void Database::ComputeFeatureStandardization()
+void Database::ComputeFeatureStandardization(DescriptorName _descriptorName)
 {
-	float averageVolume = 0;
-	float averageSurfaceArea = 0;
-	float averageCompactness = 0;
-	float averageBoundsArea = 0;
-	float averageBoundsVolume = 0;
-	float averageEccentricity = 0;
+	float averageValue = 0;
+	float stddevValue = 0;
 
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
-	{
-		averageVolume += modelDescriptor.m_3DFeatures.volume;
-		averageSurfaceArea += modelDescriptor.m_3DFeatures.surfaceArea;
-		averageCompactness += modelDescriptor.m_3DFeatures.compactness;
-		averageBoundsArea += modelDescriptor.m_3DFeatures.boundsArea;
-		averageBoundsVolume += modelDescriptor.m_3DFeatures.boundsVolume;
-		averageEccentricity += modelDescriptor.m_3DFeatures.eccentricity;
-	}
+		averageValue += modelDescriptor.m_3DFeatures[_descriptorName];
 
-	averageVolume /= m_modelDatabase.size();
-	averageSurfaceArea /= m_modelDatabase.size();
-	averageCompactness /= m_modelDatabase.size();
-	averageBoundsArea /= m_modelDatabase.size();
-	averageBoundsVolume /= m_modelDatabase.size();
-	averageEccentricity /= m_modelDatabase.size();
-
-	float stddevVolume = 0;
-	float stddevSurfaceArea = 0;
-	float stddevCompactness = 0;
-	float stddevBoundsArea = 0;
-	float stddevBoundsVolume = 0;
-	float stddevEccentricity = 0;
+	averageValue /= m_modelDatabase.size();
 
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
-	{
-		stddevVolume += pow(modelDescriptor.m_3DFeatures.volume - averageVolume, 2);
-		stddevSurfaceArea += pow(modelDescriptor.m_3DFeatures.surfaceArea - averageSurfaceArea, 2);
-		stddevCompactness += pow(modelDescriptor.m_3DFeatures.compactness - averageCompactness, 2);
-		stddevBoundsArea += pow(modelDescriptor.m_3DFeatures.boundsArea - averageBoundsArea, 2);
-		stddevBoundsVolume += pow(modelDescriptor.m_3DFeatures.boundsVolume - averageBoundsVolume, 2);
-		stddevEccentricity += pow(modelDescriptor.m_3DFeatures.eccentricity - averageEccentricity, 2);
-	}
+		stddevValue += pow(modelDescriptor.m_3DFeatures[_descriptorName] - averageValue, 2);
 
-	stddevVolume = sqrt(stddevVolume / (m_modelDatabase.size() - 1));
-	stddevSurfaceArea = sqrt(stddevSurfaceArea / (m_modelDatabase.size() - 1));
-	stddevCompactness = sqrt(stddevCompactness / (m_modelDatabase.size() - 1));
-	stddevBoundsArea = sqrt(stddevBoundsArea / (m_modelDatabase.size() - 1));
-	stddevBoundsVolume = sqrt(stddevBoundsVolume / (m_modelDatabase.size() - 1));
-	stddevEccentricity = sqrt(stddevEccentricity / (m_modelDatabase.size() - 1));
+	stddevValue = sqrt(stddevValue / (m_modelDatabase.size() - 1));
 
-	m_averageFeatures.volume = averageVolume;
-	m_averageFeatures.surfaceArea = averageSurfaceArea;
-	m_averageFeatures.compactness = averageCompactness;
-	m_averageFeatures.boundsArea = averageBoundsArea;
-	m_averageFeatures.boundsVolume = averageBoundsVolume;
-	m_averageFeatures.eccentricity = averageEccentricity;
-
-	m_stddevFeatures.volume = stddevVolume;
-	m_stddevFeatures.surfaceArea = stddevSurfaceArea;
-	m_stddevFeatures.compactness = stddevCompactness;
-	m_stddevFeatures.boundsArea = stddevBoundsArea;
-	m_stddevFeatures.boundsVolume = stddevBoundsVolume;
-	m_stddevFeatures.eccentricity = stddevEccentricity;
+	m_singleFeatureAverage[_descriptorName] = averageValue;
+	m_singleFeatureStddev[_descriptorName] = stddevValue;
+	qDebug() << "Standardization computed";
 }
 
 void Database::CompoundHistogramPerClass()
@@ -439,7 +394,13 @@ void Database::CompoundHistogramPerClass()
 		outFile.close();
 	}
 
-	ComputeFeatureStandardization();
+	ComputeFeatureStandardization(VOLUME_3D);
+	ComputeFeatureStandardization(SURFACE_AREA_3D);
+	ComputeFeatureStandardization(COMPACTNESS_3D);
+	ComputeFeatureStandardization(BOUNDS_3D);
+	ComputeFeatureStandardization(BOUNDS_AREA_3D);
+	ComputeFeatureStandardization(BOUNDS_VOLUME_3D);
+	ComputeFeatureStandardization(ECCENTRICITY_3D);
 }
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)

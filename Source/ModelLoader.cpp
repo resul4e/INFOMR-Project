@@ -106,32 +106,32 @@ Features3D ModelLoader::LoadFeatures(std::filesystem::path _filePath)
 	std::getline(featuresFile, line);
 	auto nextComma = line.find(',');
 	std::string number = line.substr(nextComma + 2, line.size());
-	features.volume = std::stof(number);
+	features[VOLUME_3D] = std::stof(number);
 	
 	std::getline(featuresFile, line);
 	nextComma = line.find(',');
 	number = line.substr(nextComma + 2, line.size());
-	features.surfaceArea = std::stof(number);
+	features[SURFACE_AREA_3D] = std::stof(number);
 	
 	std::getline(featuresFile, line);
 	nextComma = line.find(',');
 	number = line.substr(nextComma + 2, line.size());
-	features.compactness = std::stof(number);
+	features[COMPACTNESS_3D] = std::stof(number);
 	
 	std::getline(featuresFile, line);
 	nextComma = line.find(',');
 	number = line.substr(nextComma + 2, line.size());
-	features.boundsArea = std::stof(number);
+	features[BOUNDS_AREA_3D] = std::stof(number);
 	
 	std::getline(featuresFile, line);
 	nextComma = line.find(',');
 	number = line.substr(nextComma + 2, line.size());
-	features.boundsVolume = std::stof(number);
+	features[BOUNDS_VOLUME_3D] = std::stof(number);
 	
 	std::getline(featuresFile, line);
 	nextComma = line.find(',');
 	number = line.substr(nextComma + 2, line.size());
-	features.eccentricity = std::stof(number);
+	features[ECCENTRICITY_3D] = std::stof(number);
 
 	LoadHistogramFeature(features.a3, featuresFile);
 	LoadHistogramFeature(features.d1, featuresFile);

@@ -10,17 +10,28 @@
 #include <memory>
 #include <vector>
 
+enum DescriptorName
+{
+	VOLUME_3D, SURFACE_AREA_3D, COMPACTNESS_3D, BOUNDS_3D, BOUNDS_AREA_3D, BOUNDS_VOLUME_3D, ECCENTRICITY_3D
+};
+
+struct DescriptorNameHash
+{
+	template <typename T>
+	std::size_t operator()(T t) const
+	{
+		return static_cast<std::size_t>(t);
+	}
+};
+
 struct Features3D
 {
 	Features3D();
 
 	Bounds bounds;
-	float volume;
-	float surfaceArea;
-	float compactness;
-	float boundsArea;
-	float boundsVolume;
-	float eccentricity;
+
+	const float& operator[](DescriptorName desc) const { return m_singleFeatures[desc]; }
+	float& operator[](DescriptorName desc) { return m_singleFeatures[desc]; }
 
 	HistogramFeature a3;
 	HistogramFeature d1;
@@ -33,6 +44,8 @@ struct Features3D
 	inline static glm::vec2 globalBoundsD2 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
 	inline static glm::vec2 globalBoundsD3 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
 	inline static glm::vec2 globalBoundsD4 = glm::vec2(std::numeric_limits<float>().max(), std::numeric_limits<float>().lowest());
+
+	mutable std::unordered_map<DescriptorName, float, std::hash<int>> m_singleFeatures;
 };
 
 struct ModelDescriptor
