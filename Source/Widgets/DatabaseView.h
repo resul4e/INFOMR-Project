@@ -44,7 +44,8 @@ public:
 	void FindClosestShapes();
 	void ComputeEmbedding();
 	void Update();
-	
+	void SimilarModelSelectionChanged();
+
 private:
 	QtCharts::QChart* CreateVertexCountChart();
 	

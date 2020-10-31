@@ -40,6 +40,8 @@ public:
 	*/
 	std::vector<ModelDescriptor>& GetModelDatabase();
 
+	ModelDescriptor FindModelByName(const std::string& _name);
+
 	/**
 	 * @brief Goes through each model and subdivides it if it is necessary and normalises it.
 	*/
