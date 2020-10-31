@@ -254,10 +254,10 @@ std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 	std::vector<std::vector<int>> indices;
 	std::vector<std::vector<float>> dists;
 	// Do a knn search, using 128 checks
-	m_index.knnSearch(query, indices, dists, k, flann::SearchParams(128));
+	m_index.knnSearch(query, indices, dists, k+1, flann::SearchParams(128));
 
 	std::vector<int> closestKIndices;
-	for (int i = 0; i < k; i++)
+	for (int i = 1; i <= k; i++)
 		closestKIndices.push_back(indices[0][i]);
 
 	return closestKIndices;
