@@ -31,11 +31,13 @@ add_executable(${PROJECT_NAME}
     ${BASE_SOURCES}
     ${GRAPHICS_SOURCES}
     ${WIDGETS_SOURCES}
+    ${EVALUATION_SOURCES}
 )
 
 source_group(Source FILES ${BASE_SOURCES})
 source_group(Graphics FILES ${GRAPHICS_SOURCES})
 source_group(Widgets FILES ${WIDGETS_SOURCES})
+source_group(Evaluation FILES ${EVALUATION_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 target_link_libraries(${PROJECT_NAME} Qt5::Charts)
