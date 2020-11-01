@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QLabel>
+#include <QBitmap>
 #include <QLineEdit>
 #include <QChartView>
 #include <QBarSet>
@@ -81,9 +82,15 @@ FeatureView::FeatureView(Context& _context) :
 	attributeLayout->addWidget(m_facesField, 2, 1);
 
 	ScatterplotView* scatterplot = new ScatterplotView(m_context);
+	QLabel* legend = new QLabel();
+	QPixmap pixmap("../Resources/Legend.png");
+	legend->setPixmap(pixmap);
+	legend->setMask(pixmap.mask());
+	legend->show();
 
 	//chartLayout->addWidget(chartView, 0, 0);
 	chartLayout->addWidget(scatterplot, 0, 0);
+	chartLayout->addWidget(legend, 1, 0);
 
 	featureLayout->addWidget(volumeLabel, 0, 0);
 	featureLayout->addWidget(m_shapeVolumeField, 0, 1);
