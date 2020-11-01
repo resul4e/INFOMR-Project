@@ -43,6 +43,8 @@ public:
 	*/
 	std::vector<ModelDescriptor>& GetModelDatabase();
 
+	std::unordered_map<std::string, int>& GetClassCounts();
+
 	ModelDescriptor FindModelByName(const std::string& _name);
 
 	/**
@@ -65,17 +67,21 @@ public:
 	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);
 	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
 
+	void ComputeQualityMetrics();
+
 signals:
 	void featuresLoaded();
 
 private:
 	void ComputeFeatureStandardization(DescriptorName _descriptorName);
+	void ComputeClassCounts();
 	void ComputeFeatureVectors();
 	void CompoundHistogramPerClass();
 	
 	std::shared_ptr<Model> LoadSavedModel(std::filesystem::path _modelFileName);
 	
 	std::vector<ModelDescriptor> m_modelDatabase;
+	std::unordered_map<std::string, int> m_classCounts;
 
 	Features3D m_singleFeatureAverage;
 	Features3D m_singleFeatureStddev;

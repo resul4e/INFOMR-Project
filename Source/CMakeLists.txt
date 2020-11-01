@@ -74,3 +74,9 @@ set(WIDGETS_SOURCES
     ${DIR}/Widgets/ScatterplotView.cpp
     PARENT_SCOPE
 )
+
+set(EVALUATION_SOURCES
+    ${DIR}/Evaluation/Evaluation.h
+    ${DIR}/Evaluation/Evaluation.cpp
+    PARENT_SCOPE
+)

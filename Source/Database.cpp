@@ -10,6 +10,8 @@
 #include "ModelAnalytics.h"
 #include "ModelProcessing.h"
 
+#include "Evaluation/Evaluation.h"
+
 #include <flann/algorithms/kdtree_index.h>
 
 #include <QDebug>
@@ -45,6 +47,11 @@ void Database::AddModel(ModelDescriptor _model)
 std::vector<ModelDescriptor>& Database::GetModelDatabase()
 {
 	return m_modelDatabase;
+}
+
+std::unordered_map<std::string, int>& Database::GetClassCounts()
+{
+	return m_classCounts;
 }
 
 ModelDescriptor Database::FindModelByName(const std::string& _name)
@@ -112,8 +119,10 @@ void Database::ProcessAllModels()
 
 	CompoundHistogramPerClass();
 	ComputeFeatureVectors();
+	ComputeClassCounts();
 	emit featuresLoaded();
 	BuildANNIndex();
+	//ComputeQualityMetrics();
 }
 
 void Database::RemeshAllModels()
@@ -279,6 +288,12 @@ std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 	return closestKIndices;
 }
 
+void Database::ComputeQualityMetrics()
+{
+	eval::WriteNNResults(*this, false);
+	eval::WriteNNResults(*this, true);
+}
+
 void Database::ComputeFeatureStandardization(DescriptorName _descriptorName)
 {
 	float averageValue = 0;
@@ -297,6 +312,17 @@ void Database::ComputeFeatureStandardization(DescriptorName _descriptorName)
 	m_singleFeatureAverage[_descriptorName] = averageValue;
 	m_singleFeatureStddev[_descriptorName] = stddevValue;
 	qDebug() << "Standardization computed";
+}
+
+void Database::ComputeClassCounts()
+{
+	for (ModelDescriptor& md : m_modelDatabase)
+	{
+		if (m_classCounts.find(md.m_class) != m_classCounts.end())
+			m_classCounts[md.m_class]++;
+		else
+			m_classCounts[md.m_class] = 0;
+	}
 }
 
 void Database::CompoundHistogramPerClass()
