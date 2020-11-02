@@ -3,6 +3,8 @@
 #include "Database.h"
 
 #include <fstream>
+#include <random>
+#include <chrono>
 
 namespace eval
 {
@@ -88,6 +90,40 @@ namespace eval
 			recallFile << recalls[k] << '\n';
 		}
 		recallFile.close();
+	}
+
+	void WritePerformance(Database& database, bool preciseKNN)
+	{
+		auto& modelDatabase = database.GetModelDatabase();
+
+		//int numQueries = 10000;
+
+		//std::random_device rd;
+		//std::mt19937 gen(rd());
+		//std::uniform_int_distribution<> distrib(0, modelDatabase.size());
+
+		//std::vector<int> modelIndices(numQueries);
+		//for (int i = 0; i < numQueries; i++)
+		//{
+		//	modelIndices[i] = distrib(gen);
+		//}
+
+		std::vector<float> timings;
+		for (int k = 1; k < 31; k++)
+		{
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+			for (ModelDescriptor& md : modelDatabase)
+			{
+				if (preciseKNN)
+					database.FindClosestKNNShapes(md, k);
+				else
+					database.FindClosestANNShapes(md, k);
+			}
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			float timing = std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / modelDatabase.size();
+			timings.push_back(timing);
+			std::cout << "Average NN query time = " << timing << "[microseconds] for k=" << k << std::endl;
+		}
 	}
 
 	void WriteNNResults(Database& database, bool preciseKNN)
