@@ -1,5 +1,6 @@
 #include "DatabaseView.h"
 #include "FeatureView.h"
+#include "FeatureExtraction.h"
 
 #include <QChartView>
 #include <QVBoxLayout>
@@ -17,7 +18,10 @@
 #include "Model.h"
 
 #include <chrono>
+#include <fstream>
+#include <sstream>
 #include <QDebug>
+
 using namespace QtCharts;
 
 DatabaseHierarchy::DatabaseHierarchy(Context& _context) :
@@ -97,11 +101,15 @@ DatabaseView::DatabaseView(Context& _context) :
 	mainlayout->setMargin(0);
 	setWidget(mainWidget);
 
+	connect(&m_context, &Context::modelChanged, this, &DatabaseView::OnModelChanged);
+
 	QLabel* databaseCountLabel = new QLabel("Database entries");
 
 	m_databaseCountField = createField("0");
 
 	m_databaseHierarchy = new DatabaseHierarchy(_context);
+	m_databaseHierarchy->setMinimumWidth(200);
+	m_databaseHierarchy->setMaximumWidth(200);
 
 	m_computeSimilar = new QPushButton("Search similar");
 	connect(m_computeSimilar, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
@@ -109,6 +117,8 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_querySizeInput = new QLineEdit();
 
 	m_matchList = new QListWidget();
+	m_matchList->setMinimumWidth(200);
+	m_matchList->setMaximumWidth(200);
 	m_matchList->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 	connect(m_matchList, &QListWidget::itemSelectionChanged, this, &DatabaseView::SimilarModelSelectionChanged);
 
@@ -120,6 +130,14 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_vertexCountSlider->setMinimum(10);
 	m_vertexCountSlider->setEnabled(false);
 
+	m_faceAreaHistogram = CreateFaceAreaHistogram();
+	//m_faceAreaHistogram->setVisible(false);
+
+	QChartView* faceChartView = new QChartView(m_faceAreaHistogram);
+	faceChartView->setRenderHint(QPainter::Antialiasing);
+	faceChartView->setMinimumWidth(400);
+	faceChartView->setMaximumHeight(300);
+
 	QLineEdit* vertexCountSliderField = createField("0");
 	auto changeChartRange = [=]()
 	{
@@ -130,23 +148,23 @@ DatabaseView::DatabaseView(Context& _context) :
 	changeChartRange();
 	connect(m_vertexCountSlider, &QSlider::sliderReleased, this, changeChartRange);
 
-
 	QChartView* chartView = new QChartView(m_vertexCountHistogram);
 	chartView->setRenderHint(QPainter::Antialiasing);
-	chartView->setMinimumWidth(300);
-	chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	chartView->setMinimumWidth(400);
+	chartView->setMaximumHeight(300);
 
 	QGridLayout* informationLayout = new QGridLayout();
 	QGridLayout* chartsLayout = new QGridLayout();
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
-	informationLayout->addWidget(m_databaseHierarchy, 1, 0, 1, 2, Qt::AlignHCenter);
+	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
+	informationLayout->addWidget(m_matchList, 1, 1);
 	informationLayout->addWidget(m_computeSimilar, 2, 0);
 	informationLayout->addWidget(m_querySizeInput, 2, 1);
-	informationLayout->addWidget(m_matchList, 3, 0, 1, 2, Qt::AlignHCenter);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
 	chartsLayout->addWidget(chartView, 1, 0, 1, 2, Qt::AlignHCenter);
+	chartsLayout->addWidget(faceChartView, 2, 0, 1, 2, Qt::AlignHCenter);
 	
 	QGroupBox* informationBox = new QGroupBox("Database information");
 	informationBox->setLayout(informationLayout);
@@ -157,6 +175,15 @@ DatabaseView::DatabaseView(Context& _context) :
 	mainlayout->addWidget(informationBox);
 	mainlayout->addWidget(chartsBox);
 }
+
+void DatabaseView::OnModelChanged()
+{
+	const ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
+
+	if (modelDescriptor.m_model != nullptr)
+		UpdateFaceAreaHistogram(modelDescriptor);
+}
+
 
 QChart* DatabaseView::CreateVertexCountChart()
 {
@@ -176,8 +203,9 @@ QChart* DatabaseView::CreateVertexCountChart()
 	vertexCountHistogram->legend()->setVisible(false);
 	vertexCountHistogram->setTitle("Vertex count distribution");
 	vertexCountHistogram->setAnimationOptions(QChart::SeriesAnimations);
-	vertexCountHistogram->setMaximumHeight(450);
-	vertexCountHistogram->setMinimumHeight(450);
+	vertexCountHistogram->setMinimumWidth(400);
+	vertexCountHistogram->setMaximumHeight(300);
+	vertexCountHistogram->setMinimumHeight(300);
 
 	//Create the x axis categories, these are also dummy values and will be updated.
 	QStringList categories;
@@ -196,6 +224,119 @@ QChart* DatabaseView::CreateVertexCountChart()
 	series->attachAxis(vertexCountHistogramYAxis);
 
 	return vertexCountHistogram;
+}
+
+QChart* DatabaseView::CreateFaceAreaHistogram()
+{
+	//chart
+	QBarSet* vertexCountSet = new QBarSet("Database");
+
+	//Create a dummy chart with all zeros
+	*vertexCountSet << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+
+	//Create a new series with the dummy values.
+	QBarSeries* series = new QBarSeries();
+	series->append(vertexCountSet);
+
+	//Create the chart and set the desired properties
+	QChart* vertexCountHistogram = new QChart();
+	vertexCountHistogram->addSeries(series);
+	vertexCountHistogram->legend()->setVisible(false);
+	vertexCountHistogram->setTitle("Face area distribution");
+	vertexCountHistogram->setAnimationOptions(QChart::SeriesAnimations);
+
+	//Create the x axis categories, these are also dummy values and will be updated.
+	QStringList categories;
+	categories << "0" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10";
+
+	//Create the x axis and attach it to the chart.
+	QBarCategoryAxis* vertexCountHistogramXAxis = new QBarCategoryAxis();
+	vertexCountHistogramXAxis->append(categories);
+	vertexCountHistogram->addAxis(vertexCountHistogramXAxis, Qt::AlignBottom);
+	series->attachAxis(vertexCountHistogramXAxis);
+
+	//Create the 10^-5 used in the x axis title.
+	std::ostringstream streamObj;
+	streamObj << std::scientific;
+	streamObj << std::setprecision(2);
+	streamObj << (1.0 / static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION));
+	//Update the title for the x axis.
+	vertexCountHistogramXAxis->setTitleText(("Face area (*" + streamObj.str() + ")").c_str());
+	vertexCountHistogramXAxis->setTitleVisible(true);
+
+	//Create the y axis and attach it to the chart.
+	QValueAxis* vertexCountHistogramYAxis = new QValueAxis();
+	vertexCountHistogramYAxis->setRange(0, 10);
+	vertexCountHistogram->addAxis(vertexCountHistogramYAxis, Qt::AlignLeft);
+	series->attachAxis(vertexCountHistogramYAxis);
+
+	//y-axis will always have a range from 0-1
+	vertexCountHistogramYAxis->setRange(0, 1);
+	vertexCountHistogramYAxis->setTitleText("% of faces");
+	vertexCountHistogramYAxis->setTitleVisible(true);
+
+	vertexCountHistogram->setMinimumWidth(400);
+	vertexCountHistogram->setMinimumHeight(300);
+	vertexCountHistogram->setPreferredHeight(300);
+	vertexCountHistogram->setMaximumHeight(300);
+
+	return vertexCountHistogram;
+}
+
+void DatabaseView::UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor)
+{
+	//get the areas of each of the triangles in the model
+	std::vector<double> areas = ExtractFaceAreas(_modelDescriptor);
+	std::sort(areas.begin(), areas.end(), [](double lhs, double rhs) { return lhs < rhs; });
+
+	//How many histogram bars there are.
+	const int DIVISION_COUNT = 10;
+	int faceAreasCount[DIVISION_COUNT];
+	const double largestArea = areas.back();
+
+	//Go through each division, and count how many models fall in that range.
+	//Then update the chart to reflect this.
+	QStringList categories;
+	int largestSet = 0;
+	int index = 0;
+	for (int i = 0; i < DIVISION_COUNT; i++)
+	{
+		//Get the min and max values for this range.
+		const double minRange = i == 0 ? 0 : (largestArea * (1.0 / DIVISION_COUNT) * (i));
+		const double maxRange = largestArea * (1.0 / DIVISION_COUNT) * (1 + i);
+
+		//Create the label
+		std::ostringstream streamObj;
+		streamObj << std::setprecision(2);
+		streamObj << (minRange * static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION)) << "-" << (maxRange * static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION));
+		categories << streamObj.str().c_str();
+
+		//Get how many models lie in this range.
+		faceAreasCount[i] = 0;
+		while (index < areas.size() && areas[index] <= maxRange)
+		{
+			faceAreasCount[i]++;
+			index++;
+		}
+
+		//Update the values in the histogram
+		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->replace(i, static_cast<float>(faceAreasCount[i]) / static_cast<float>(areas.size()));
+		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->setLabel(std::to_string(static_cast<float>(faceAreasCount[i]) / static_cast<float>(areas.size())).c_str());
+		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->setLabelColor(QColor(0, 0, 0));
+		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->setLabelsVisible(true);
+		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->setLabelsPosition(QAbstractBarSeries::LabelsPosition::LabelsOutsideEnd);
+
+		largestSet = std::max(largestSet, faceAreasCount[i]);
+	}
+
+	//Set the new range labels on the x axis and update the title.
+	QBarCategoryAxis* xAxis = static_cast<QBarCategoryAxis*>(m_faceAreaHistogram->axes(Qt::Orientation::Horizontal)[0]);
+	xAxis->clear();
+	xAxis->append(categories);
+	xAxis->setLabelsAngle(-45);
+
+	//Set the height and make it visible
+	m_faceAreaHistogram->setVisible(true);
 }
 
 void DatabaseView::Update()

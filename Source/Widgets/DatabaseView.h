@@ -42,12 +42,20 @@ class DatabaseView : public QDockWidget
 public:
 	DatabaseView(Context& _context);
 
+	QtCharts::QChart* CreateFaceAreaHistogram();
 	void FindClosestShapes();
 	void Update();
 	void SimilarModelSelectionChanged();
 
+public slots:
+	void OnModelChanged();
+
 private:
+	const int FACE_AREA_HISTOGRAM_PRECISION = 10000;
+
 	QtCharts::QChart* CreateVertexCountChart();
+
+	void UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor);
 	
 	Context& m_context;
 
@@ -59,6 +67,7 @@ private:
 
 	QtCharts::QChart* m_vertexCountHistogram;
 	QSlider* m_vertexCountSlider;
+	QtCharts::QChart* m_faceAreaHistogram;
 	
 	int m_maxVertexCount;
 };

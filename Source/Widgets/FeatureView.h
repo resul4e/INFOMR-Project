@@ -6,26 +6,17 @@
 
 class Model;
 class QLineEdit;
-namespace QtCharts
-{
-	class QChart;
-}
 
 class FeatureView : public QDockWidget
 {
 	Q_OBJECT
 public:
 	FeatureView(Context& _context);
-	QtCharts::QChart* CreateFaceAreaHistogram();
 
 public slots:
 	void OnModelChanged();
 	
 private:
-	const int FACE_AREA_HISTOGRAM_PRECISION = 10000;
-	
-	void UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor);
-	
 	Context& m_context;
 
 	bool updated;
@@ -33,7 +24,6 @@ private:
 	QLineEdit* m_modelNameField;
 	QLineEdit* m_verticesField;
 	QLineEdit* m_facesField;
-	QtCharts::QChart* m_faceAreaHistogram;
 
 	QLineEdit* m_surfaceAreaField;
 	QLineEdit* m_AABBAreaField;

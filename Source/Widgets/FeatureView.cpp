@@ -69,11 +69,6 @@ FeatureView::FeatureView(Context& _context) :
 	m_eccentricityRatioField = createField("0");
 	QLineEdit* bbaRatioField = createField("0");
 
-	m_faceAreaHistogram = CreateFaceAreaHistogram();
-	m_faceAreaHistogram->setVisible(false);
-	QChartView* chartView = new QChartView(m_faceAreaHistogram);
-	chartView->setRenderHint(QPainter::Antialiasing);
-
 	attributeLayout->addWidget(modelNameLabel, 0, 0);
 	attributeLayout->addWidget(m_modelNameField, 0, 1);
 	attributeLayout->addWidget(verticesLabel, 1, 0);
@@ -88,7 +83,6 @@ FeatureView::FeatureView(Context& _context) :
 	legend->setMask(pixmap.mask());
 	legend->show();
 
-	//chartLayout->addWidget(chartView, 0, 0);
 	chartLayout->addWidget(scatterplot, 0, 0);
 	chartLayout->addWidget(legend, 1, 0);
 
@@ -121,62 +115,6 @@ FeatureView::FeatureView(Context& _context) :
 	mainlayout->addWidget(featureBox);
 }
 
-QChart* FeatureView::CreateFaceAreaHistogram()
-{
-	//chart
-	QBarSet* vertexCountSet = new QBarSet("Database");
-
-	//Create a dummy chart with all zeros
-	*vertexCountSet << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
-
-	//Create a new series with the dummy values.
-	QBarSeries* series = new QBarSeries();
-	series->append(vertexCountSet);
-
-	//Create the chart and set the desired properties
-	QChart* vertexCountHistogram = new QChart();
-	vertexCountHistogram->addSeries(series);
-	vertexCountHistogram->legend()->setVisible(false);
-	vertexCountHistogram->setTitle("Face area distribution");
-	vertexCountHistogram->setAnimationOptions(QChart::SeriesAnimations);
-
-	//Create the x axis categories, these are also dummy values and will be updated.
-	QStringList categories;
-	categories << "0" << "1" << "2" << "3" << "4" << "5" << "6" << "7" << "8" << "9" << "10";
-	
-	//Create the x axis and attach it to the chart.
-	QBarCategoryAxis* vertexCountHistogramXAxis = new QBarCategoryAxis();
-	vertexCountHistogramXAxis->append(categories);
-	vertexCountHistogram->addAxis(vertexCountHistogramXAxis, Qt::AlignBottom);
-	series->attachAxis(vertexCountHistogramXAxis);
-
-	//Create the 10^-5 used in the x axis title.
-	std::ostringstream streamObj;
-	streamObj << std::scientific;
-	streamObj << std::setprecision(2);
-	streamObj << (1.0 / static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION));
-	//Update the title for the x axis.
-	vertexCountHistogramXAxis->setTitleText(("Face area (*" + streamObj.str() + ")").c_str());
-	vertexCountHistogramXAxis->setTitleVisible(true);
-	
-	//Create the y axis and attach it to the chart.
-	QValueAxis* vertexCountHistogramYAxis = new QValueAxis();
-	vertexCountHistogramYAxis->setRange(0, 10);
-	vertexCountHistogram->addAxis(vertexCountHistogramYAxis, Qt::AlignLeft);
-	series->attachAxis(vertexCountHistogramYAxis);
-
-	//y-axis will always have a range from 0-1
-	vertexCountHistogramYAxis->setRange(0, 1);
-	vertexCountHistogramYAxis->setTitleText("% of faces");
-	vertexCountHistogramYAxis->setTitleVisible(true);
-
-	vertexCountHistogram->setMinimumHeight(450);
-	vertexCountHistogram->setPreferredHeight(450);
-	vertexCountHistogram->setMaximumHeight(450);
-
-	return vertexCountHistogram;
-}
-
 
 void FeatureView::OnModelChanged()
 {
@@ -192,63 +130,4 @@ void FeatureView::OnModelChanged()
 	m_AABBAreaField->setText(QString::number(modelDescriptor.m_3DFeatures[BOUNDS_AREA_3D]));
 	m_AABBVolumeField->setText(QString::number(modelDescriptor.m_3DFeatures[BOUNDS_VOLUME_3D]));
 	m_eccentricityRatioField->setText(QString::number(modelDescriptor.m_3DFeatures[ECCENTRICITY_3D]));
-	
-	if (modelDescriptor.m_model != nullptr)
-		UpdateFaceAreaHistogram(modelDescriptor);
-}
-
-void FeatureView::UpdateFaceAreaHistogram(const ModelDescriptor& _modelDescriptor)
-{
-	//get the areas of each of the triangles in the model
-	std::vector<double> areas = ExtractFaceAreas(_modelDescriptor);
-	std::sort(areas.begin(), areas.end(), [](double lhs, double rhs) { return lhs < rhs; });
-
-	//How many histogram bars there are.
-	const int DIVISION_COUNT = 10;
-	int faceAreasCount[DIVISION_COUNT];
-	const double largestArea = areas.back();
-
-	//Go through each division, and count how many models fall in that range.
-	//Then update the chart to reflect this.
-	QStringList categories;
-	int largestSet = 0;
-	int index = 0;
-	for (int i = 0; i < DIVISION_COUNT; i++)
-	{
-		//Get the min and max values for this range.
-		const double minRange = i == 0 ? 0 : (largestArea * (1.0 / DIVISION_COUNT) * (i));
-		const double maxRange = largestArea * (1.0 / DIVISION_COUNT) * (1 + i);
-
-		//Create the label
-		std::ostringstream streamObj;
-		streamObj << std::setprecision(2);
-		streamObj << (minRange * static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION)) << "-" << (maxRange * static_cast<double>(FACE_AREA_HISTOGRAM_PRECISION));
-		categories << streamObj.str().c_str();
-
-		//Get how many models lie in this range.
-		faceAreasCount[i] = 0;
-		while (index < areas.size() && areas[index] <= maxRange)
-		{
-			faceAreasCount[i]++;
-			index++;
-		}
-
-		//Update the values in the histogram
-		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->replace(i, static_cast<float>(faceAreasCount[i]) / static_cast<float>(areas.size()));
-		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->setLabel(std::to_string(static_cast<float>(faceAreasCount[i]) / static_cast<float>(areas.size())).c_str());
-		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->barSets()[0]->setLabelColor(QColor(0, 0, 0));
-		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->setLabelsVisible(true);
-		static_cast<QBarSeries*>(m_faceAreaHistogram->series()[0])->setLabelsPosition(QAbstractBarSeries::LabelsPosition::LabelsOutsideEnd);
-
-		largestSet = std::max(largestSet, faceAreasCount[i]);
-	}
-
-	//Set the new range labels on the x axis and update the title.
-	QBarCategoryAxis* xAxis = static_cast<QBarCategoryAxis*>(m_faceAreaHistogram->axes(Qt::Orientation::Horizontal)[0]);
-	xAxis->clear();
-	xAxis->append(categories);
-	xAxis->setLabelsAngle(-45);
-
-	//Set the height and make it visible
-	m_faceAreaHistogram->setVisible(true);
 }
