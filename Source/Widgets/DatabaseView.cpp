@@ -23,7 +23,7 @@ using namespace QtCharts;
 DatabaseHierarchy::DatabaseHierarchy(Context& _context) :
 	m_context(_context)
 {
-	setFixedWidth(200);
+	//setFixedWidth(200);
 
 	m_model = new DatabaseHierarchyModel(*_context.GetDatabase());
 
@@ -106,6 +106,8 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_computeSimilar = new QPushButton("Search similar");
 	connect(m_computeSimilar, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
 
+	m_querySizeInput = new QLineEdit();
+
 	m_matchList = new QListWidget();
 	m_matchList->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 	connect(m_matchList, &QListWidget::itemSelectionChanged, this, &DatabaseView::SimilarModelSelectionChanged);
@@ -131,17 +133,20 @@ DatabaseView::DatabaseView(Context& _context) :
 
 	QChartView* chartView = new QChartView(m_vertexCountHistogram);
 	chartView->setRenderHint(QPainter::Antialiasing);
+	chartView->setMinimumWidth(300);
+	chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	QGridLayout* informationLayout = new QGridLayout();
 	QGridLayout* chartsLayout = new QGridLayout();
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
-	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
+	informationLayout->addWidget(m_databaseHierarchy, 1, 0, 1, 2, Qt::AlignHCenter);
 	informationLayout->addWidget(m_computeSimilar, 2, 0);
-	informationLayout->addWidget(m_matchList, 4, 0);
+	informationLayout->addWidget(m_querySizeInput, 2, 1);
+	informationLayout->addWidget(m_matchList, 3, 0, 1, 2, Qt::AlignHCenter);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
-	chartsLayout->addWidget(chartView, 1, 0);
+	chartsLayout->addWidget(chartView, 1, 0, 1, 2, Qt::AlignHCenter);
 	
 	QGroupBox* informationBox = new QGroupBox("Database information");
 	informationBox->setLayout(informationLayout);

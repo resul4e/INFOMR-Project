@@ -19,6 +19,7 @@ namespace QtCharts
 }
 class QSlider;
 class QPushButton;
+class QLineEdit;
 
 class DatabaseHierarchy : public QTreeView
 {
@@ -53,6 +54,7 @@ private:
 	QLineEdit* m_databaseCountField;
 	DatabaseHierarchy* m_databaseHierarchy;
 	QPushButton* m_computeSimilar;
+	QLineEdit* m_querySizeInput;
 	QListWidget* m_matchList;
 
 	QtCharts::QChart* m_vertexCountHistogram;
