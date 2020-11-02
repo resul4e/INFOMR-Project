@@ -157,14 +157,14 @@ DatabaseView::DatabaseView(Context& _context) :
 	QGridLayout* chartsLayout = new QGridLayout();
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
 	informationLayout->addWidget(m_databaseCountField, 0, 1);
-	informationLayout->addWidget(m_databaseHierarchy, 1, 0);
-	informationLayout->addWidget(m_matchList, 1, 1);
-	informationLayout->addWidget(m_computeSimilar, 2, 0);
-	informationLayout->addWidget(m_querySizeInput, 2, 1);
+	informationLayout->addWidget(m_computeSimilar, 1, 0);
+	informationLayout->addWidget(m_querySizeInput, 1, 1);
+	informationLayout->addWidget(m_databaseHierarchy, 2, 0, 1, 2, Qt::AlignHCenter);
+	informationLayout->addWidget(m_matchList, 2, 2, 1, 2, Qt::AlignHCenter);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
-	chartsLayout->addWidget(chartView, 1, 0, 1, 2, Qt::AlignHCenter);
-	chartsLayout->addWidget(faceChartView, 2, 0, 1, 2, Qt::AlignHCenter);
+	chartsLayout->addWidget(chartView, 1, 0, 1, 4, Qt::AlignHCenter);
+	chartsLayout->addWidget(faceChartView, 2, 0, 1, 4, Qt::AlignHCenter);
 	
 	QGroupBox* informationBox = new QGroupBox("Database information");
 	informationBox->setLayout(informationLayout);
