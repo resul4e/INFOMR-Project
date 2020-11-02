@@ -71,6 +71,7 @@ void Database::ProcessAllModels()
 {
 	const fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
+	const fs::path descriptorDatabasePath = fs::path("..\\DescriptorDatabase");
 	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
 	fs::create_directory(savedMeshesPath);
 	fs::create_directory(modifiedMeshesPath);
@@ -88,7 +89,7 @@ void Database::ProcessAllModels()
 
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
-		if (fs::exists(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")))
+		if (fs::exists(featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")) && fs::exists(descriptorDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv")))
 		{
 			continue;
 		}

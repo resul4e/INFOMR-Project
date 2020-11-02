@@ -129,6 +129,7 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_vertexCountSlider->setMaximum(m_maxVertexCount);
 	m_vertexCountSlider->setMinimum(10);
 	m_vertexCountSlider->setEnabled(false);
+	m_vertexCountSlider->setVisible(false);
 
 	m_faceAreaHistogram = CreateFaceAreaHistogram();
 	//m_faceAreaHistogram->setVisible(false);
@@ -145,6 +146,7 @@ DatabaseView::DatabaseView(Context& _context) :
 		vertexCountSliderField->setText(std::to_string(m_vertexCountSlider->value()).c_str());
 		Update();
 	};
+	vertexCountSliderField->setVisible(false);
 	changeChartRange();
 	connect(m_vertexCountSlider, &QSlider::sliderReleased, this, changeChartRange);
 
@@ -362,7 +364,7 @@ void DatabaseView::Update()
 
 	//Sort the model from largest to smallest and get the largest vertex count (or the range set by the slider)
 	std::sort(modelDatabase.begin(), modelDatabase.end(), [](ModelDescriptor& lhs, ModelDescriptor& rhs) { return lhs.m_vertexCount < rhs.m_vertexCount; });
-	const int largestModelVertexCount = std::min(static_cast<int>(modelDatabase.back().m_vertexCount), m_maxVertexCount);
+	const int largestModelVertexCount = modelDatabase.back().m_vertexCount; //std::min(static_cast<int>(modelDatabase.back().m_vertexCount), m_maxVertexCount);
 
 	//Go through each division, and count how many models fall in that range.
 	//Then update the chart to reflect this.

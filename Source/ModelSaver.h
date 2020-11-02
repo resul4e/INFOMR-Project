@@ -24,5 +24,6 @@ public:
 private:
 
 	static void SaveFeatures(ModelDescriptor& _modelDescriptor);
+	static void SaveDescriptorData(ModelDescriptor& _modelDescriptor);
 	static void SaveHistogramFeatures(HistogramFeature _feature, std::ofstream& _stream);
 };

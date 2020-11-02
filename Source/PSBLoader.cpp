@@ -5,6 +5,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include "ModelLoader.h"
 
 namespace fs = std::filesystem;
 
@@ -27,6 +28,8 @@ namespace
 
 	void ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path _filePath, Database& _database)
 	{
+		const fs::path descriptorDatabasePath("../DescriptorDatabase");
+		
 		std::string cls = "NO_CLASS_DETECTED!";
 
 		int counter = 0;
@@ -65,6 +68,11 @@ namespace
 					descriptor.m_class = cls;
 					descriptor.m_name = cls + line;
 					descriptor.m_path = modelPath;
+
+					int vertexCount, faceCount;
+					ModelLoader::LoadDescriptorData(descriptorDatabasePath / modelPath.filename().replace_extension("csv"), vertexCount, faceCount);
+					descriptor.m_faceCount = vertexCount;
+					descriptor.m_vertexCount = faceCount;
 
 					_database.AddModel(descriptor);
 					std::cout << "Added model: " << descriptor.m_name << std::endl;

@@ -72,6 +72,7 @@ void ModelSaver::SavePly(ModelDescriptor& _modelDescriptor, fs::path _filePath)
 	_modelDescriptor.m_path = _filePath;
 
 	SaveFeatures(_modelDescriptor);
+	SaveDescriptorData(_modelDescriptor);
 }
 
 void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
@@ -113,6 +114,29 @@ void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 	SaveHistogramFeatures(features.d4, featuresStream);
 	
 	featuresStream.close();
+}
+
+void ModelSaver::SaveDescriptorData(ModelDescriptor& _modelDescriptor)
+{
+	const fs::path descriptorDatabasePath("../DescriptorDatabase");
+	fs::create_directory(descriptorDatabasePath);
+
+	if(_modelDescriptor.m_model != nullptr)
+	{
+		_modelDescriptor.UpdateDescriptorData();
+
+		fs::path descriptorsPath = descriptorDatabasePath / _modelDescriptor.m_path.filename().replace_extension(".csv");
+
+		std::ofstream descriptorsStream(descriptorsPath.string());
+		if (!descriptorsStream.is_open())
+		{
+			std::cerr << "Could not save " << descriptorsPath;
+			return;
+		}
+
+		descriptorsStream << _modelDescriptor.m_vertexCount << ", ";
+		descriptorsStream << _modelDescriptor.m_faceCount;
+	}
 }
 
 void ModelSaver::SaveHistogramFeatures(HistogramFeature _feature, std::ofstream& _stream)

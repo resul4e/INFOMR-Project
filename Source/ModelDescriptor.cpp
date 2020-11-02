@@ -26,7 +26,7 @@ ModelDescriptor::ModelDescriptor() :
 
 }
 
-void ModelDescriptor::UpdateFeatures()
+void ModelDescriptor::UpdateDescriptorData()
 {
 	if (m_model != nullptr)
 	{
@@ -37,7 +37,14 @@ void ModelDescriptor::UpdateFeatures()
 			m_vertexCount += mesh.positions.size();
 			m_faceCount += mesh.faces.size();
 		}
+	}
+}
 
+void ModelDescriptor::UpdateFeatures()
+{
+	if (m_model != nullptr)
+	{
+		UpdateDescriptorData();
 		UpdateBounds();
 		util::ComputeEigenVectors(*m_model, m_eigenVectors[0], m_eigenVectors[1], m_eigenVectors[2], m_eigenValues);
 		m_model->CalculateOBB();

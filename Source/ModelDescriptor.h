@@ -52,6 +52,7 @@ struct ModelDescriptor
 {
 	ModelDescriptor();
 
+	void UpdateDescriptorData();
 	void UpdateFeatures();
 	void UpdateBounds();
 

@@ -142,6 +142,28 @@ Features3D ModelLoader::LoadFeatures(std::filesystem::path _filePath)
 	return features;
 }
 
+void ModelLoader::LoadDescriptorData(std::filesystem::path _filePath, int& o_vertexCount, int& o_faceCount)
+{
+	if(!std::filesystem::exists(_filePath))
+	{
+		o_vertexCount = 0;
+		o_faceCount = 0;
+		return;
+	}
+	
+	std::ifstream descriptorFile(_filePath);
+	assert(descriptorFile.is_open());
+
+	std::string line;
+
+	std::getline(descriptorFile, line);
+	auto nextComma = line.find(',');
+	std::string number = line.substr(0, nextComma);
+	o_vertexCount = std::stoi(number);
+	number = line.substr(nextComma + 2, line.size());
+	o_faceCount = std::stoi(number);
+}
+
 void ModelLoader::LoadHistogramFeature(HistogramFeature& _feature, std::ifstream& _stream)
 {
 	std::string line;
