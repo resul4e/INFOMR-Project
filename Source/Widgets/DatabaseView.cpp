@@ -416,7 +416,7 @@ void DatabaseView::Update()
 
 void DatabaseView::SimilarModelSelectionChanged()
 {
-	if(m_matchList->selectedItems().size() < 0)
+	if(m_matchList->selectedItems().size() <= 0)
 	{
 		return;
 	}
