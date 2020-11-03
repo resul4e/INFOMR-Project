@@ -66,7 +66,7 @@ private:
 	std::vector<float> m_weights;
 	std::vector<HistogramFeature> m_histogramFeatures;
 
-	friend float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2);
+	friend float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2, std::vector<float> hist_weights);
 };
 
-float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2);
+float FeatureVectorDistance(const FeatureVector& fv1, const FeatureVector& fv2, std::vector<float> hist_weights);

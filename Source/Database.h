@@ -74,6 +74,7 @@ signals:
 
 private:
 	void ComputeFeatureStandardization(DescriptorName _descriptorName);
+	void ComputeHistogramFeatureWeights();
 	void ComputeClassCounts();
 	void ComputeFeatureVectors();
 	void CompoundHistogramPerClass();
@@ -85,6 +86,8 @@ private:
 
 	Features3D m_singleFeatureAverage;
 	Features3D m_singleFeatureStddev;
+
+	std::vector<float> m_hist_weights;
 
 	/** ANN search index*/
 	flann::Index<flann::L2<float>> m_index;

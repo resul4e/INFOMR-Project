@@ -207,12 +207,20 @@ FeatureVector Database::ComputeFeatureVector(const ModelDescriptor& md)
 {
 	FeatureVector featureVector;
 	
-	featureVector.AddFeature((md.m_3DFeatures[VOLUME_3D] - m_singleFeatureAverage[VOLUME_3D]) / m_singleFeatureStddev[VOLUME_3D]);
-	featureVector.AddFeature((md.m_3DFeatures[SURFACE_AREA_3D] - m_singleFeatureAverage[SURFACE_AREA_3D]) / m_singleFeatureStddev[SURFACE_AREA_3D]);
-	featureVector.AddFeature((md.m_3DFeatures[COMPACTNESS_3D] - m_singleFeatureAverage[COMPACTNESS_3D]) / m_singleFeatureStddev[COMPACTNESS_3D]);
-	featureVector.AddFeature((md.m_3DFeatures[BOUNDS_AREA_3D] - m_singleFeatureAverage[BOUNDS_AREA_3D]) / m_singleFeatureStddev[BOUNDS_AREA_3D]);
-	featureVector.AddFeature((md.m_3DFeatures[BOUNDS_VOLUME_3D] - m_singleFeatureAverage[BOUNDS_VOLUME_3D]) / m_singleFeatureStddev[BOUNDS_VOLUME_3D]);
-	featureVector.AddFeature((md.m_3DFeatures[ECCENTRICITY_3D] - m_singleFeatureAverage[ECCENTRICITY_3D]) / m_singleFeatureStddev[ECCENTRICITY_3D]);
+	Feature singleFeatures(6);
+	singleFeatures[0] = (md.m_3DFeatures[VOLUME_3D] - m_singleFeatureAverage[VOLUME_3D]) / m_singleFeatureStddev[VOLUME_3D];
+	singleFeatures[1] = (md.m_3DFeatures[SURFACE_AREA_3D] - m_singleFeatureAverage[SURFACE_AREA_3D]) / m_singleFeatureStddev[SURFACE_AREA_3D];
+	singleFeatures[2] = (md.m_3DFeatures[COMPACTNESS_3D] - m_singleFeatureAverage[COMPACTNESS_3D]) / m_singleFeatureStddev[COMPACTNESS_3D];
+	singleFeatures[3] = (md.m_3DFeatures[BOUNDS_AREA_3D] - m_singleFeatureAverage[BOUNDS_AREA_3D]) / m_singleFeatureStddev[BOUNDS_AREA_3D];
+	singleFeatures[4] = (md.m_3DFeatures[BOUNDS_VOLUME_3D] - m_singleFeatureAverage[BOUNDS_VOLUME_3D]) / m_singleFeatureStddev[BOUNDS_VOLUME_3D];
+	singleFeatures[5] = (md.m_3DFeatures[ECCENTRICITY_3D] - m_singleFeatureAverage[ECCENTRICITY_3D]) / m_singleFeatureStddev[ECCENTRICITY_3D];
+	Feature boundsFeature(3);
+	boundsFeature[0] = md.m_3DFeatures.bounds.max.x - md.m_3DFeatures.bounds.min.x;
+	boundsFeature[1] = md.m_3DFeatures.bounds.max.y - md.m_3DFeatures.bounds.min.y;
+	boundsFeature[2] = md.m_3DFeatures.bounds.max.z - md.m_3DFeatures.bounds.min.z;
+	featureVector.AddFeature(singleFeatures);
+	//featureVector.AddFeature(boundsFeature);
+	featureVector.AddFeature(md.m_3DFeatures.a3);
 	featureVector.AddFeature(md.m_3DFeatures.d1);
 	featureVector.AddFeature(md.m_3DFeatures.d2);
 	featureVector.AddFeature(md.m_3DFeatures.d3);
@@ -226,7 +234,7 @@ void Database::BuildANNIndex()
 	auto& modelDatabase = GetModelDatabase();
 
 	int numShapes = modelDatabase.size();
-	int numDims = 46;
+	int numDims = modelDatabase[0].m_featureVector->AsFloatVector().size();
 	flann::Matrix<float> dataset = flann::Matrix<float>(new float[numShapes * numDims], numShapes, numDims);
 
 	for (int i = 0; i < modelDatabase.size(); i++)
@@ -257,7 +265,7 @@ std::vector<int> Database::FindClosestKNNShapes(ModelDescriptor& md, int k)
 		ModelDescriptor& md = modelDatabase[i];
 		FeatureVector fv2 = ComputeFeatureVector(md);
 
-		distances[i] = FeatureVectorDistance(fv1, fv2);
+		distances[i] = FeatureVectorDistance(fv1, fv2, m_hist_weights);
 	}
 
 	std::vector<size_t> indices = sortIndices(distances);
@@ -315,6 +323,86 @@ void Database::ComputeFeatureStandardization(DescriptorName _descriptorName)
 	m_singleFeatureAverage[_descriptorName] = averageValue;
 	m_singleFeatureStddev[_descriptorName] = stddevValue;
 	qDebug() << "Standardization computed";
+}
+
+void Database::ComputeHistogramFeatureWeights()
+{
+	std::vector<float> distancesA3;
+	std::vector<float> distancesD1;
+	std::vector<float> distancesD2;
+	std::vector<float> distancesD3;
+	std::vector<float> distancesD4;
+
+	WassersteinDistance wasserstein;
+	for (int i = 0; i < m_modelDatabase.size(); i++)
+	{
+		for (int j = i+1; j < m_modelDatabase.size(); j++)
+		{
+			HistogramFeature& a = m_modelDatabase[i].m_3DFeatures.a3;
+			HistogramFeature& b = m_modelDatabase[j].m_3DFeatures.a3;
+			float distanceA3 = wasserstein.distance(a, b);
+
+			a = m_modelDatabase[i].m_3DFeatures.d1;
+			b = m_modelDatabase[j].m_3DFeatures.d1;
+			float distanceD1 = wasserstein.distance(a, b);
+
+			a = m_modelDatabase[i].m_3DFeatures.d2;
+			b = m_modelDatabase[j].m_3DFeatures.d2;
+			float distanceD2 = wasserstein.distance(a, b);
+
+			a = m_modelDatabase[i].m_3DFeatures.d3;
+			b = m_modelDatabase[j].m_3DFeatures.d3;
+			float distanceD3 = wasserstein.distance(a, b);
+
+			a = m_modelDatabase[i].m_3DFeatures.d4;
+			b = m_modelDatabase[j].m_3DFeatures.d4;
+			float distanceD4 = wasserstein.distance(a, b);
+
+			distancesA3.push_back(distanceA3);
+			distancesD1.push_back(distanceD1);
+			distancesD2.push_back(distanceD2);
+			distancesD3.push_back(distanceD3);
+			distancesD4.push_back(distanceD4);
+		}
+	}
+
+	float averageA3 = 0, averageD1 = 0, averageD2 = 0, averageD3 = 0, averageD4 = 0;
+	float stddevA3 = 0, stddevD1 = 0, stddevD2 = 0, stddevD3 = 0, stddevD4 = 0;
+
+	for (int i = 0; i < distancesA3.size(); i++)
+	{
+		averageA3 += distancesA3[i];
+		averageD1 += distancesD1[i];
+		averageD2 += distancesD2[i];
+		averageD3 += distancesD3[i];
+		averageD4 += distancesD4[i];
+	}
+	averageA3 /= distancesA3.size();
+	averageD1 /= distancesA3.size();
+	averageD2 /= distancesA3.size();
+	averageD3 /= distancesA3.size();
+	averageD4 /= distancesA3.size();
+
+	for (int i = 0; i < distancesA3.size(); i++)
+	{
+		stddevA3 += pow(distancesA3[i] - averageA3, 2);
+		stddevD1 += pow(distancesD1[i] - averageD1, 2);
+		stddevD2 += pow(distancesD2[i] - averageD2, 2);
+		stddevD3 += pow(distancesD3[i] - averageD3, 2);
+		stddevD4 += pow(distancesD4[i] - averageD4, 2);
+	}
+
+	stddevA3 = sqrt(stddevA3 / (distancesA3.size() - 1));
+	stddevD1 = sqrt(stddevD1 / (distancesD1.size() - 1));
+	stddevD2 = sqrt(stddevD2 / (distancesD2.size() - 1));
+	stddevD3 = sqrt(stddevD3 / (distancesD3.size() - 1));
+	stddevD4 = sqrt(stddevD4 / (distancesD4.size() - 1));
+
+	m_hist_weights.push_back(1 / stddevA3);
+	m_hist_weights.push_back(1 / stddevD1);
+	m_hist_weights.push_back(1 / stddevD2);
+	m_hist_weights.push_back(1 / stddevD3);
+	m_hist_weights.push_back(1 / stddevD4);
 }
 
 void Database::ComputeClassCounts()
@@ -446,6 +534,9 @@ void Database::CompoundHistogramPerClass()
 	ComputeFeatureStandardization(BOUNDS_AREA_3D);
 	ComputeFeatureStandardization(BOUNDS_VOLUME_3D);
 	ComputeFeatureStandardization(ECCENTRICITY_3D);
+	//ComputeHistogramFeatureWeights();
+
+	m_hist_weights = { 2.03818, 1.14862, 2.13344, 1.71947, 2.04633 };
 }
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)
