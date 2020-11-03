@@ -154,10 +154,10 @@ void ModelView::wheelEvent(QWheelEvent* event)
 
 	m_distance += d;
 
-	if (m_distance < 1) m_distance = 1;
+	if (m_distance < 0.2f) m_distance = 0.2f;
 
 	m_camera->distance += d;
-	if (m_camera->distance < 1) m_camera->distance = 1;
+	if (m_camera->distance < 0.2f) m_camera->distance = 0.2f;
 
 	m_camera->RecomputePosition();
 }
