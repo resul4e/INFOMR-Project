@@ -68,6 +68,10 @@ public:
 	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
 
 	void ComputeQualityMetrics();
+	void LoadFeatureDatabase();
+
+public slots:
+	void OnFeaturesLoaded();
 
 signals:
 	void featuresLoaded();
