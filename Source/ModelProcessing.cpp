@@ -80,7 +80,7 @@ namespace
 
 				for (int k = 0; k < 3; k++)
 				{
-					f += sgn(center[k]) * (center[k] * center[k]);
+					f[k] += sgn(center[k]) * (center[k] * center[k]);
 				}
 			}
 		}
