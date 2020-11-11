@@ -36,7 +36,7 @@ namespace
 Database::Database() :
 	m_index(flann::KDTreeIndexParams(4))
 {
-
+	connect(this, &Database::featuresLoaded, this, &Database::OnFeaturesLoaded);
 }
 
 void Database::AddModel(ModelDescriptor _model)
@@ -118,12 +118,8 @@ void Database::ProcessAllModels()
 		modelDescriptor.m_model = nullptr;
 	}
 
-	CompoundHistogramPerClass();
-	ComputeFeatureVectors();
-	ComputeClassCounts();
-	emit featuresLoaded();
-	BuildANNIndex();
-	//ComputeQualityMetrics();
+	LoadFeatureDatabase();
+	//CompoundHistogramPerClass();
 }
 
 void Database::RemeshAllModels()
@@ -193,6 +189,12 @@ void Database::SortDatabase(SortingOptions _option)
 	default:
 		break;
 	}
+}
+
+void Database::OnFeaturesLoaded()
+{
+	BuildANNIndex();
+	ComputeQualityMetrics();
 }
 
 void Database::ComputeFeatureVectors()
@@ -416,6 +418,37 @@ void Database::ComputeClassCounts()
 	}
 }
 
+void Database::LoadFeatureDatabase()
+{
+	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
+
+	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
+	{
+		fs::path featurePath = featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv");
+		if (fs::exists(featurePath))
+		{
+			modelDescriptor.m_3DFeatures = ModelLoader::LoadFeatures(featurePath);
+		}
+	}
+
+	// Standardize single features
+	ComputeFeatureStandardization(VOLUME_3D);
+	ComputeFeatureStandardization(SURFACE_AREA_3D);
+	ComputeFeatureStandardization(COMPACTNESS_3D);
+	ComputeFeatureStandardization(BOUNDS_3D);
+	ComputeFeatureStandardization(BOUNDS_AREA_3D);
+	ComputeFeatureStandardization(BOUNDS_VOLUME_3D);
+	ComputeFeatureStandardization(ECCENTRICITY_3D);
+
+	// Compute histogram distance weights
+	//ComputeHistogramFeatureWeights();
+	m_hist_weights = { 2.03818, 1.14862, 2.13344, 1.71947, 2.04633 };
+
+	ComputeFeatureVectors();
+	ComputeClassCounts();
+	emit featuresLoaded();
+}
+
 void Database::CompoundHistogramPerClass()
 {
 	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
@@ -526,17 +559,6 @@ void Database::CompoundHistogramPerClass()
 
 		outFile.close();
 	}
-
-	ComputeFeatureStandardization(VOLUME_3D);
-	ComputeFeatureStandardization(SURFACE_AREA_3D);
-	ComputeFeatureStandardization(COMPACTNESS_3D);
-	ComputeFeatureStandardization(BOUNDS_3D);
-	ComputeFeatureStandardization(BOUNDS_AREA_3D);
-	ComputeFeatureStandardization(BOUNDS_VOLUME_3D);
-	ComputeFeatureStandardization(ECCENTRICITY_3D);
-	//ComputeHistogramFeatureWeights();
-
-	m_hist_weights = { 2.03818, 1.14862, 2.13344, 1.71947, 2.04633 };
 }
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)

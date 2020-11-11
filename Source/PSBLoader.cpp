@@ -122,5 +122,7 @@ namespace io
 		fs::path trainClassificationPath = _PSBDirectory / "classification" / "v1" / "coarse1" / "coarse1Train.cla";
 		ReadPSBClassificationFile(modelDirectoryPath, testClassificationPath, _database);
 		ReadPSBClassificationFile(modelDirectoryPath, trainClassificationPath, _database);
+
+		_database.LoadFeatureDatabase();
 	}
 }

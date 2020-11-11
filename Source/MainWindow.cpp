@@ -195,6 +195,7 @@ void MainWindow::importModelFromFile()
 	modelDescriptor.m_name = fileName.toStdString();
 
 	m_context.SetModel(modelDescriptor);
+	m_context.GetActiveModel().UpdateFeatures();
 }
 
 void MainWindow::exportModelToFile()
