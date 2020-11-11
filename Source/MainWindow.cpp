@@ -159,30 +159,7 @@ void MainWindow::loadPSB()
 		return;
 
 	io::LoadPSB(std::filesystem::path(fileName.toStdString()), *m_context.GetDatabase());
-	m_menuModelSelect->clear();
 	_databaseWidget->Update();
-}
-
-void MainWindow::populateDatabaseModelSelector()
-{
-	if(!m_menuModelSelect->actions().empty())
-	{
-		return;
-	}
-	
-	for(ModelDescriptor m : m_context.GetDatabase()->GetModelDatabase())
-	{
-		auto selectModelLamda = [=]()
-		{
-			m_context.SetModel(m);
-		};
-		
-		QAction* modelAction = new QAction(m.m_name.c_str());
-		connect(modelAction, &QAction::triggered, this, selectModelLamda);
-		m_menuModelSelect->addAction(modelAction);
-		m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
-
-	}
 }
 
 void MainWindow::centerAndResize(float coverage) {

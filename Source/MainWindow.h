@@ -82,7 +82,6 @@ private:
 	void addDatabaseMenuActions();
 	
 private:
-	QMenu* m_menuModelSelect;
 	QByteArray _windowConfiguration;
 
 	Context m_context;
