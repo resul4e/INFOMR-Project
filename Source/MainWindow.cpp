@@ -22,10 +22,11 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-	QMainWindow(parent),
-	m_selectedModelIndex(0)
+	QMainWindow(parent)
 {
 	setupUi(this);
+	//Remove unhelpfull help menu bar item
+	static_cast<Ui::MainWindow*>(this)->menuBar->removeAction(menuHelp->menuAction());
 	
 
 	//setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
@@ -59,18 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(exportModelAction, &QAction::triggered, this, &MainWindow::exportModelToFile);
 	exportDataFileMenu->addAction(exportModelAction);
 
-	QAction* processModelAction = new QAction("Process Model");
-	connect(processModelAction, &QAction::triggered, this, processModelFunc);
-	menuFile->insertAction(exitAction, processModelAction);
-	
-	QAction* normalizeModelAction = new QAction("Normalize Model");
-	connect(normalizeModelAction, &QAction::triggered, this, &MainWindow::normalizeCurrentModel);
-	menuFile->insertAction(exitAction, normalizeModelAction);
-
-	QAction* remeshModelAction = new QAction("Remesh Model");
-	connect(remeshModelAction, &QAction::triggered, this, &MainWindow::remeshCurrentModel);
-	menuFile->insertAction(exitAction, remeshModelAction);
-
 	addDatabaseMenuActions();
 }
 
@@ -81,88 +70,20 @@ void MainWindow::addDatabaseMenuActions()
 		m_context.GetDatabase()->ProcessAllModels();
 		_databaseWidget->Update();
 	};
-
-	auto remeshModelsFunc = [=]()
-	{
-		m_context.GetDatabase()->RemeshAllModels();
-		_databaseWidget->Update();
-	};
-
-	auto saveModifiedModelsFunc = [=]()
-	{
-		m_context.GetDatabase()->SaveAllModels();
-	};
-	
-	auto normalizeModelsFunc = [=]()
-	{
-		m_context.GetDatabase()->NormalizeAllModels();
-		_databaseWidget->Update();
-	};
-	
-	auto sortByVertexCountFunc = [=]()
-	{
-		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::VERTEX_COUNT);
-		m_menuModelSelect->clear();
-	};
-
-	auto sortByFaceCountFunc = [=]()
-	{
-		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::FACE_COUNT);
-		m_menuModelSelect->clear();
-	};
-
-	auto sortByBoundsFunc = [=]()
-	{
-		m_context.GetDatabase()->SortDatabase(Database::SortingOptions::BOUNDS);
-		m_menuModelSelect->clear();
-	};
 	
 	//Importing databases
-	QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
-	connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
-	menuDatabase->addAction(loadLabelledPSBAction);
+	//QAction* loadLabelledPSBAction = new QAction("Load Labelled PSB");
+	//connect(loadLabelledPSBAction, &QAction::triggered, this, &MainWindow::loadLabelledPSB);
+	//menuDatabase->addAction(loadLabelledPSBAction);
 
 	QAction* loadPSBAction = new QAction("Load PSB");
 	connect(loadPSBAction, &QAction::triggered, this, &MainWindow::loadPSB);
 	menuDatabase->addAction(loadPSBAction);
-
-	//Model selector
-	m_menuModelSelect = new QMenu("Select Model");
-	connect(m_menuModelSelect, &QMenu::aboutToShow, this, &MainWindow::populateDatabaseModelSelector);
-	menuDatabase->addMenu(m_menuModelSelect);
-
-	//Sorting menu
-	QMenu* menuSortDatabase = new QMenu("Sort database by...");
-	menuDatabase->addMenu(menuSortDatabase);
-
-	QAction* sortByVertexCount = new QAction("Vertex Count");
-	connect(sortByVertexCount, &QAction::triggered, this, sortByVertexCountFunc);
-	menuSortDatabase->addAction(sortByVertexCount);
-
-	QAction* sortByFaceCount = new QAction("Face Count");
-	connect(sortByFaceCount, &QAction::triggered, this, sortByFaceCountFunc);
-	menuSortDatabase->addAction(sortByFaceCount);
-
-	QAction* sortByBounds = new QAction("Bounds");
-	connect(sortByBounds, &QAction::triggered, this, sortByBoundsFunc);
-	menuSortDatabase->addAction(sortByBounds);
 	
 	//Processing menu
 	QAction* menuProcessDatabase = new QAction("Process database");
 	connect(menuProcessDatabase, &QAction::triggered, this, processModelsFunc);
 	menuDatabase->addAction(menuProcessDatabase);
-
-	QAction* menuRemeshDatabase = new QAction("Remesh database");
-	connect(menuRemeshDatabase, &QAction::triggered, this, remeshModelsFunc);
-	menuDatabase->addAction(menuRemeshDatabase);
-	
-	QAction* menuNormalizeDatabase = new QAction("Normalize database");
-	connect(menuNormalizeDatabase, &QAction::triggered, this, normalizeModelsFunc);
-	menuDatabase->addAction(menuNormalizeDatabase);
-
-	QAction* menuSaveDatabase = new QAction("Save modified database");
-	connect(menuSaveDatabase, &QAction::triggered, this, saveModifiedModelsFunc);
-	menuDatabase->addAction(menuSaveDatabase);
 }
 
 MainWindow::~MainWindow()
@@ -216,18 +137,18 @@ void MainWindow::exportModelToFile()
 	m_context.SetModel(modelDescriptor);
 }
 
-void MainWindow::loadLabelledPSB()
-{
-	QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
-
-	// Don't try to load a file if the dialog was cancelled or the file name is empty
-	if (fileName.isNull() || fileName.isEmpty())
-		return;
-
-	io::LoadLabelledPSB(std::filesystem::path(fileName.toStdString()), *m_context.GetDatabase());
-	m_menuModelSelect->clear();
-	_databaseWidget->Update();
-}
+//void MainWindow::loadLabelledPSB()
+//{
+//	QString fileName = QFileDialog::getExistingDirectory(Q_NULLPTR, "Select labelled PSB directory", "");
+//
+//	// Don't try to load a file if the dialog was cancelled or the file name is empty
+//	if (fileName.isNull() || fileName.isEmpty())
+//		return;
+//
+//	io::LoadLabelledPSB(std::filesystem::path(fileName.toStdString()), *m_context.GetDatabase());
+//	m_menuModelSelect->clear();
+//	_databaseWidget->Update();
+//}
 
 void MainWindow::loadPSB()
 {
@@ -261,35 +182,6 @@ void MainWindow::populateDatabaseModelSelector()
 		m_menuModelSelect->addAction(modelAction);
 		m_menuModelSelect->setStyleSheet("QMenu { menu-scrollable: 1; }");
 
-	}
-}
-
-void MainWindow::normalizeCurrentModel()
-{
-	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
-	if(modelDescriptor.m_model != nullptr)
-	{
-		proc::Normalize(modelDescriptor);
-
-		m_context.SetModel(modelDescriptor);
-	}
-	else
-	{
-		std::cerr << "No Model to perform normalization on!" << std::endl;
-	}
-}
-
-void MainWindow::remeshCurrentModel()
-{
-	ModelDescriptor& modelDescriptor = m_context.GetActiveModel();
-	if (modelDescriptor.m_model != nullptr)
-	{
-		proc::Remesh(modelDescriptor);
-		m_context.SetModel(modelDescriptor);
-	}
-	else
-	{
-		std::cerr << "No Model to perform remeshing on!" << std::endl;
 	}
 }
 
@@ -342,19 +234,4 @@ void MainWindow::showEvent(QShowEvent *event)
 void MainWindow::keyPressEvent(QKeyEvent* _event)
 {
 	
-	std::cout << _event->key() << std::endl;
-	if(_event->key() == Qt::Key::Key_M)
-	{
-		m_selectedModelIndex++;
-	}
-	else if (_event->key() == Qt::Key::Key_N)
-	{
-		m_selectedModelIndex--;
-	}
-
-	std::vector<ModelDescriptor> db = m_context.GetDatabase()->GetModelDatabase();
-	if(m_selectedModelIndex < db.size())
-	{
-		m_context.SetModel(db[m_selectedModelIndex]);
-	}
 }

@@ -42,7 +42,8 @@ public:
 	 * @brief Gets path to database directory from user and Calls QueryManager::LoadLabelledPSB
 	 * @note Also clears the database model selector
 	*/
-	void loadLabelledPSB();
+	//void loadLabelledPSB();
+
 	/**
 	 * @brief Gets path to database directory from user and Calls QueryManager::LoadPSB
 	 * @note Also clears the database model selector
@@ -50,12 +51,9 @@ public:
 	void loadPSB();
 
 	/**
-	 * @brief GO through all of the models in the database and add them to the menu (only if the list is empty)
+	 * @brief Go through all of the models in the database and add them to the menu (only if the list is empty)
 	*/
 	void populateDatabaseModelSelector();
-
-	void normalizeCurrentModel();
-	void remeshCurrentModel();
 
 	/**
 	 * Moves the window to the center of the screen and resizes it to a fraction
@@ -90,8 +88,6 @@ private:
 	Context m_context;
 
 	ModelView* _modelView;
-	//std::shared_ptr<QueryManager> m_queryManager;
 	FeatureView* _featureView;
 	DatabaseView* _databaseWidget;
-	size_t m_selectedModelIndex;
 };
