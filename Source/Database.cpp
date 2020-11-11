@@ -541,9 +541,6 @@ void Database::CompoundHistogramPerClass()
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)
 {
-	//TODO(Resul): Remove this return
-	//For now just always load the default model
-
 	fs::path modifiedMeshesPath = fs::path("..\\SavedMeshes");
 
 	fs::path offPath = _modelFileName;
