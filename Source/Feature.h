@@ -41,6 +41,12 @@ public:
 	virtual float distance(const Feature& f1, const Feature& f2) = 0;
 };
 
+class ManhattanDistance : public DistanceFunction
+{
+public:
+	float distance(const Feature& f1, const Feature& f2) override;
+};
+
 class EuclideanDistance : public DistanceFunction
 {
 public:

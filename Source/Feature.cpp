@@ -4,6 +4,22 @@
 
 #include <cassert>
 
+float ManhattanDistance::distance(const Feature& f1, const Feature& f2)
+{
+	assert(f1.size() == f2.size());
+
+	if (f1.size() == 1)
+		return abs(f1[0] - f2[0]);
+
+	float sum = 0;
+	for (int i = 0; i < f1.size(); i++)
+	{
+		float f = (f1[i] - f2[i]);
+		sum += abs(f);
+	}
+	return sum;
+}
+
 float EuclideanDistance::distance(const Feature& f1, const Feature& f2)
 {
 	assert(f1.size() == f2.size());
