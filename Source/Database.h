@@ -70,6 +70,9 @@ public:
 	void ComputeQualityMetrics();
 	void LoadFeatureDatabase();
 
+	Features3D& getFeatureAverages() { return m_singleFeatureAverage; }
+	Features3D& getFeatureStddevs() { return m_singleFeatureStddev; }
+
 public slots:
 	void OnFeaturesLoaded();
 
