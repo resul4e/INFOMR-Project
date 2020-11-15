@@ -125,16 +125,24 @@ namespace proc
 		//The folder where we will save the subdivided mesh
 		fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
 
-		auto newPath = modifiedMeshesPath;
-		newPath /= _modelDescriptor.m_path.filename();
-		int error = system(("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string()).c_str());
+		auto outputPath = modifiedMeshesPath;
+		outputPath /= _modelDescriptor.m_path.filename();
+		outputPath = outputPath.replace_extension(".ply");
+		fs::path inputPath;
+
+		if (fs::exists(outputPath))
+			inputPath = outputPath;
+		else
+			inputPath = _modelDescriptor.m_path;
+
+		int error = system(("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + inputPath.string() + " -o " + outputPath.string()).c_str());
 		if (error != 0)
 		{
 			std::cerr << "Failed to remesh" << "\n";
 			return;
 		}
 
-		std::shared_ptr<Model> mdl = ModelLoader::LoadModel(newPath);
+		std::shared_ptr<Model> mdl = ModelLoader::LoadModel(outputPath);
 		if (mdl != nullptr)
 		{
 			_modelDescriptor.m_model = mdl;

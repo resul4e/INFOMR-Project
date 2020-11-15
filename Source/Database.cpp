@@ -98,7 +98,7 @@ void Database::ProcessAllModels()
 		{
 			modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(modelDescriptor.m_path));
 			//proc::SubdivideModel(modelDescriptor);
-			proc::CrunchModel(modelDescriptor);
+			//proc::CrunchModel(modelDescriptor);
 			proc::Remesh(modelDescriptor);
 			proc::Normalize(modelDescriptor);
 		}
