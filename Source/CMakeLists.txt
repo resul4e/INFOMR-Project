@@ -76,6 +76,8 @@ set(WIDGETS_SOURCES
 )
 
 set(EVALUATION_SOURCES
+    ${DIR}/Evaluation/DatabaseAnalytics.h
+    ${DIR}/Evaluation/DatabaseAnalytics.cpp
     ${DIR}/Evaluation/Evaluation.h
     ${DIR}/Evaluation/Evaluation.cpp
     PARENT_SCOPE
