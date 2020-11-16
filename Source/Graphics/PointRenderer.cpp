@@ -227,7 +227,7 @@ void PointRenderer::init()
 	_gpuPoints.init();
 
 	bool loaded = true;
-	loaded &= _shader.loadShaderFromFile("../Resources/PointPlot.vert", "../Resources/PointPlot.frag");
+	loaded &= _shader.loadShaderFromFile("Resources/PointPlot.vert", "Resources/PointPlot.frag");
 
 	if (!loaded) {
 		qCritical() << "Failed to load one of the Scatterplot shaders";

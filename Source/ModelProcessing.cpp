@@ -123,7 +123,7 @@ namespace proc
 	void Remesh(ModelDescriptor& _modelDescriptor)
 	{
 		//The folder where we will save the subdivided mesh
-		fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
 
 		auto outputPath = modifiedMeshesPath;
 		outputPath /= _modelDescriptor.m_path.filename();
@@ -135,7 +135,7 @@ namespace proc
 		else
 			inputPath = _modelDescriptor.m_path;
 
-		int error = system(("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\RM.mlx -i " + inputPath.string() + " -o " + outputPath.string()).c_str());
+		int error = system(("Scripts\\meshlabserver.exe -s \\Scripts\\RM.mlx -i " + inputPath.string() + " -o " + outputPath.string()).c_str());
 		if (error != 0)
 		{
 			std::cerr << "Failed to remesh" << "\n";
@@ -156,7 +156,7 @@ namespace proc
 	void SubdivideModel(ModelDescriptor& _modelDescriptor)
 	{
 		//The folder where we will save the subdivided mesh
-		fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
 
 		//check if we need to subdivide.
 		bool subdivide = false;
@@ -179,12 +179,12 @@ namespace proc
 			newPath /= _modelDescriptor.m_path.filename();
 			newPath.replace_extension(".ply");
 			
-			auto command = ("..\\Scripts\\meshlabserver.exe -s ..\\Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
+			auto command = ("Scripts\\meshlabserver.exe -s Scripts\\SubdivOnce.mlx -i " + _modelDescriptor.m_path.string() + " -o " + newPath.string());
 			int error = system(command.c_str());
 			if (error != 0)
 			{
 				std::cerr << "Subdivision failed', using backup subdivision" << "\n";
-				system(("..\\Scripts\\mesh_filter.exe " + _modelDescriptor.m_path.string() + " -subdiv " + newPath.string()).c_str());
+				system(("Scripts\\mesh_filter.exe " + _modelDescriptor.m_path.string() + " -subdiv " + newPath.string()).c_str());
 			}
 
 			_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
@@ -194,7 +194,7 @@ namespace proc
 	void CrunchModel(ModelDescriptor& _modelDescriptor)
 	{
 		//The folder where we will save the crunched mesh
-		fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
+		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
 
 		for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 		{
@@ -202,7 +202,7 @@ namespace proc
 			{
 				auto newPath = modifiedMeshesPath;
 				newPath /= _modelDescriptor.m_path.filename();
-				system(("..\\Scripts\\mesh_crunch.exe " + _modelDescriptor.m_path.string() + " " + newPath.string()).c_str());
+				system(("Scripts\\mesh_crunch.exe " + _modelDescriptor.m_path.string() + " " + newPath.string()).c_str());
 
 				_modelDescriptor.m_model = ModelLoader::LoadModel(newPath);
 			}

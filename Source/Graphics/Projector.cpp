@@ -25,7 +25,7 @@ void Projector::initialize()
 	bindContext();
 
 	m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
-	bool success = m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Black.frag");
+	bool success = m_modelShader.loadShaderFromFile("Resources/Model.vert", "Resources/Black.frag");
 	if (!success)
 		qDebug() << "Failed to load Projector shader";
 

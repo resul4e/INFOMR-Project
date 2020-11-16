@@ -36,16 +36,16 @@ void ModelView::initializeGL()
 	std::string versionString = std::string((const char*)glGetString(GL_VERSION));
 	qDebug() << versionString.c_str();
 
-	m_planeModel = ModelLoader::LoadModel("../Resources/Plane.obj");
+	m_planeModel = ModelLoader::LoadModel("Resources/Plane.obj");
 	m_planeModel->Upload();
 
 	m_camera = std::make_shared<Camera>(glm::radians(60.0f), 1, 0.1f, 100.0f);
 	m_camera->loadProjectionMatrix(m_projMatrix);
 	m_camera->RecomputePosition();
 
-	m_modelShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Model.frag");
-	m_wireframeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Color.frag");
-	m_planeShader.loadShaderFromFile("../Resources/Model.vert", "../Resources/Plane.frag");
+	m_modelShader.loadShaderFromFile("Resources/Model.vert", "Resources/Model.frag");
+	m_wireframeShader.loadShaderFromFile("Resources/Model.vert", "Resources/Color.frag");
+	m_planeShader.loadShaderFromFile("Resources/Model.vert", "Resources/Plane.frag");
 	//connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &ModelView::cleanup);
 
 	QTimer* timer = new QTimer(this);

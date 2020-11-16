@@ -54,6 +54,8 @@ install(FILES ThirdParty/assimp/bin/assimp.dll DESTINATION ${BINARY_DIR}/$<CONFI
 
 #set startup project to be the main executable instead of ALL_BUILD
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${PROJECT_NAME}")
+#Set working directory to be the root
+set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 #automatically copies the correct qt files over to make the program run.
 add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD COMMAND ${Qt5_DIR}/../../../bin/windeployqt.exe --quick ${BINARY_DIR}/$<CONFIG>/)

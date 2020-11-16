@@ -69,10 +69,10 @@ ModelDescriptor Database::FindModelByName(const std::string& _name)
 
 void Database::ProcessAllModels()
 {
-	const fs::path modifiedMeshesPath = fs::path("..\\ModifiedMeshes");
-	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
-	const fs::path descriptorDatabasePath = fs::path("..\\DescriptorDatabase");
-	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
+	const fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
+	const fs::path featureDatabasePath = fs::path("FeatureDatabase");
+	const fs::path descriptorDatabasePath = fs::path("DescriptorDatabase");
+	const fs::path savedMeshesPath = fs::path("SavedMeshes");
 	fs::create_directory(savedMeshesPath);
 	fs::create_directory(modifiedMeshesPath);
 
@@ -132,7 +132,7 @@ void Database::RemeshAllModels()
 
 void Database::SaveAllModels()
 {
-	const fs::path savedMeshesPath = fs::path("..\\SavedMeshes");
+	const fs::path savedMeshesPath = fs::path("SavedMeshes");
 	fs::create_directory(savedMeshesPath);
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
@@ -420,7 +420,7 @@ void Database::ComputeClassCounts()
 
 void Database::LoadFeatureDatabase()
 {
-	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
+	const fs::path featureDatabasePath = fs::path("FeatureDatabase");
 
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
@@ -451,7 +451,7 @@ void Database::LoadFeatureDatabase()
 
 void Database::CompoundHistogramPerClass()
 {
-	const fs::path featureDatabasePath = fs::path("..\\FeatureDatabase");
+	const fs::path featureDatabasePath = fs::path("FeatureDatabase");
 	fs::create_directory(featureDatabasePath / "Combined");
 	std::map<std::string, std::vector<ModelDescriptor>> classMap;
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
@@ -563,7 +563,7 @@ void Database::CompoundHistogramPerClass()
 
 std::shared_ptr<Model> Database::LoadSavedModel(std::filesystem::path _modelFileName)
 {
-	fs::path modifiedMeshesPath = fs::path("..\\SavedMeshes");
+	fs::path modifiedMeshesPath = fs::path("SavedMeshes");
 
 	fs::path offPath = _modelFileName;
 	fs::path plyPath = _modelFileName.replace_extension(".ply");

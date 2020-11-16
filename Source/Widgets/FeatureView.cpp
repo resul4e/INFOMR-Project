@@ -78,7 +78,7 @@ FeatureView::FeatureView(Context& _context) :
 
 	ScatterplotView* scatterplot = new ScatterplotView(m_context);
 	QLabel* legend = new QLabel();
-	QPixmap pixmap("../Resources/Legend.png");
+	QPixmap pixmap("Resources/Legend.png");
 	legend->setPixmap(pixmap);
 	legend->setMask(pixmap.mask());
 	legend->show();

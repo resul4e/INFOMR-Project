@@ -28,7 +28,7 @@ namespace
 
 	void ReadPSBClassificationFile(fs::path _modelDirectoryPath, fs::path _filePath, Database& _database)
 	{
-		const fs::path descriptorDatabasePath("../DescriptorDatabase");
+		const fs::path descriptorDatabasePath("DescriptorDatabase");
 		
 		std::string cls = "NO_CLASS_DETECTED!";
 

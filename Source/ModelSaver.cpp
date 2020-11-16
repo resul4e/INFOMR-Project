@@ -77,7 +77,7 @@ void ModelSaver::SavePly(ModelDescriptor& _modelDescriptor, fs::path _filePath)
 
 void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 {
-	const fs::path featuresDatabasePath("../FeatureDatabase");
+	const fs::path featuresDatabasePath("FeatureDatabase");
 	fs::create_directory(featuresDatabasePath);
 
 	fs::path featuresPath = featuresDatabasePath / _modelDescriptor.m_path.filename().replace_extension(".csv");
@@ -118,7 +118,7 @@ void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 
 void ModelSaver::SaveDescriptorData(ModelDescriptor& _modelDescriptor)
 {
-	const fs::path descriptorDatabasePath("../DescriptorDatabase");
+	const fs::path descriptorDatabasePath("DescriptorDatabase");
 	fs::create_directory(descriptorDatabasePath);
 
 	if(_modelDescriptor.m_model != nullptr)

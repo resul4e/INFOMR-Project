@@ -66,13 +66,13 @@ namespace eval
 
 		if (preciseKNN)
 		{
-			precisionFileName = "../Evaluation/precision_knn.csv";
-			recallFileName = "../Evaluation/recall_knn.csv";
+			precisionFileName = "Evaluation/precision_knn.csv";
+			recallFileName = "Evaluation/recall_knn.csv";
 		}
 		else
 		{
-			precisionFileName = "../Evaluation/precision_ann.csv";
-			recallFileName = "../Evaluation/recall_ann.csv";
+			precisionFileName = "Evaluation/precision_ann.csv";
+			recallFileName = "Evaluation/recall_ann.csv";
 		}
 
 		std::ofstream precisionFile;
@@ -140,9 +140,9 @@ namespace eval
 		std::string confusionFileName = "";
 
 		if (preciseKNN)
-			confusionFileName = "../Evaluation/statistics_knn_" + std::to_string(k) + ".csv";
+			confusionFileName = "Evaluation/statistics_knn_" + std::to_string(k) + ".csv";
 		else
-			confusionFileName = "../Evaluation/statistics_ann_" + std::to_string(k) + ".csv";
+			confusionFileName = "Evaluation/statistics_ann_" + std::to_string(k) + ".csv";
 
 		std::ofstream confusionFile;
 		confusionFile.open(confusionFileName);
