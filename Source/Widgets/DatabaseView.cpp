@@ -57,7 +57,7 @@ void DatabaseHierarchy::UpdateDataModel()
 
 void DatabaseView::FindClosestShapes()
 {
-	int k = 5;
+	int k = m_querySizeInput->text().toInt();
 
 	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
 
