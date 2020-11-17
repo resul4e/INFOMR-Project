@@ -37,6 +37,8 @@ Binary/Release/INFOMR-Project.exe
 
 Alternatively the project can be build in the visual GUI of CMake and compiled in Visual Studio (tested on 2019).
 
+**When running the project from the Binary directory, make sure the Resources, FeatureDatabase and DescriptorDatabase folder are present beside the executable.**
+
 ## Usage
 After the program opens, a database can be loaded through the top-bar menu by picking Database -> Load PSB and pointing it to the `benchmark` folder.
 
