@@ -32,10 +32,10 @@
   <Param name="Iterations" description="Iterations" type="RichInt" value="3" tooltip="Number of iterations of the remeshing operations to repeat on the mesh."/>
   <Param name="Adaptive" description="Adaptive remeshing" type="RichBool" value="false" tooltip="Toggles adaptive isotropic remeshing."/>
   <Param name="SelectedOnly" description="Remesh only selected faces" type="RichBool" value="false" tooltip="If checked the remeshing operations will be applied only to the selected faces."/>
-  <Param name="TargetLen" description="Target Length" min="0" type="RichAbsPerc" max="1.2341" value="0.01" tooltip="Sets the target length for the remeshed mesh edges."/>
+  <Param name="TargetLen" description="Target Length" min="0" type="RichAbsPerc" max="1.2341" value="0.02" tooltip="Sets the target length for the remeshed mesh edges."/>
   <Param name="FeatureDeg" description="Crease Angle" type="RichFloat" value="30" tooltip="Minimum angle between faces of the original to consider the shared edge as a feature to be preserved."/>
   <Param name="CheckSurfDist" description="Check Surface Distance" type="RichBool" value="true" tooltip="If toggled each local operation must deviate from original mesh by [Max. surface distance]"/>
-  <Param name="MaxSurfDist" description="Max. Surface Distance" min="0" type="RichAbsPerc" max="1.2341" value="0.01" tooltip="Maximal surface deviation allowed for each local operation"/>
+  <Param name="MaxSurfDist" description="Max. Surface Distance" min="0" type="RichAbsPerc" max="1.2341" value="0.02" tooltip="Maximal surface deviation allowed for each local operation"/>
   <Param name="SplitFlag" description="Refine Step" type="RichBool" value="true" tooltip="If checked the remeshing operations will include a refine step."/>
   <Param name="CollapseFlag" description="Collapse Step" type="RichBool" value="true" tooltip="If checked the remeshing operations will include a collapse step."/>
   <Param name="SwapFlag" description="Edge-Swap Step" type="RichBool" value="true" tooltip="If checked the remeshing operations will include a edge-swap step, aimed at improving the vertex valence of the resulting mesh."/>
