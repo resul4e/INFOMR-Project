@@ -11,6 +11,7 @@
 #include "ModelProcessing.h"
 
 #include "Evaluation/Evaluation.h"
+#include "Evaluation/DatabaseAnalytics.h"
 
 #include <flann/algorithms/kdtree_index.h>
 
@@ -442,14 +443,20 @@ void Database::LoadFeatureDatabase()
 	ComputeFeatureStandardization(VOLUME_3D);
 	ComputeFeatureStandardization(SURFACE_AREA_3D);
 	ComputeFeatureStandardization(COMPACTNESS_3D);
-	ComputeFeatureStandardization(BOUNDS_3D);
 	ComputeFeatureStandardization(BOUNDS_AREA_3D);
 	ComputeFeatureStandardization(BOUNDS_VOLUME_3D);
 	ComputeFeatureStandardization(ECCENTRICITY_3D);
 
+	//analytics::ComputeFeatureDistribution("volume_norm.csv", VOLUME_3D, *this);
+	//analytics::ComputeFeatureDistribution("surface_area_norm.csv", SURFACE_AREA_3D, *this);
+	//analytics::ComputeFeatureDistribution("compactness_norm.csv", COMPACTNESS_3D, *this);
+	//analytics::ComputeFeatureDistribution("bounds_area_norm.csv", BOUNDS_AREA_3D, *this);
+	//analytics::ComputeFeatureDistribution("bounds_volume_norm.csv", BOUNDS_VOLUME_3D, *this);
+	//analytics::ComputeFeatureDistribution("eccentricity_norm.csv", ECCENTRICITY_3D, *this);
+
 	// Compute histogram distance weights
 	//ComputeHistogramFeatureWeights();
-	m_hist_weights = { 2.03818, 1.14862, 2.13344, 1.71947, 2.04633 };
+	m_hist_weights = { 2.03818, 1.14862, 2.13344, 1.71947, 2.04633 }; // Precomputed distance weights
 
 	ComputeFeatureVectors();
 	ComputeClassCounts();
