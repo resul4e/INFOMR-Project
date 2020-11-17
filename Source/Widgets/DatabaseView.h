@@ -44,6 +44,7 @@ public:
 
 	QtCharts::QChart* CreateFaceAreaHistogram();
 	void FindClosestShapes();
+	void FindClosestShapesRadius();
 	void Update();
 	void SimilarModelSelectionChanged();
 
@@ -61,8 +62,10 @@ private:
 
 	QLineEdit* m_databaseCountField;
 	DatabaseHierarchy* m_databaseHierarchy;
-	QPushButton* m_computeSimilar;
+	QPushButton* m_computeSimilarK;
+	QPushButton* m_computeSimilarR;
 	QLineEdit* m_querySizeInput;
+	QLineEdit* m_queryRadiusInput;
 	QListWidget* m_matchList;
 
 	QtCharts::QChart* m_vertexCountHistogram;

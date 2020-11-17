@@ -63,16 +63,16 @@ void DatabaseView::FindClosestShapes()
 
 	std::vector<int> closestIndices;
 
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	closestIndices = m_context.GetDatabase()->FindClosestKNNShapes(m_context.GetActiveModel(), k);
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	//std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	//closestIndices = m_context.GetDatabase()->FindClosestKNNShapes(m_context.GetActiveModel(), k);
+	//std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
 	std::chrono::steady_clock::time_point begin2 = std::chrono::steady_clock::now();
 	closestIndices = m_context.GetDatabase()->FindClosestANNShapes(m_context.GetActiveModel(), k);
 	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
 
-	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[탎]" << std::endl;
-	std::cout << "ANN Time difference = " << std::chrono::duration_cast<std::chrono::microseconds> (end2 - begin2).count() << "[탎]" << std::endl;
+	//std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[탎]" << std::endl;
+	std::cout << "ANN Query Time = " << std::chrono::duration_cast<std::chrono::microseconds> (end2 - begin2).count() << "[탎]" << std::endl;
 
 	m_matchList->clear();
 
@@ -82,10 +82,26 @@ void DatabaseView::FindClosestShapes()
 		QString s = QString::fromStdString(closest.m_name);
 		m_matchList->addItem(s);
 	}
-	
-	//ModelDescriptor& closest = modelDatabase[indices[1]];
-	//qDebug() << QString::fromStdString(modelDatabase[indices[1]].m_name);
-	//m_context.SetModel(closest);
+}
+
+void DatabaseView::FindClosestShapesRadius()
+{
+	float r = m_queryRadiusInput->text().toFloat();
+
+	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
+
+	std::vector<int> closestIndices;
+
+	closestIndices = m_context.GetDatabase()->FindClosestANNShapesRadius(m_context.GetActiveModel(), r);
+
+	m_matchList->clear();
+
+	for (int i = 0; i < closestIndices.size(); i++)
+	{
+		ModelDescriptor& closest = modelDatabase[closestIndices[i]];
+		QString s = QString::fromStdString(closest.m_name);
+		m_matchList->addItem(s);
+	}
 }
 
 DatabaseView::DatabaseView(Context& _context) :
@@ -94,7 +110,8 @@ DatabaseView::DatabaseView(Context& _context) :
 {
 	setObjectName("DatabaseView");
 	setWindowTitle("Database View");
-	setMinimumWidth(250);
+	setMinimumWidth(425);
+	setMaximumWidth(425);
 
 	QWidget* mainWidget = new QWidget(this);
 	QLayout* mainlayout = new QGridLayout(mainWidget);
@@ -111,10 +128,20 @@ DatabaseView::DatabaseView(Context& _context) :
 	m_databaseHierarchy->setMinimumWidth(200);
 	m_databaseHierarchy->setMaximumWidth(200);
 
-	m_computeSimilar = new QPushButton("Search similar");
-	connect(m_computeSimilar, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
+	m_computeSimilarK = new QPushButton("Search similar");
+	m_computeSimilarK->setMinimumHeight(40);
+	connect(m_computeSimilarK, &QPushButton::pressed, this, &DatabaseView::FindClosestShapes);
 
+	m_computeSimilarR = new QPushButton("Search similar (Radius)");
+	m_computeSimilarR->setMinimumHeight(40);
+	connect(m_computeSimilarR, &QPushButton::pressed, this, &DatabaseView::FindClosestShapesRadius);
+
+	QLabel* kLabel = new QLabel("Query Size k=");
 	m_querySizeInput = new QLineEdit();
+	m_querySizeInput->setText("10");
+
+	QLabel* rLabel = new QLabel("Query Radius r=");
+	m_queryRadiusInput = new QLineEdit();
 
 	m_matchList = new QListWidget();
 	m_matchList->setMinimumWidth(200);
@@ -158,11 +185,22 @@ DatabaseView::DatabaseView(Context& _context) :
 	QGridLayout* informationLayout = new QGridLayout();
 	QGridLayout* chartsLayout = new QGridLayout();
 	informationLayout->addWidget(databaseCountLabel, 0, 0);
-	informationLayout->addWidget(m_databaseCountField, 0, 1);
-	informationLayout->addWidget(m_computeSimilar, 1, 0);
-	informationLayout->addWidget(m_querySizeInput, 1, 1);
-	informationLayout->addWidget(m_databaseHierarchy, 2, 0, 1, 2, Qt::AlignHCenter);
-	informationLayout->addWidget(m_matchList, 2, 2, 1, 2, Qt::AlignHCenter);
+
+	QHBoxLayout* kSelectionLayout = new QHBoxLayout();
+	kSelectionLayout->addWidget(kLabel);
+	kSelectionLayout->addWidget(m_querySizeInput);
+
+	QHBoxLayout* rSelectionLayout = new QHBoxLayout();
+	rSelectionLayout->addWidget(rLabel);
+	rSelectionLayout->addWidget(m_queryRadiusInput);
+
+	informationLayout->addWidget(m_databaseCountField, 0, 2);
+	informationLayout->addLayout(kSelectionLayout, 1, 0);
+	//informationLayout->addLayout(rSelectionLayout, 2, 0);
+	informationLayout->addWidget(m_computeSimilarK, 2, 0);
+	//informationLayout->addWidget(m_computeSimilarR, 3, 3);
+	informationLayout->addWidget(m_databaseHierarchy, 3, 0, 1, 3, Qt::AlignHCenter);
+	informationLayout->addWidget(m_matchList, 3, 3, 1, 3, Qt::AlignHCenter);
 	chartsLayout->addWidget(m_vertexCountSlider, 0, 0);
 	chartsLayout->addWidget(vertexCountSliderField, 0, 1);
 	chartsLayout->addWidget(chartView, 1, 0, 1, 4, Qt::AlignHCenter);

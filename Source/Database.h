@@ -66,6 +66,7 @@ public:
 	void BuildANNIndex();
 	std::vector<int> FindClosestKNNShapes(ModelDescriptor& md, int k);
 	std::vector<int> FindClosestANNShapes(ModelDescriptor& md, int k);
+	std::vector<int> FindClosestANNShapesRadius(ModelDescriptor& md, float r);
 
 	void ComputeQualityMetrics();
 	void LoadFeatureDatabase();

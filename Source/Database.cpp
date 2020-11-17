@@ -300,6 +300,26 @@ std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 	return closestKIndices;
 }
 
+std::vector<int> Database::FindClosestANNShapesRadius(ModelDescriptor& md, float r)
+{
+	FeatureVector fv = ComputeFeatureVector(md);
+	std::vector<float> floatVector = fv.AsFloatVector();
+	qDebug() << r;
+	int numDims = floatVector.size();
+	flann::Matrix<float> query(floatVector.data(), 1, numDims);
+	qDebug() << numDims;
+	std::vector<std::vector<int>> indices;
+	std::vector<std::vector<float>> dists;
+	// Do a knn search, using 128 checks
+	m_index.radiusSearch(query, indices, dists, r, flann::SearchParams(128));
+	qDebug() << indices.size();
+	std::vector<int> closestRIndices;
+	for (int i = 1; i <= indices.size(); i++)
+		closestRIndices.push_back(indices[0][i]);
+
+	return closestRIndices;
+}
+
 void Database::ComputeQualityMetrics()
 {
 	//eval::ComputeMeanAveragePrecision(*this, true);
