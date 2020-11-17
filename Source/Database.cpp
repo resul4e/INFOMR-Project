@@ -301,8 +301,9 @@ std::vector<int> Database::FindClosestANNShapes(ModelDescriptor& md, int k)
 
 void Database::ComputeQualityMetrics()
 {
-	eval::WritePerformance(*this, false);
-	eval::WritePerformance(*this, true);
+	//eval::ComputeMeanAveragePrecision(*this, true);
+	//eval::WritePerformance(*this, false);
+	//eval::WritePerformance(*this, true);
 	//eval::WriteNNResults(*this, false);
 	//eval::WriteNNResults(*this, true);
 }
