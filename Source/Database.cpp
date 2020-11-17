@@ -423,6 +423,12 @@ void Database::LoadFeatureDatabase()
 {
 	const fs::path featureDatabasePath = fs::path("FeatureDatabase");
 
+	if (!fs::exists(featureDatabasePath))
+	{
+		std::cerr << "Loaded database without any features, please process to compute features" << std::endl;
+		return;
+	}
+
 	for (ModelDescriptor& modelDescriptor : m_modelDatabase)
 	{
 		fs::path featurePath = featureDatabasePath / modelDescriptor.m_path.filename().replace_extension(".csv");
