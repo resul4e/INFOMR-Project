@@ -160,7 +160,7 @@ void ScatterplotView::setData(const std::vector<glm::vec2>* points)
 	// Pass bounds and data to renderer
 	_pointRenderer.setBounds(_dataBounds);
 	_pointRenderer.setData(*points);
-	pointSizeChanged(20);
+	pointSizeChanged(15);
 	_pointRenderer.setAlpha(1.0);
 	update();
 }
