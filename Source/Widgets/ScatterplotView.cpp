@@ -83,8 +83,8 @@ void ScatterplotView::setData(const std::vector<glm::vec2>* points)
 	bounds.expand(0.1f);
 	_dataBounds = bounds;
 
-	// Use Kelly's 22 colors of maximum contrast, apart from white which is the background color
-	std::vector<std::string> kellyColors = { "222222", "F3C300", "875692", "F38400", "A1CAF1", "BE0032", "C2B280", "848482", "008856", "E68FAC", "0067A5", "F99379", "604E97", "F6A600", "B3446C", "DCD300", "882D17", "8DB600", "654522", "E25822", "2B3D26" };
+	// Use Kelly's 22 colors of maximum contrast, apart from white which is the background color, and grey which is used for the rest
+	std::vector<std::string> kellyColors = { "222222", "F3C300", "875692", "F38400", "A1CAF1", "BE0032", "C2B280", "008856", "E68FAC", "0067A5", "F99379", "604E97", "F6A600", "B3446C", "DCD300", "882D17", "8DB600", "654522", "E25822", "2B3D26" };
 	
 	auto& modelDatabase = m_context.GetDatabase()->GetModelDatabase();
 	auto& classCountsMap = m_context.GetDatabase()->GetClassCounts();
