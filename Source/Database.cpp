@@ -106,6 +106,7 @@ void Database::ProcessAllModels()
 			modelDescriptor.m_model = LoadSavedModel(modelDescriptor.m_path);
 			if(modelDescriptor.m_model == nullptr)
 			{
+				std::cerr << "Attempted to load saved model, but no model found" << std::endl;
 				continue;
 			}
 			proc::Normalize(modelDescriptor);
