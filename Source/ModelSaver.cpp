@@ -88,7 +88,7 @@ void ModelSaver::SaveFeatures(ModelDescriptor& _modelDescriptor)
 		std::cerr << "Could not save " << featuresPath;
 		return;
 	}
-
+	_modelDescriptor.UpdateFeatures();
 	Features3D features = _modelDescriptor.m_3DFeatures;
 	
 	featuresStream << "volume, " << features[VOLUME_3D] << "\n";
