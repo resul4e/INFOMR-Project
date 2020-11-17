@@ -122,8 +122,8 @@ namespace proc
 
 	void Remesh(ModelDescriptor& _modelDescriptor)
 	{
-		//The folder where we will save the subdivided mesh
-		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
+		//The folder where we will save the remeshed mesh
+		fs::path modifiedMeshesPath = fs::path("SavedMeshes");
 
 		auto outputPath = modifiedMeshesPath;
 		outputPath /= _modelDescriptor.m_path.filename();
@@ -156,7 +156,7 @@ namespace proc
 	void SubdivideModel(ModelDescriptor& _modelDescriptor)
 	{
 		//The folder where we will save the subdivided mesh
-		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
+		fs::path modifiedMeshesPath = fs::path("SavedMeshes");
 
 		//check if we need to subdivide.
 		bool subdivide = false;
@@ -194,7 +194,7 @@ namespace proc
 	void CrunchModel(ModelDescriptor& _modelDescriptor)
 	{
 		//The folder where we will save the crunched mesh
-		fs::path modifiedMeshesPath = fs::path("ModifiedMeshes");
+		fs::path modifiedMeshesPath = fs::path("SavedMeshes");
 
 		for (const Mesh& mesh : _modelDescriptor.m_model->m_meshes)
 		{

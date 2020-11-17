@@ -74,7 +74,6 @@ void Database::ProcessAllModels()
 	const fs::path descriptorDatabasePath = fs::path("DescriptorDatabase");
 	const fs::path savedMeshesPath = fs::path("SavedMeshes");
 	fs::create_directory(savedMeshesPath);
-	fs::create_directory(modifiedMeshesPath);
 
 	Features3D::globalBoundsA3.s = 0;
 	Features3D::globalBoundsA3.t = 3.14159f;
