@@ -22,7 +22,7 @@ void Context::SetModel(ModelDescriptor _modelDescriptor)
 	if (m_modelDescriptor.m_model == nullptr)
 		m_modelDescriptor.m_model = ModelLoader::LoadModel(std::filesystem::path(_modelDescriptor.m_path));
 	
-	m_modelDescriptor.UpdateFeatures();
+	//m_modelDescriptor.UpdateFeatures();
 
 	emit modelChanged();
 }
