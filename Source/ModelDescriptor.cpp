@@ -54,7 +54,7 @@ void ModelDescriptor::UpdateFeatures()
 		m_3DFeatures[BOUNDS_AREA_3D] = ExtractAABBArea(*this);
 		m_3DFeatures[BOUNDS_VOLUME_3D] = ExtractAABBVolume(*this);
 		m_3DFeatures[COMPACTNESS_3D] = (std::pow(M_PI, 1.0 / 3.0) * std::pow((6.0 * m_3DFeatures[VOLUME_3D]), 2.0 / 3.0)) / m_3DFeatures[SURFACE_AREA_3D];
-		m_3DFeatures[ECCENTRICITY_3D] = m_eigenValues.x / m_eigenValues.z;
+		m_3DFeatures[ECCENTRICITY_3D] = std::min(m_eigenValues.x / m_eigenValues.z, 5000.0f);
 
 		m_3DFeatures.a3 = ExtractA3(*this);
 		m_3DFeatures.d1 = ExtractD1(*this);
